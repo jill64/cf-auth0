@@ -1,2 +1,2 @@
-# cf-auth0
-Auth0 on Cloudflare Pages
+<!----- BEGIN GHOST DOCS HEADER ----->
+<!----- END GHOST DOCS HEADER ----->

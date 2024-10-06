@@ -1,0 +1,29 @@
+{
+  "name": "@jill64/cf-auth0",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "!**/*.test.*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && npx publint",
+    "prepack": "npm run build",
+    "test": "vitest",
+    "lint": "npx eslint . && npx depcheck",
+    "format": "npx prettier -w ."
+  },
+  "prettier": "@jill64/prettier-config",
+  "devDependencies": {
+    "@jill64/eslint-config-ts": "1.1.43",
+    "@jill64/prettier-config": "1.0.0",
+    "typescript": "5.6.2",
+    "vitest": "2.1.2"
+  }
+}
