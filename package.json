@@ -14,15 +14,25 @@
   },
   "scripts": {
     "build": "tsc && npx publint",
+    "sync": "npx tsx scripts/sync.ts",
     "prepack": "npm run build",
     "test": "vitest",
     "lint": "npx eslint . && npx depcheck",
     "format": "npx prettier -w ."
   },
   "prettier": "@jill64/prettier-config",
+  "dependencies": {},
   "devDependencies": {
     "@jill64/eslint-config-ts": "1.1.43",
     "@jill64/prettier-config": "1.0.0",
+    "@types/jsonwebtoken": "9.0.7",
+    "buffer-equal-constant-time": "1.0.1",
+    "ecdsa-sig-formatter": "1.0.11",
+    "jsonwebtoken": "9.0.2",
+    "jwa": "2.0.0",
+    "jwks-rsa": "3.1.0",
+    "jws": "4.0.0",
+    "lru-memoizer": "2.3.0",
     "typescript": "5.6.2",
     "vitest": "2.1.2"
   }
