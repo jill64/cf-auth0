@@ -1,5 +1,5 @@
 import debug from 'debug'
-import limitter from 'limiter'
+import * as limitter from 'limiter'
 import JwksRateLimitError from '../errors/JwksRateLimitError.js'
 import { JwksClient } from '../JwksClient.js'
 
