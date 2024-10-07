@@ -1,4 +1,4 @@
-import debug from 'debug'
+import console from 'node:console'
 import JwksError from './errors/JwksError.js'
 import SigningKeyNotFoundError from './errors/SigningKeyNotFoundError.js'
 import { retrieveSigningKeys } from './utils.js'
@@ -10,7 +10,7 @@ import {
   request
 } from './wrappers/index.js'
 
-const logger = debug('jwks')
+const logger = console.log
 
 class JwksClient {
   // @ts-expect-error TODO
