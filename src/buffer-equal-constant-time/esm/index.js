@@ -1,8 +1,8 @@
-import { Buffer } from 'node:buffer'
+import { Buffer, SlowBuffer } from 'node:buffer'
 
 export default bufferEq
 
-function bufferEq(a: Buffer, b: Buffer) {
+function bufferEq(a, b) {
   // shortcutting on type is necessary for correctness
   if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
     return false
@@ -21,4 +21,17 @@ function bufferEq(a: Buffer, b: Buffer) {
     c |= a[i] ^ b[i] // XOR
   }
   return c === 0
+}
+
+bufferEq.install = function () {
+  Buffer.prototype.equal = SlowBuffer.prototype.equal = function equal(that) {
+    return bufferEq(this, that)
+  }
+}
+
+var origBufEqual = Buffer.prototype.equal
+var origSlowBufEqual = SlowBuffer.prototype.equal
+bufferEq.restore = function () {
+  Buffer.prototype.equal = origBufEqual
+  SlowBuffer.prototype.equal = origSlowBufEqual
 }
