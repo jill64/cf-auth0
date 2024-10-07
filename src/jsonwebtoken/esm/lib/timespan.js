@@ -1,5 +1,6 @@
 import ms from 'ms'
 
+// @ts-expect-error TODO
 export default function (time, iat) {
   var timestamp = iat || Math.floor(Date.now() / 1000)
 

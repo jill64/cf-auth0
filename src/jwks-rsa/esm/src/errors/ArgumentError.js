@@ -1,3 +1,4 @@
+// @ts-expect-error TODO
 function ArgumentError(message) {
   Error.call(this, message)
   Error.captureStackTrace(this, this.constructor)

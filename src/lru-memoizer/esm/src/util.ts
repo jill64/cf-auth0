@@ -1,4 +1,6 @@
+// @ts-expect-error TODO
 import LRU from 'lru-cache'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Listener = (...as: any[]) => void
 export type INodeStyleCallBack<Success> = (
   err: Error | null,
@@ -54,6 +56,7 @@ export interface IHashingFunction6<T1, T2, T3, T4, T5, T6> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6): string
 }
 export interface IHashingFunctionPlus<> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (...rest: any[]): string
 }
 
@@ -79,6 +82,7 @@ export interface IBypassFunction6<T1, T2, T3, T4, T5, T6> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6): boolean
 }
 export interface IBypassFunctionPlus {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (...rest: any[]): boolean
 }
 
@@ -104,6 +108,7 @@ export interface IMaxAgeFunction6<T1, T2, T3, T4, T5, T6, TResult> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6, res: TResult): number
 }
 export interface IMaxAgeFunctionPlus {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (...rest: any[]): number
 }
 
@@ -161,6 +166,7 @@ export interface IParamsBasePlus extends IParamsBaseCommons {
   bypass?: IBypassFunctionPlus
   itemMaxAge?: IMaxAgeFunctionPlus
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface IParamsBaseCommons extends LRU.Options<string, any> {
   /**
    * Indicates if the resource should be freezed.

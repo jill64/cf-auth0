@@ -4,9 +4,11 @@ import { retrieveSigningKeys } from '../utils.js'
  * Uses getKeysInterceptor to allow users to retrieve keys from a file,
  * external cache, or provided object before falling back to the jwksUri endpoint
  */
+// @ts-expect-error TODO
 function getKeysInterceptor(client, { getKeysInterceptor }) {
   const getSigningKey = client.getSigningKey.bind(client)
 
+  // @ts-expect-error TODO
   return async (kid) => {
     const keys = await getKeysInterceptor()
 

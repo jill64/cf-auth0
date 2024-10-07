@@ -35,6 +35,7 @@ declare namespace JwksRsa {
   interface JSONWebKey {
     kid: string
     alg: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any
   }
 
@@ -67,13 +68,18 @@ declare namespace JwksRsa {
   type secretType = string | Buffer
   type SecretCallbackLong = (
     req: unknown,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     header: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     done: (err: any, secret?: secretType) => void
   ) => void
   type SecretCallback = (
     req: unknown,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     done: (err: any, secret?: secretType) => void
   ) => void
 

@@ -1,6 +1,7 @@
 import JsonWebTokenError from './JsonWebTokenError.js'
 
-var NotBeforeError = function (message, date) {
+// @ts-expect-error TODO
+function NotBeforeError(message, date) {
   JsonWebTokenError.call(this, message)
   this.name = 'NotBeforeError'
   this.date = date

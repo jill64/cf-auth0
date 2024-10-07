@@ -11,10 +11,12 @@ var MAX_OCTET = 0x80,
   ENCODED_TAG_SEQ = TAG_SEQ | PRIMITIVE_BIT | (CLASS_UNIVERSAL << 6),
   ENCODED_TAG_INT = TAG_INT | (CLASS_UNIVERSAL << 6)
 
+// @ts-expect-error TODO
 function base64Url(base64) {
   return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
 }
 
+// @ts-expect-error TODO
 function signatureAsBuffer(signature) {
   if (Buffer.isBuffer(signature)) {
     return signature
@@ -25,6 +27,7 @@ function signatureAsBuffer(signature) {
   throw new TypeError('ECDSA signature must be a Base64 string or a Buffer')
 }
 
+// @ts-expect-error TODO
 function derToJose(signature, alg) {
   signature = signatureAsBuffer(signature)
   var paramBytes = getParamBytesForAlg(alg)
@@ -148,12 +151,14 @@ function derToJose(signature, alg) {
     sOffset + sLength
   )
 
+  // @ts-expect-error TODO
   dst = dst.toString('base64')
   dst = base64Url(dst)
 
   return dst
 }
 
+// @ts-expect-error TODO
 function countPadding(buf, start, stop) {
   var padding = 0
   while (start + padding < stop && buf[start + padding] === 0) {
@@ -168,6 +173,7 @@ function countPadding(buf, start, stop) {
   return padding
 }
 
+// @ts-expect-error TODO
 function joseToDer(signature, alg) {
   signature = signatureAsBuffer(signature)
   var paramBytes = getParamBytesForAlg(alg)

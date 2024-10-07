@@ -7,6 +7,7 @@ import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'
 import TokenExpiredError from './lib/TokenExpiredError.js'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
+import { Buffer } from 'node:buffer'
 
 const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512']
 const EC_KEY_ALGS = ['ES256', 'ES384', 'ES512']
@@ -18,6 +19,7 @@ if (PS_SUPPORTED) {
   RSA_KEY_ALGS.splice(RSA_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
 }
 
+// @ts-expect-error TODO
 export default function (jwtString, secretOrPublicKey, options, callback) {
   if (typeof options === 'function' && !callback) {
     callback = options
@@ -36,6 +38,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
   if (callback) {
     done = callback
   } else {
+    // @ts-expect-error TODO
     done = function (err, data) {
       if (err) throw err
       return data
@@ -90,6 +93,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
     return done(new JsonWebTokenError('invalid token'))
   }
 
+  // @ts-expect-error TODO
   const header = decodedToken.header
   let getSecret
 
@@ -104,11 +108,13 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
 
     getSecret = secretOrPublicKey
   } else {
+    // @ts-expect-error TODO
     getSecret = function (header, secretCallback) {
       return secretCallback(null, secretOrPublicKey)
     }
   }
 
+  // @ts-expect-error TODO
   return getSecret(header, function (err, secretOrPublicKey) {
     if (err) {
       return done(
@@ -144,14 +150,14 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
     ) {
       try {
         secretOrPublicKey = createPublicKey(secretOrPublicKey)
-      } catch (_) {
+      } catch {
         try {
           secretOrPublicKey = createSecretKey(
             typeof secretOrPublicKey === 'string'
               ? Buffer.from(secretOrPublicKey)
               : secretOrPublicKey
           )
-        } catch (_) {
+        } catch {
           return done(
             new JsonWebTokenError('secretOrPublicKey is not valid key material')
           )
@@ -173,6 +179,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
       }
     }
 
+    // @ts-expect-error TODO
     if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
       return done(new JsonWebTokenError('invalid algorithm'))
     }
@@ -205,6 +212,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
     let valid
 
     try {
+      // @ts-expect-error TODO
       valid = jws.verify(jwtString, decodedToken.header.alg, secretOrPublicKey)
     } catch (e) {
       return done(e)
@@ -214,6 +222,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
       return done(new JsonWebTokenError('invalid signature'))
     }
 
+    // @ts-expect-error TODO
     const payload = decodedToken.payload
 
     if (typeof payload.nbf !== 'undefined' && !options.ignoreNotBefore) {
@@ -244,7 +253,9 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
         : [options.audience]
       const target = Array.isArray(payload.aud) ? payload.aud : [payload.aud]
 
+      // @ts-expect-error TODO
       const match = target.some(function (targetAudience) {
+        // @ts-expect-error TODO
         return audiences.some(function (audience) {
           return audience instanceof RegExp
             ? audience.test(targetAudience)
@@ -329,6 +340,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
     }
 
     if (options.complete === true) {
+      // @ts-expect-error TODO
       const signature = decodedToken.signature
 
       return done(null, {

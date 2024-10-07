@@ -5,6 +5,7 @@ import jwa from '../../../jwa/esm/index.js'
 import DataStream from './data-stream.js'
 import toString from './tostring.js'
 
+// @ts-expect-error TODO
 function base64url(string, encoding) {
   return Buffer.from(string, encoding)
     .toString('base64')
@@ -13,6 +14,7 @@ function base64url(string, encoding) {
     .replace(/\//g, '_')
 }
 
+// @ts-expect-error TODO
 function jwsSecuredInput(header, payload, encoding) {
   encoding = encoding || 'utf8'
   var encodedHeader = base64url(toString(header), 'binary')
@@ -20,6 +22,7 @@ function jwsSecuredInput(header, payload, encoding) {
   return util.format('%s.%s', encodedHeader, encodedPayload)
 }
 
+// @ts-expect-error TODO
 function jwsSign(opts) {
   var header = opts.header
   var payload = opts.payload
@@ -31,6 +34,7 @@ function jwsSign(opts) {
   return util.format('%s.%s', securedInput, signature)
 }
 
+// @ts-expect-error TODO
 function SignStream(opts) {
   var secret = opts.secret || opts.privateKey || opts.key
   var secretStream = new DataStream(secret)
@@ -39,16 +43,20 @@ function SignStream(opts) {
   this.encoding = opts.encoding
   this.secret = this.privateKey = this.key = secretStream
   this.payload = new DataStream(opts.payload)
+  // @ts-expect-error TODO
   this.secret.once(
     'close',
     function () {
+      // @ts-expect-error TODO
       if (!this.payload.writable && this.readable) this.sign()
     }.bind(this)
   )
 
+  // @ts-expect-error TODO
   this.payload.once(
     'close',
     function () {
+      // @ts-expect-error TODO
       if (!this.secret.writable && this.readable) this.sign()
     }.bind(this)
   )
@@ -63,14 +71,19 @@ SignStream.prototype.sign = function sign() {
       secret: this.secret.buffer,
       encoding: this.encoding
     })
+    // @ts-expect-error TODO
     this.emit('done', signature)
+    // @ts-expect-error TODO
     this.emit('data', signature)
+    // @ts-expect-error TODO
     this.emit('end')
     this.readable = false
     return signature
   } catch (e) {
     this.readable = false
+    // @ts-expect-error TODO
     this.emit('error', e)
+    // @ts-expect-error TODO
     this.emit('close')
   }
 }

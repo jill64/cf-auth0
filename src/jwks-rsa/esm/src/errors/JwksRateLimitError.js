@@ -1,3 +1,4 @@
+// @ts-expect-error TODO
 function JwksRateLimitError(message) {
   Error.call(this, message)
   Error.captureStackTrace(this, this.constructor)

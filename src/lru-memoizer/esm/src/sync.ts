@@ -1,3 +1,4 @@
+// @ts-expect-error TODO
 import LRU from 'lru-cache'
 import { EventEmitter } from 'events'
 import deepClone from 'lodash.clonedeep'
@@ -12,7 +13,7 @@ import {
   IParamsBase5,
   IParamsBase6,
   IParamsBasePlus
-} from './util'
+} from './util.js'
 
 interface IMemoizedSync<T1, T2, T3, T4, T5, T6, TResult> extends ResultBase {
   (arg1: T1): TResult
@@ -45,6 +46,7 @@ interface IMemoizableFunctionSync6<T1, T2, T3, T4, T5, T6, TResult> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6): TResult
 }
 interface IMemoizableFunctionSyncPlus<TResult> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (...args: any[]): TResult
 }
 
@@ -130,15 +132,18 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     cache.del(key)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function emit(event: string, ...parameters: any[]) {
     emitter.emit(event, ...parameters)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function isPromise(result: any): boolean {
     // detect native, bluebird, A+ promises
     return result && result.then && typeof result.then === 'function'
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function processResult(result: any) {
     let res = result
 
@@ -162,6 +167,7 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   }
 
   const result: IMemoizableFunctionSync6<T1, T2, T3, T4, T5, T6, TResult> =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function (...args: any[]) {
       if (bypass && bypass(...args)) {
         emit('miss', ...args)
@@ -182,7 +188,6 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
       const result = load(...args)
 
       if (itemMaxAge) {
-        // @ts-ignore
         cache.set(key, result, itemMaxAge(...args.concat([result])))
       } else {
         cache.set(key, result)
@@ -191,5 +196,5 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
       return processResult(result)
     }
 
-  return Object.assign(result, defaultResult) as any
+  return Object.assign(result, defaultResult)
 }

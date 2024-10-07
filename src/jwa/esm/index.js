@@ -1,8 +1,8 @@
-import bufferEqual from '../../buffer-equal-constant-time/esm/index.js'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
-import formatEcdsa from '../../ecdsa-sig-formatter/esm/ecdsa-sig-formatter.js'
 import util from 'node:util'
+import bufferEqual from '../../buffer-equal-constant-time/esm/index.js'
+import formatEcdsa from '../../ecdsa-sig-formatter/esm/ecdsa-sig-formatter.js'
 
 var MSG_INVALID_ALGORITHM =
   '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'
@@ -16,6 +16,7 @@ if (supportsKeyObjects) {
   MSG_INVALID_SECRET += 'or a KeyObject'
 }
 
+// @ts-expect-error TODO
 function checkIsPublicKey(key) {
   if (Buffer.isBuffer(key)) {
     return
@@ -46,6 +47,7 @@ function checkIsPublicKey(key) {
   }
 }
 
+// @ts-expect-error TODO
 function checkIsPrivateKey(key) {
   if (Buffer.isBuffer(key)) {
     return
@@ -62,6 +64,7 @@ function checkIsPrivateKey(key) {
   throw typeError(MSG_INVALID_SIGNER_KEY)
 }
 
+// @ts-expect-error TODO
 function checkIsSecretKey(key) {
   if (Buffer.isBuffer(key)) {
     return
@@ -88,10 +91,12 @@ function checkIsSecretKey(key) {
   }
 }
 
+// @ts-expect-error TODO
 function fromBase64(base64) {
   return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
 }
 
+// @ts-expect-error TODO
 function toBase64(base64url) {
   base64url = base64url.toString()
 
@@ -102,25 +107,31 @@ function toBase64(base64url) {
     }
   }
 
-  return base64url.replace(/\-/g, '+').replace(/_/g, '/')
+  return base64url.replace(/-/g, '+').replace(/_/g, '/')
 }
 
+// @ts-expect-error TODO
 function typeError(template) {
+  // @ts-expect-error TODO
   var args = [].slice.call(arguments, 1)
   var errMsg = util.format.bind(util, template).apply(null, args)
   return new TypeError(errMsg)
 }
 
+// @ts-expect-error TODO
 function bufferOrString(obj) {
   return Buffer.isBuffer(obj) || typeof obj === 'string'
 }
 
+// @ts-expect-error TODO
 function normalizeInput(thing) {
   if (!bufferOrString(thing)) thing = JSON.stringify(thing)
   return thing
 }
 
+// @ts-expect-error TODO
 function createHmacSigner(bits) {
+  // @ts-expect-error TODO
   return function sign(thing, secret) {
     checkIsSecretKey(secret)
     thing = normalizeInput(thing)
@@ -130,14 +141,18 @@ function createHmacSigner(bits) {
   }
 }
 
+// @ts-expect-error TODO
 function createHmacVerifier(bits) {
+  // @ts-expect-error TODO
   return function verify(thing, signature, secret) {
     var computedSig = createHmacSigner(bits)(thing, secret)
     return bufferEqual(Buffer.from(signature), Buffer.from(computedSig))
   }
 }
 
+// @ts-expect-error TODO
 function createKeySigner(bits) {
+  // @ts-expect-error TODO
   return function sign(thing, privateKey) {
     checkIsPrivateKey(privateKey)
     thing = normalizeInput(thing)
@@ -149,7 +164,9 @@ function createKeySigner(bits) {
   }
 }
 
+// @ts-expect-error TODO
 function createKeyVerifier(bits) {
+  // @ts-expect-error TODO
   return function verify(thing, signature, publicKey) {
     checkIsPublicKey(publicKey)
     thing = normalizeInput(thing)
@@ -160,7 +177,9 @@ function createKeyVerifier(bits) {
   }
 }
 
+// @ts-expect-error TODO
 function createPSSKeySigner(bits) {
+  // @ts-expect-error TODO
   return function sign(thing, privateKey) {
     checkIsPrivateKey(privateKey)
     thing = normalizeInput(thing)
@@ -179,7 +198,9 @@ function createPSSKeySigner(bits) {
   }
 }
 
+// @ts-expect-error TODO
 function createPSSKeyVerifier(bits) {
+  // @ts-expect-error TODO
   return function verify(thing, signature, publicKey) {
     checkIsPublicKey(publicKey)
     thing = normalizeInput(thing)
@@ -198,17 +219,21 @@ function createPSSKeyVerifier(bits) {
   }
 }
 
+// @ts-expect-error TODO
 function createECDSASigner(bits) {
   var inner = createKeySigner(bits)
   return function sign() {
+    // @ts-expect-error TODO
     var signature = inner.apply(null, arguments)
     signature = formatEcdsa.derToJose(signature, 'ES' + bits)
     return signature
   }
 }
 
+// @ts-expect-error TODO
 function createECDSAVerifer(bits) {
   var inner = createKeyVerifier(bits)
+  // @ts-expect-error TODO
   return function verify(thing, signature, publicKey) {
     signature = formatEcdsa.joseToDer(signature, 'ES' + bits).toString('base64')
     var result = inner(thing, signature, publicKey)
@@ -223,11 +248,13 @@ function createNoneSigner() {
 }
 
 function createNoneVerifier() {
+  // @ts-expect-error TODO
   return function verify(thing, signature) {
     return signature === ''
   }
 }
 
+// @ts-expect-error TODO
 export default function jwa(algorithm) {
   var signerFactories = {
     hs: createHmacSigner,
@@ -249,7 +276,9 @@ export default function jwa(algorithm) {
   var bits = match[2]
 
   return {
+    // @ts-expect-error TODO
     sign: signerFactories[algo](bits),
+    // @ts-expect-error TODO
     verify: verifierFactories[algo](bits)
   }
 }

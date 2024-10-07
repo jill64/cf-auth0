@@ -1,3 +1,4 @@
+// @ts-expect-error TODO
 import LRU from 'lru-cache'
 import { EventEmitter } from 'node:events'
 import cloneDeep from 'lodash.clonedeep'
@@ -16,6 +17,7 @@ import {
   IParamsBasePlus
 } from './util.js'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Callback = (err?: any, ...args: any[]) => void
 
 type PendingLoad = {
@@ -55,6 +57,7 @@ interface IMemoizableFunction6<T1, T2, T3, T4, T5, T6, TResult> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6, cb: CB<TResult>): void
 }
 interface IMemoizableFunctionPlus {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (...rest: any[]): void
 }
 
@@ -140,11 +143,13 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     return Object.assign(load, memoizerMethods)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function del(...args: any[]) {
     const key = hash(...args)
     cache.del(key)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function add(key: string, parameters: any[], result: any[]) {
     if (freeze) {
       result.forEach(deepFreeze)
@@ -157,6 +162,7 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function runCallbacks(callbacks: Callback[], args: any[]) {
     for (const callback of callbacks) {
       // Simulate async call when returning from cache
@@ -169,10 +175,12 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function emit(event: string, ...parameters: any[]) {
     emitter.emit(event, ...parameters)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function memoizedFunction(...args: any[]) {
     const parameters = args.slice(0, -1)
     const callback: Callback = args.slice(-1).pop()
@@ -217,6 +225,7 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
       expiresAt: started + queueMaxAge
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const loadHandler = (...args: any[]) => {
       const err = args[0]
       if (!err) {

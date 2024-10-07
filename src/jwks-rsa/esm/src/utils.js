@@ -1,6 +1,7 @@
 import jose from 'jose'
 import JwksError from './errors/JwksError.js'
 
+// @ts-expect-error TODO
 function resolveAlg(jwk) {
   if (jwk.alg) {
     return jwk.alg
@@ -34,22 +35,28 @@ function resolveAlg(jwk) {
   throw new JwksError('Unsupported JWK')
 }
 
+// @ts-expect-error TODO
 async function retrieveSigningKeys(jwks) {
   const results = []
 
   jwks = jwks
+    // @ts-expect-error TODO
     .filter(({ use }) => use === 'sig' || use === undefined)
+    // @ts-expect-error TODO
     .filter(({ kty }) => kty === 'RSA' || kty === 'EC' || kty === 'OKP')
 
   for (const jwk of jwks) {
     try {
       const key = await jose.importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
+      // @ts-expect-error TODO
       if (key.type !== 'public') {
         continue
       }
       let getSpki
+      // @ts-expect-error TODO
       switch (key[Symbol.toStringTag]) {
         case 'CryptoKey': {
+          // @ts-expect-error TODO
           const spki = await jose.exportSPKI(key)
           getSpki = () => spki
           break
@@ -58,6 +65,7 @@ async function retrieveSigningKeys(jwks) {
         // Assume legacy Node.js version without the Symbol.toStringTag backported
         // Fall through
         default:
+          // @ts-expect-error TODO
           getSpki = () => key.export({ format: 'pem', type: 'spki' })
       }
       results.push({
@@ -77,7 +85,7 @@ async function retrieveSigningKeys(jwks) {
           ? { alg: jwk.alg }
           : undefined)
       })
-    } catch (err) {
+    } catch {
       continue
     }
   }

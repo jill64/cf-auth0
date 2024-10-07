@@ -4,16 +4,20 @@ import JwksRateLimitError from '../errors/JwksRateLimitError.js'
 
 const logger = debug('jwks')
 
+// @ts-expect-error TODO
 function rateLimitWrapper(client, { jwksRequestsPerMinute = 10 }) {
   const getSigningKey = client.getSigningKey.bind(client)
 
+  // @ts-expect-error TODO
   const limiter = new RateLimiter(jwksRequestsPerMinute, 'minute', true)
   logger(
     `Configured rate limiting to JWKS endpoint at ${jwksRequestsPerMinute}/minute`
   )
 
+  // @ts-expect-error TODO
   return async (kid) =>
     await new Promise((resolve, reject) => {
+      // @ts-expect-error TODO
       limiter.removeTokens(1, async (err, remaining) => {
         if (err) {
           reject(err)

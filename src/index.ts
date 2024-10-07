@@ -3,15 +3,15 @@ import type {
   JwtHeader,
   JwtPayload,
   SigningKeyCallback
-} from './jsonwebtoken/esm/index.js'
-import jwt from './jsonwebtoken/esm/index.js'
-import { JwksClient } from './jwks-rsa/esm/index.js'
+} from './jsonwebtoken/esm/index.d.ts'
+import * as jwt from './jsonwebtoken/esm/index.js'
+import { JwksClient } from './jwks-rsa/esm/src/index.js'
 
 const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 
 let cached_key: string | undefined = undefined
 
-export class CfAuth {
+export class CfAuth0 {
   private auth0_client_id
   private auth0_client_secret
   private auth0_domain
@@ -42,7 +42,6 @@ export class CfAuth {
     try {
       const client = new JwksClient({ jwksUri: this.jwks_url })
 
-      // 1
       const key = await client.getSigningKey(header.kid)
 
       if (cached_key) {
@@ -59,7 +58,6 @@ export class CfAuth {
 
   verifyToken(token: string): Promise<JwtPayload | string> {
     return new Promise((resolve, reject) => {
-      // 2
       jwt.verify(token, this.getKey, {}, (err, payload) => {
         if (err || !payload) {
           return reject(err)
@@ -96,7 +94,6 @@ export class CfAuth {
       return null
     }
 
-    // 3
     return jwt.decode(jwtToken)
   }
 
@@ -109,7 +106,6 @@ export class CfAuth {
   }
 
   setAuthCookie(cookies: Cookies, user: JwtPayload | string) {
-    // 4
     const cookieValue = jwt.sign(user, this.session_secret)
     cookies.set(this.auth0_cookie_name, cookieValue, {
       httpOnly: true,

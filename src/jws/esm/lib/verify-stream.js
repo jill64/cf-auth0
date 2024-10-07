@@ -6,45 +6,54 @@ import DataStream from './data-stream.js'
 import toString from './tostring.js'
 var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
 
+// @ts-expect-error TODO
 function isObject(thing) {
   return Object.prototype.toString.call(thing) === '[object Object]'
 }
 
+// @ts-expect-error TODO
 function safeJsonParse(thing) {
   if (isObject(thing)) return thing
   try {
     return JSON.parse(thing)
-  } catch (e) {
+  } catch {
     return undefined
   }
 }
 
+// @ts-expect-error TODO
 function headerFromJWS(jwsSig) {
   var encodedHeader = jwsSig.split('.', 1)[0]
   return safeJsonParse(Buffer.from(encodedHeader, 'base64').toString('binary'))
 }
 
+// @ts-expect-error TODO
 function securedInputFromJWS(jwsSig) {
   return jwsSig.split('.', 2).join('.')
 }
 
+// @ts-expect-error TODO
 function signatureFromJWS(jwsSig) {
   return jwsSig.split('.')[2]
 }
 
+// @ts-expect-error TODO
 function payloadFromJWS(jwsSig, encoding) {
   encoding = encoding || 'utf8'
   var payload = jwsSig.split('.')[1]
   return Buffer.from(payload, 'base64').toString(encoding)
 }
 
+// @ts-expect-error TODO
 function isValidJws(string) {
   return JWS_REGEX.test(string) && !!headerFromJWS(string)
 }
 
+// @ts-expect-error TODO
 function jwsVerify(jwsSig, algorithm, secretOrKey) {
   if (!algorithm) {
     var err = new Error('Missing algorithm parameter for jws.verify')
+    // @ts-expect-error TODO
     err.code = 'MISSING_ALGORITHM'
     throw err
   }
@@ -55,6 +64,7 @@ function jwsVerify(jwsSig, algorithm, secretOrKey) {
   return algo.verify(securedInput, signature, secretOrKey)
 }
 
+// @ts-expect-error TODO
 function jwsDecode(jwsSig, opts) {
   opts = opts || {}
   jwsSig = toString(jwsSig)
@@ -76,6 +86,7 @@ function jwsDecode(jwsSig, opts) {
   }
 }
 
+// @ts-expect-error TODO
 function VerifyStream(opts) {
   opts = opts || {}
   var secretOrKey = opts.secret || opts.publicKey || opts.key
@@ -85,16 +96,20 @@ function VerifyStream(opts) {
   this.encoding = opts.encoding
   this.secret = this.publicKey = this.key = secretStream
   this.signature = new DataStream(opts.signature)
+  // @ts-expect-error TODO
   this.secret.once(
     'close',
     function () {
+      // @ts-expect-error TODO
       if (!this.signature.writable && this.readable) this.verify()
     }.bind(this)
   )
 
+  // @ts-expect-error TODO
   this.signature.once(
     'close',
     function () {
+      // @ts-expect-error TODO
       if (!this.secret.writable && this.readable) this.verify()
     }.bind(this)
   )
@@ -108,14 +123,19 @@ VerifyStream.prototype.verify = function verify() {
       this.key.buffer
     )
     var obj = jwsDecode(this.signature.buffer, this.encoding)
+    // @ts-expect-error TODO
     this.emit('done', valid, obj)
+    // @ts-expect-error TODO
     this.emit('data', valid)
+    // @ts-expect-error TODO
     this.emit('end')
     this.readable = false
     return valid
   } catch (e) {
     this.readable = false
+    // @ts-expect-error TODO
     this.emit('error', e)
+    // @ts-expect-error TODO
     this.emit('close')
   }
 }

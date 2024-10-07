@@ -1,4 +1,5 @@
-var JsonWebTokenError = function (message, error) {
+// @ts-expect-error TODO
+function JsonWebTokenError(message, error) {
   Error.call(this, message)
   if (Error.captureStackTrace) {
     Error.captureStackTrace(this, this.constructor)

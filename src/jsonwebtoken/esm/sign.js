@@ -9,6 +9,7 @@ import { KeyObject, createPrivateKey, createSecretKey } from 'node:crypto'
 import * as jws from '../../jws/esm/index.js'
 import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'
+import { Buffer } from 'node:buffer'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
 
 const SUPPORTED_ALGS = [
@@ -29,6 +30,7 @@ if (PS_SUPPORTED) {
 
 const sign_options_schema = {
   expiresIn: {
+    // @ts-expect-error TODO
     isValid: function (value) {
       return isInteger(value) || (isString(value) && value)
     },
@@ -36,6 +38,7 @@ const sign_options_schema = {
       '"expiresIn" should be a number of seconds or string representing a timespan'
   },
   notBefore: {
+    // @ts-expect-error TODO
     isValid: function (value) {
       return isInteger(value) || (isString(value) && value)
     },
@@ -43,6 +46,7 @@ const sign_options_schema = {
       '"notBefore" should be a number of seconds or string representing a timespan'
   },
   audience: {
+    // @ts-expect-error TODO
     isValid: function (value) {
       return isString(value) || Array.isArray(value)
     },
@@ -82,6 +86,7 @@ const registered_claims_schema = {
   nbf: { isValid: isNumber, message: '"nbf" should be a number of seconds' }
 }
 
+// @ts-expect-error TODO
 function validate(schema, allowUnknown, object, parameterName) {
   if (!isPlainObject(object)) {
     throw new Error('Expected "' + parameterName + '" to be a plain object.')
@@ -102,10 +107,12 @@ function validate(schema, allowUnknown, object, parameterName) {
   })
 }
 
+// @ts-expect-error TODO
 function validateOptions(options) {
   return validate(sign_options_schema, false, options, 'options')
 }
 
+// @ts-expect-error TODO
 function validatePayload(payload) {
   return validate(registered_claims_schema, true, payload, 'payload')
 }
@@ -127,6 +134,7 @@ const options_for_objects = [
   'jwtid'
 ]
 
+// @ts-expect-error TODO
 export default function (payload, secretOrPrivateKey, options, callback) {
   if (typeof options === 'function') {
     callback = options
@@ -147,6 +155,7 @@ export default function (payload, secretOrPrivateKey, options, callback) {
     options.header
   )
 
+  // @ts-expect-error TODO
   function failure(err) {
     if (callback) {
       return callback(err)
@@ -164,14 +173,14 @@ export default function (payload, secretOrPrivateKey, options, callback) {
   ) {
     try {
       secretOrPrivateKey = createPrivateKey(secretOrPrivateKey)
-    } catch (_) {
+    } catch {
       try {
         secretOrPrivateKey = createSecretKey(
           typeof secretOrPrivateKey === 'string'
             ? Buffer.from(secretOrPrivateKey)
             : secretOrPrivateKey
         )
-      } catch (_) {
+      } catch {
         return failure(
           new Error('secretOrPrivateKey is not valid key material')
         )
@@ -311,6 +320,7 @@ export default function (payload, secretOrPrivateKey, options, callback) {
   }
 
   Object.keys(options_to_payload).forEach(function (key) {
+    // @ts-expect-error TODO
     const claim = options_to_payload[key]
     if (typeof options[key] !== 'undefined') {
       if (typeof payload[claim] !== 'undefined') {
@@ -340,7 +350,9 @@ export default function (payload, secretOrPrivateKey, options, callback) {
         payload: payload,
         encoding: encoding
       })
+      // @ts-expect-error TODO
       .once('error', callback)
+      // @ts-expect-error TODO
       .once('done', function (signature) {
         // TODO: Remove in favor of the modulus length check before signing once node 15+ is the minimum supported version
         if (

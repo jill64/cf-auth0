@@ -1,6 +1,7 @@
 import JsonWebTokenError from './JsonWebTokenError.js'
 
-var TokenExpiredError = function (message, expiredAt) {
+// @ts-expect-error TODO
+function TokenExpiredError(message, expiredAt) {
   JsonWebTokenError.call(this, message)
   this.name = 'TokenExpiredError'
   this.expiredAt = expiredAt

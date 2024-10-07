@@ -1,5 +1,6 @@
 import * as jws from '../../jws/esm/index.js'
 
+// @ts-expect-error TODO
 export default function (jwt, options) {
   options = options || {}
   var decoded = jws.decode(jwt, options)
@@ -15,7 +16,8 @@ export default function (jwt, options) {
       if (obj !== null && typeof obj === 'object') {
         payload = obj
       }
-    } catch (e) {}
+      // eslint-disable-next-line no-empty
+    } catch {}
   }
 
   //return header if `complete` option is enabled.  header includes claims

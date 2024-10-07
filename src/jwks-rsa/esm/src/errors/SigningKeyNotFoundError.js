@@ -1,3 +1,4 @@
+// @ts-expect-error TODO
 function SigningKeyNotFoundError(message) {
   Error.call(this, message)
   Error.captureStackTrace(this, this.constructor)

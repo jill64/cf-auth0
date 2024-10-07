@@ -13,6 +13,7 @@ import {
 const logger = debug('jwks')
 
 class JwksClient {
+  // @ts-expect-error TODO
   constructor(options) {
     this.options = {
       rateLimit: false,
@@ -33,6 +34,7 @@ class JwksClient {
       this.getSigningKey = cacheSigningKey(this, options)
     }
 
+    // @ts-expect-error TODO
     this.getSigningKey = callbackSupport(this, options)
   }
 
@@ -51,6 +53,7 @@ class JwksClient {
       logger('Keys:', res.keys)
       return res.keys
     } catch (err) {
+      // @ts-expect-error TODO
       const { errorMsg } = err
       logger('Failure:', errorMsg || err)
       throw errorMsg ? new JwksError(errorMsg) : err
@@ -74,6 +77,7 @@ class JwksClient {
     return signingKeys
   }
 
+  // @ts-expect-error TODO
   async getSigningKey(kid) {
     logger(`Fetching signing key for '${kid}'`)
     const keys = await this.getSigningKeys()
