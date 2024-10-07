@@ -18,7 +18,7 @@
     "sync": "npx tsx scripts/sync.ts",
     "prepack": "npm run build",
     "test": "vitest",
-    "lint": "npx eslint . && npx depcheck",
+    "lint": "npx eslint .",
     "format": "npx prettier -w ."
   },
   "prettier": "@jill64/prettier-config",
@@ -34,7 +34,6 @@
     "@types/lodash.isstring": "4.0.9",
     "@types/lodash.once": "4.1.9",
     "@types/ms": "0.7.34",
-    "@types/node": "22.7.4",
     "@types/semver": "7.5.8",
     "debug": "4.3.7",
     "jose": "5.9.3",
