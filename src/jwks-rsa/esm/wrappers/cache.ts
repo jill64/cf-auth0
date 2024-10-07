@@ -14,10 +14,12 @@ export default function cacheWrapper(
   )
   return promisify(
     memoizer({
-      hash: (kid: string) => kid,
+      // @ts-expect-error WARNING: Unknown type `kid`
+      hash: (kid: unknown) => kid,
+      // @ts-expect-error WARNING: Unknown type
       load: callbackify(client.getSigningKey.bind(client)),
-      itemMaxAge: () => cacheMaxAge,
-      queueMaxAge: cacheMaxEntries
+      maxAge: cacheMaxAge,
+      max: cacheMaxEntries
     })
   )
 }
