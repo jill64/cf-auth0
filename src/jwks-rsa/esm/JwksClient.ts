@@ -88,7 +88,7 @@ export class JwksClient {
     return signingKeys
   }
 
-  async getSigningKey(kid: string) {
+  async getSigningKey(kid: string | undefined) {
     logger(`Fetching signing key for '${kid}'`)
     const keys = await this.getSigningKeys()
 
