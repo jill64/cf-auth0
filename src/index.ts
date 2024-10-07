@@ -12,13 +12,13 @@ const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 let cached_key: string | undefined = undefined
 
 export class CfAuth {
-  auth0_client_id
-  auth0_client_secret
-  auth0_domain
-  auth0_cookie_name
-  jwks_url
-  session_secret
-  base_url
+  private auth0_client_id
+  private auth0_client_secret
+  private auth0_domain
+  private auth0_cookie_name
+  private jwks_url
+  private session_secret
+  private base_url
 
   constructor(arg: {
     auth0_client_id: string
@@ -38,7 +38,7 @@ export class CfAuth {
     this.base_url = arg.base_url
   }
 
-  async getKey(header: JwtHeader, callback: SigningKeyCallback) {
+  private async getKey(header: JwtHeader, callback: SigningKeyCallback) {
     try {
       const client = new JwksClient({ jwksUri: this.jwks_url })
 
