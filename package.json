@@ -1,6 +1,6 @@
 {
   "name": "@jill64/cf-auth0",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -18,11 +18,12 @@
     "sync": "npx tsx scripts/sync.ts",
     "prepack": "npm run build",
     "test": "vitest",
-    "lint": "npx eslint . && npx depcheck",
+    "lint": "npx eslint .",
     "format": "npx prettier -w ."
   },
   "prettier": "@jill64/prettier-config",
   "dependencies": {
+    "@sveltejs/kit": "2.6.2",
     "@types/debug": "4.1.12",
     "@types/lodash.clonedeep": "4.5.9",
     "@types/lodash.includes": "4.3.9",
@@ -44,11 +45,10 @@
     "lodash.isplainobject": "4.0.6",
     "lodash.isstring": "4.0.1",
     "lodash.once": "4.1.1",
-    "lru-cache": "11.0.1",
+    "lru-cache": "6.0.0",
+    "@types/node": "22.7.4",
     "ms": "2.1.3",
-    "semver": "7.6.3",
-    "@sveltejs/kit": "2.6.2",
-    "@types/node": "22.7.4"
+    "semver": "7.6.3"
   },
   "devDependencies": {
     "@jill64/eslint-config-ts": "1.1.43",
@@ -67,8 +67,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/ad799b40bafd6ff245ffd467c272ca2945d8861f53adeba3cb33a225adf82be5/jill64/cf-auth0"
+    "url": "git+https://github.com/jill64/cf-auth0.git",
+    "image": "https://opengraph.githubassets.com/7d55a4b0db6453eadb2840a5b238a3f485f63cbff44b7fe60b8ba730612f1ca2/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {
