@@ -1,10 +1,11 @@
+import LRU from 'lru-cache'
+import { EventEmitter } from 'node:events'
 import cloneDeep from 'lodash.clonedeep'
-import { LRUCache } from 'lru-cache'
-import events from 'node:events'
 import { deepFreeze } from './freeze.js'
 import { syncMemoizer } from './sync.js'
 import {
   INodeStyleCallBack as CB,
+  ResultBase,
   IParamsBase0,
   IParamsBase1,
   IParamsBase2,
@@ -12,11 +13,10 @@ import {
   IParamsBase4,
   IParamsBase5,
   IParamsBase6,
-  IParamsBasePlus,
-  ResultBase
+  IParamsBasePlus
 } from './util.js'
 
-type Callback = (err?: unknown, ...args: unknown[]) => void
+type Callback = (err?: any, ...args: any[]) => void
 
 type PendingLoad = {
   queue: Callback[]
@@ -55,7 +55,7 @@ interface IMemoizableFunction6<T1, T2, T3, T4, T5, T6, TResult> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6, cb: CB<TResult>): void
 }
 interface IMemoizableFunctionPlus {
-  (...rest: unknown[]): void
+  (...rest: any[]): void
 }
 
 interface AsyncParamsPlus extends IParamsBasePlus {
@@ -90,7 +90,6 @@ interface AsyncParams6<T1, T2, T3, T4, T5, T6, TResult>
   load: IMemoizableFunction6<T1, T2, T3, T4, T5, T6, TResult>
 }
 
-// @ts-expect-error WARNING: unknown type
 function asyncMemoizer<TResult>(
   options: AsyncParams0<TResult>
 ): IMemoized<unknown, unknown, unknown, unknown, unknown, unknown, TResult>
@@ -115,8 +114,7 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
 function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   options: AsyncParamsPlus
 ): IMemoized<T1, T2, T3, T4, T5, T6, TResult> {
-  // @ts-expect-error WARNING: unknown type
-  const cache = new LRUCache(options)
+  const cache = new LRU(options)
   const load = options.load
   const hash = options.hash
   const bypass = options.bypass
@@ -125,12 +123,11 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   const clone = options.clone
   const queueMaxAge = options.queueMaxAge || 1000
   const loading = new Map<string, PendingLoad>()
-  const emitter = new events.EventEmitter()
+  const emitter = new EventEmitter()
 
   const memoizerMethods = Object.assign(
     {
       del,
-      // @ts-expect-error WARNING: unknown type
       reset: () => cache.reset(),
       keys: cache.keys.bind(cache),
       on: emitter.on.bind(emitter),
@@ -140,37 +137,27 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   )
 
   if (options.disable) {
-    return Object.assign(load, memoizerMethods) as IMemoized<
-      T1,
-      T2,
-      T3,
-      T4,
-      T5,
-      T6,
-      TResult
-    >
+    return Object.assign(load, memoizerMethods)
   }
 
-  function del(...args: Callback[]) {
+  function del(...args: any[]) {
     const key = hash(...args)
-    // @ts-expect-error WARNING: unknown type
     cache.del(key)
   }
 
-  function add(key: string, parameters: unknown[], result: unknown[]) {
+  function add(key: string, parameters: any[], result: any[]) {
     if (freeze) {
       result.forEach(deepFreeze)
     }
 
     if (itemMaxAge) {
-      // @ts-expect-error WARNING: unknown type
       cache.set(key, result, itemMaxAge(...parameters.concat(result)))
     } else {
       cache.set(key, result)
     }
   }
 
-  function runCallbacks(callbacks: Callback[], args: unknown[]) {
+  function runCallbacks(callbacks: Callback[], args: any[]) {
     for (const callback of callbacks) {
       // Simulate async call when returning from cache
       // and yield between callback resolution
@@ -182,13 +169,13 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     }
   }
 
-  function emit(event: string, ...parameters: unknown[]) {
+  function emit(event: string, ...parameters: any[]) {
     emitter.emit(event, ...parameters)
   }
 
-  function memoizedFunction(...args: Callback[]) {
+  function memoizedFunction(...args: any[]) {
     const parameters = args.slice(0, -1)
-    const callback: Callback = args.slice(-1).pop() as Callback
+    const callback: Callback = args.slice(-1).pop()
     let key: string
 
     if (bypass && bypass(...parameters)) {
@@ -207,10 +194,7 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     if (fromCache) {
       emit('hit', ...parameters)
       // found, invoke callback
-      return runCallbacks(
-        [callback],
-        [null].concat(fromCache as ConcatArray<null>)
-      )
+      return runCallbacks([callback], [null].concat(fromCache))
     }
 
     const pendingLoad = loading.get(key)
@@ -233,7 +217,7 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
       expiresAt: started + queueMaxAge
     })
 
-    const loadHandler = (...args: unknown[]) => {
+    const loadHandler = (...args: any[]) => {
       const err = args[0]
       if (!err) {
         add(key, parameters, args.slice(1))
@@ -252,15 +236,7 @@ function asyncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
     load(...parameters, loadHandler)
   }
 
-  return Object.assign(memoizedFunction, memoizerMethods) as IMemoized<
-    T1,
-    T2,
-    T3,
-    T4,
-    T5,
-    T6,
-    TResult
-  >
+  return Object.assign(memoizedFunction, memoizerMethods)
 }
 
 asyncMemoizer.sync = syncMemoizer

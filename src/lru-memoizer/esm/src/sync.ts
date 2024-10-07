@@ -1,8 +1,9 @@
+import LRU from 'lru-cache'
+import { EventEmitter } from 'events'
 import deepClone from 'lodash.clonedeep'
-import { LRUCache } from 'lru-cache'
-import events from 'node:events'
 import { deepFreeze } from './freeze.js'
 import {
+  ResultBase,
   IParamsBase0,
   IParamsBase1,
   IParamsBase2,
@@ -10,9 +11,8 @@ import {
   IParamsBase4,
   IParamsBase5,
   IParamsBase6,
-  IParamsBasePlus,
-  ResultBase
-} from './util.js'
+  IParamsBasePlus
+} from './util'
 
 interface IMemoizedSync<T1, T2, T3, T4, T5, T6, TResult> extends ResultBase {
   (arg1: T1): TResult
@@ -45,7 +45,7 @@ interface IMemoizableFunctionSync6<T1, T2, T3, T4, T5, T6, TResult> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6): TResult
 }
 interface IMemoizableFunctionSyncPlus<TResult> {
-  (...args: unknown[]): TResult
+  (...args: any[]): TResult
 }
 
 export interface SyncParams0<TResult> extends IParamsBase0<TResult> {
@@ -101,20 +101,18 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
 export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   options: SyncParamsPlus<TResult>
 ): IMemoizedSync<T1, T2, T3, T4, T5, T6, TResult> {
-  // @ts-expect-error WARNING: unknown type
-  const cache = new LRUCache(options)
+  const cache = new LRU(options)
   const load = options.load
   const hash = options.hash
   const bypass = options.bypass
   const itemMaxAge = options.itemMaxAge
   const freeze = options.freeze
   const clone = options.clone
-  const emitter = new events.EventEmitter()
+  const emitter = new EventEmitter()
 
   const defaultResult = Object.assign(
     {
       del,
-      // @ts-expect-error WARNING: unknown type
       reset: () => cache.reset(),
       keys: cache.keys.bind(cache),
       on: emitter.on.bind(emitter),
@@ -129,32 +127,24 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
 
   function del() {
     const key = hash(...arguments)
-    // @ts-expect-error WARNING: unknown type
     cache.del(key)
   }
 
-  function emit(event: string, ...parameters: unknown[]) {
+  function emit(event: string, ...parameters: any[]) {
     emitter.emit(event, ...parameters)
   }
 
-  function isPromise(
-    result:
-      | Promise<unknown>
-      | {
-          then: unknown
-          [key: string]: unknown
-        }
-  ): boolean {
+  function isPromise(result: any): boolean {
     // detect native, bluebird, A+ promises
-    return !!(result && result.then && typeof result.then === 'function')
+    return result && result.then && typeof result.then === 'function'
   }
 
-  function processResult(result: { then: unknown; [key: string]: unknown }) {
-    let res: Promise<unknown> | typeof result = result
+  function processResult(result: any) {
+    let res = result
 
     if (clone) {
       if (isPromise(res)) {
-        res = (res as unknown as Promise<unknown>).then(deepClone)
+        res = res.then(deepClone)
       } else {
         res = deepClone(res)
       }
@@ -162,7 +152,7 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
 
     if (freeze) {
       if (isPromise(res)) {
-        res = (res as unknown as Promise<unknown>).then(deepFreeze)
+        res = res.then(deepFreeze)
       } else {
         deepFreeze(res)
       }
@@ -172,7 +162,7 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   }
 
   const result: IMemoizableFunctionSync6<T1, T2, T3, T4, T5, T6, TResult> =
-    function (...args: unknown[]): TResult {
+    function (...args: any[]) {
       if (bypass && bypass(...args)) {
         emit('miss', ...args)
         return load(...args)
@@ -185,40 +175,21 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
       if (fromCache) {
         emit('hit', ...args)
 
-        // @ts-expect-error WARNING: unknown type
-        return processResult(fromCache) as TResult
+        return processResult(fromCache)
       }
 
       emit('miss', ...args)
       const result = load(...args)
 
       if (itemMaxAge) {
-        cache.set(
-          key,
-          result as {
-            [key: string]: unknown
-            then: unknown
-          },
-          // @ts-expect-error WARNING: unknown type
-          itemMaxAge(...args.concat([result]))
-        )
+        // @ts-ignore
+        cache.set(key, result, itemMaxAge(...args.concat([result])))
       } else {
-        cache.set(
-          key,
-          result as {
-            [key: string]: unknown
-            then: unknown
-          }
-        )
+        cache.set(key, result)
       }
 
-      return processResult(
-        result as {
-          [key: string]: unknown
-          then: unknown
-        }
-      ) as TResult
+      return processResult(result)
     }
 
-  return Object.assign(result, defaultResult)
+  return Object.assign(result, defaultResult) as any
 }

@@ -1,8 +1,8 @@
+import bufferEqual from '../../buffer-equal-constant-time/esm/index.js'
 import { Buffer } from 'node:buffer'
 import crypto from 'node:crypto'
-import util from 'node:util'
-import bufferEqual from '../../buffer-equal-constant-time/esm/index.js'
 import formatEcdsa from '../../ecdsa-sig-formatter/esm/ecdsa-sig-formatter.js'
+import util from 'node:util'
 
 var MSG_INVALID_ALGORITHM =
   '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'
@@ -16,7 +16,7 @@ if (supportsKeyObjects) {
   MSG_INVALID_SECRET += 'or a KeyObject'
 }
 
-function checkIsPublicKey(key: string | Buffer | crypto.KeyObject) {
+function checkIsPublicKey(key) {
   if (Buffer.isBuffer(key)) {
     return
   }
@@ -46,7 +46,7 @@ function checkIsPublicKey(key: string | Buffer | crypto.KeyObject) {
   }
 }
 
-function checkIsPrivateKey(key: string | Buffer | crypto.KeyObject) {
+function checkIsPrivateKey(key) {
   if (Buffer.isBuffer(key)) {
     return
   }
@@ -62,7 +62,7 @@ function checkIsPrivateKey(key: string | Buffer | crypto.KeyObject) {
   throw typeError(MSG_INVALID_SIGNER_KEY)
 }
 
-function checkIsSecretKey(key: string | Buffer | crypto.KeyObject) {
+function checkIsSecretKey(key) {
   if (Buffer.isBuffer(key)) {
     return
   }
@@ -88,11 +88,11 @@ function checkIsSecretKey(key: string | Buffer | crypto.KeyObject) {
   }
 }
 
-function fromBase64(base64: string) {
+function fromBase64(base64) {
   return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
 }
 
-function toBase64(base64url: string) {
+function toBase64(base64url) {
   base64url = base64url.toString()
 
   var padding = 4 - (base64url.length % 4)
@@ -105,22 +105,23 @@ function toBase64(base64url: string) {
   return base64url.replace(/\-/g, '+').replace(/_/g, '/')
 }
 
-function typeError(template: string, ...args: unknown[]) {
+function typeError(template) {
+  var args = [].slice.call(arguments, 1)
   var errMsg = util.format.bind(util, template).apply(null, args)
   return new TypeError(errMsg)
 }
 
-function bufferOrString(obj: unknown) {
+function bufferOrString(obj) {
   return Buffer.isBuffer(obj) || typeof obj === 'string'
 }
 
-function normalizeInput(thing: crypto.BinaryLike) {
+function normalizeInput(thing) {
   if (!bufferOrString(thing)) thing = JSON.stringify(thing)
   return thing
 }
 
-function createHmacSigner(bits: string) {
-  return function sign(thing: crypto.BinaryLike, secret: crypto.KeyObject) {
+function createHmacSigner(bits) {
+  return function sign(thing, secret) {
     checkIsSecretKey(secret)
     thing = normalizeInput(thing)
     var hmac = crypto.createHmac('sha' + bits, secret)
@@ -129,22 +130,15 @@ function createHmacSigner(bits: string) {
   }
 }
 
-function createHmacVerifier(bits: string) {
-  return function verify(
-    thing: crypto.BinaryLike,
-    signature: string,
-    secret: crypto.KeyObject
-  ) {
+function createHmacVerifier(bits) {
+  return function verify(thing, signature, secret) {
     var computedSig = createHmacSigner(bits)(thing, secret)
     return bufferEqual(Buffer.from(signature), Buffer.from(computedSig))
   }
 }
 
-function createKeySigner(bits: string) {
-  return function sign(
-    thing: crypto.BinaryLike,
-    privateKey: string | Buffer | crypto.KeyObject
-  ) {
+function createKeySigner(bits) {
+  return function sign(thing, privateKey) {
     checkIsPrivateKey(privateKey)
     thing = normalizeInput(thing)
     // Even though we are specifying "RSA" here, this works with ECDSA
@@ -155,12 +149,8 @@ function createKeySigner(bits: string) {
   }
 }
 
-function createKeyVerifier(bits: string) {
-  return function verify(
-    thing: crypto.BinaryLike,
-    signature: string,
-    publicKey: crypto.KeyObject
-  ) {
+function createKeyVerifier(bits) {
+  return function verify(thing, signature, publicKey) {
     checkIsPublicKey(publicKey)
     thing = normalizeInput(thing)
     signature = toBase64(signature)
@@ -170,8 +160,8 @@ function createKeyVerifier(bits: string) {
   }
 }
 
-function createPSSKeySigner(bits: string) {
-  return function sign(thing: crypto.BinaryLike, privateKey: string | Buffer) {
+function createPSSKeySigner(bits) {
+  return function sign(thing, privateKey) {
     checkIsPrivateKey(privateKey)
     thing = normalizeInput(thing)
     var signer = crypto.createSign('RSA-SHA' + bits)
@@ -189,12 +179,8 @@ function createPSSKeySigner(bits: string) {
   }
 }
 
-function createPSSKeyVerifier(bits: string) {
-  return function verify(
-    thing: crypto.BinaryLike,
-    signature: string,
-    publicKey: crypto.KeyObject
-  ) {
+function createPSSKeyVerifier(bits) {
+  return function verify(thing, signature, publicKey) {
     checkIsPublicKey(publicKey)
     thing = normalizeInput(thing)
     signature = toBase64(signature)
@@ -212,29 +198,19 @@ function createPSSKeyVerifier(bits: string) {
   }
 }
 
-function createECDSASigner(bits: '256' | '384' | '512') {
+function createECDSASigner(bits) {
   var inner = createKeySigner(bits)
   return function sign() {
-    // @ts-expect-error TS2345
     var signature = inner.apply(null, arguments)
-    signature = formatEcdsa.derToJose(
-      signature,
-      ('ES' + bits) as 'ES256' | 'ES384' | 'ES512'
-    )
+    signature = formatEcdsa.derToJose(signature, 'ES' + bits)
     return signature
   }
 }
 
-function createECDSAVerifer(bits: '256' | '384' | '512') {
+function createECDSAVerifer(bits) {
   var inner = createKeyVerifier(bits)
-  return function verify(
-    thing: crypto.BinaryLike,
-    signature: string,
-    publicKey: crypto.KeyObject
-  ) {
-    signature = formatEcdsa
-      .joseToDer(signature, ('ES' + bits) as 'ES256' | 'ES384' | 'ES512')
-      .toString('base64')
+  return function verify(thing, signature, publicKey) {
+    signature = formatEcdsa.joseToDer(signature, 'ES' + bits).toString('base64')
     var result = inner(thing, signature, publicKey)
     return result
   }
@@ -247,35 +223,30 @@ function createNoneSigner() {
 }
 
 function createNoneVerifier() {
-  return function verify(thing: crypto.BinaryLike, signature: string) {
+  return function verify(thing, signature) {
     return signature === ''
   }
 }
 
-export default function jwa(algorithm: string) {
-  const signerFactories = {
+export default function jwa(algorithm) {
+  var signerFactories = {
     hs: createHmacSigner,
     rs: createKeySigner,
     ps: createPSSKeySigner,
     es: createECDSASigner,
     none: createNoneSigner
   }
-  const verifierFactories = {
+  var verifierFactories = {
     hs: createHmacVerifier,
     rs: createKeyVerifier,
     ps: createPSSKeyVerifier,
     es: createECDSAVerifer,
     none: createNoneVerifier
   }
-  const match = algorithm.match(/^(RS|PS|ES|HS)(256|384|512)$|^(none)$/)
+  var match = algorithm.match(/^(RS|PS|ES|HS)(256|384|512)$|^(none)$/)
   if (!match) throw typeError(MSG_INVALID_ALGORITHM, algorithm)
-  const algo = (match[1] || match[3]).toLowerCase() as
-    | 'hs'
-    | 'rs'
-    | 'ps'
-    | 'es'
-    | 'none'
-  const bits = match[2] as '256' | '384' | '512'
+  var algo = (match[1] || match[3]).toLowerCase()
+  var bits = match[2]
 
   return {
     sign: signerFactories[algo](bits),

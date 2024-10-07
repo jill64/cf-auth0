@@ -1,27 +1,18 @@
-import { JwksClient, Options } from '../JwksClient.js'
 import { retrieveSigningKeys } from '../utils.js'
-import type jose from 'jose'
 
 /**
  * Uses getKeysInterceptor to allow users to retrieve keys from a file,
  * external cache, or provided object before falling back to the jwksUri endpoint
  */
-export default function getKeysInterceptor(
-  client: JwksClient,
-  { getKeysInterceptor }: Options
-) {
+function getKeysInterceptor(client, { getKeysInterceptor }) {
   const getSigningKey = client.getSigningKey.bind(client)
 
-  if (!getKeysInterceptor) {
-    throw new Error('getKeysInterceptor must be provided')
-  }
-
-  return async (kid: string) => {
+  return async (kid) => {
     const keys = await getKeysInterceptor()
 
     let signingKeys
     if (keys && keys.length) {
-      signingKeys = await retrieveSigningKeys(keys as jose.JWK[])
+      signingKeys = await retrieveSigningKeys(keys)
     }
 
     if (signingKeys && signingKeys.length) {
@@ -35,3 +26,5 @@ export default function getKeysInterceptor(
     return getSigningKey(kid)
   }
 }
+
+export default getKeysInterceptor

@@ -1,13 +1,9 @@
 import { callbackify } from 'node:util'
-import { JwksClient } from '../JwksClient.js'
 
-const callbackSupport = (client: JwksClient) => {
+const callbackSupport = (client) => {
   const getSigningKey = client.getSigningKey.bind(client)
 
-  return (
-    kid: string | undefined,
-    cb: (err: Error | null, key: unknown) => void
-  ) => {
+  return (kid, cb) => {
     if (cb) {
       const callbackFunc = callbackify(getSigningKey)
       return callbackFunc(kid, cb)

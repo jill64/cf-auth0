@@ -1,8 +1,7 @@
-import * as jose from 'jose'
-import { KeyObject } from 'node:crypto'
+import jose from 'jose'
 import JwksError from './errors/JwksError.js'
 
-function resolveAlg(jwk: jose.JWK) {
+function resolveAlg(jwk) {
   if (jwk.alg) {
     return jwk.alg
   }
@@ -35,7 +34,7 @@ function resolveAlg(jwk: jose.JWK) {
   throw new JwksError('Unsupported JWK')
 }
 
-async function retrieveSigningKeys(jwks: jose.JWK[]) {
+async function retrieveSigningKeys(jwks) {
   const results = []
 
   jwks = jwks
@@ -45,16 +44,13 @@ async function retrieveSigningKeys(jwks: jose.JWK[]) {
   for (const jwk of jwks) {
     try {
       const key = await jose.importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
-      if ('type' in key && key.type !== 'public') {
+      if (key.type !== 'public') {
         continue
       }
       let getSpki
-      // switch (key[Symbol.toStringTag]) {
-      // WARNING: There may be a bug in this line
-      switch (key.constructor.name) {
+      switch (key[Symbol.toStringTag]) {
         case 'CryptoKey': {
-          // WARNING: There may be a bug in this line
-          const spki = await jose.exportSPKI(key as CryptoKey)
+          const spki = await jose.exportSPKI(key)
           getSpki = () => spki
           break
         }
@@ -62,9 +58,7 @@ async function retrieveSigningKeys(jwks: jose.JWK[]) {
         // Assume legacy Node.js version without the Symbol.toStringTag backported
         // Fall through
         default:
-          // WARNING: There may be a bug in this line
-          getSpki = () =>
-            (key as KeyObject).export({ format: 'pem', type: 'spki' })
+          getSpki = () => key.export({ format: 'pem', type: 'spki' })
       }
       results.push({
         get publicKey() {
@@ -83,7 +77,7 @@ async function retrieveSigningKeys(jwks: jose.JWK[]) {
           ? { alg: jwk.alg }
           : undefined)
       })
-    } catch {
+    } catch (err) {
       continue
     }
   }

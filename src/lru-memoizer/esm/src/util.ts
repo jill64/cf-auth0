@@ -1,5 +1,5 @@
-import { LRUCache } from 'lru-cache'
-export type Listener = (...as: unknown[]) => void
+import LRU from 'lru-cache'
+export type Listener = (...as: any[]) => void
 export type INodeStyleCallBack<Success> = (
   err: Error | null,
   result?: Success
@@ -54,7 +54,7 @@ export interface IHashingFunction6<T1, T2, T3, T4, T5, T6> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6): string
 }
 export interface IHashingFunctionPlus<> {
-  (...rest: unknown[]): string
+  (...rest: any[]): string
 }
 
 export interface IBypassFunction0 {
@@ -79,7 +79,7 @@ export interface IBypassFunction6<T1, T2, T3, T4, T5, T6> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6): boolean
 }
 export interface IBypassFunctionPlus {
-  (...rest: unknown[]): boolean
+  (...rest: any[]): boolean
 }
 
 export interface IMaxAgeFunction0<TResult> {
@@ -104,7 +104,7 @@ export interface IMaxAgeFunction6<T1, T2, T3, T4, T5, T6, TResult> {
   (a1: T1, a2: T2, a3: T3, a4: T4, a5: T5, a6: T6, res: TResult): number
 }
 export interface IMaxAgeFunctionPlus {
-  (...rest: unknown[]): number
+  (...rest: any[]): number
 }
 
 export interface IParamsBase0<TResult> extends IParamsBaseCommons {
@@ -161,9 +161,7 @@ export interface IParamsBasePlus extends IParamsBaseCommons {
   bypass?: IBypassFunctionPlus
   itemMaxAge?: IMaxAgeFunctionPlus
 }
-interface IParamsBaseCommons
-  // @ts-expect-error WARNING: unknown type
-  extends LRUCache.Options<unknown, unknown, unknown> {
+interface IParamsBaseCommons extends LRU.Options<string, any> {
   /**
    * Indicates if the resource should be freezed.
    */

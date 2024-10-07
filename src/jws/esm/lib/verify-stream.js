@@ -4,49 +4,47 @@ import util from 'node:util'
 import jwa from '../../../jwa/esm/index.js'
 import DataStream from './data-stream.js'
 import toString from './tostring.js'
-const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
+var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
 
-function isObject(thing: unknown): thing is object {
+function isObject(thing) {
   return Object.prototype.toString.call(thing) === '[object Object]'
 }
 
-function safeJsonParse(thing: object | string) {
+function safeJsonParse(thing) {
   if (isObject(thing)) return thing
   try {
     return JSON.parse(thing)
-  } catch {
+  } catch (e) {
     return undefined
   }
 }
 
-function headerFromJWS(jwsSig: string) {
+function headerFromJWS(jwsSig) {
   var encodedHeader = jwsSig.split('.', 1)[0]
   return safeJsonParse(Buffer.from(encodedHeader, 'base64').toString('binary'))
 }
 
-function securedInputFromJWS(jwsSig: string) {
+function securedInputFromJWS(jwsSig) {
   return jwsSig.split('.', 2).join('.')
 }
 
-function signatureFromJWS(jwsSig: string) {
+function signatureFromJWS(jwsSig) {
   return jwsSig.split('.')[2]
 }
 
-function payloadFromJWS(jwsSig: string, encoding: BufferEncoding) {
+function payloadFromJWS(jwsSig, encoding) {
   encoding = encoding || 'utf8'
   var payload = jwsSig.split('.')[1]
   return Buffer.from(payload, 'base64').toString(encoding)
 }
 
-function isValidJws(string: string) {
+function isValidJws(string) {
   return JWS_REGEX.test(string) && !!headerFromJWS(string)
 }
 
-// @ts-expect-error WARNING: Unknown type
 function jwsVerify(jwsSig, algorithm, secretOrKey) {
   if (!algorithm) {
     var err = new Error('Missing algorithm parameter for jws.verify')
-    // @ts-expect-error WARNING: Unknown type
     err.code = 'MISSING_ALGORITHM'
     throw err
   }
@@ -57,7 +55,6 @@ function jwsVerify(jwsSig, algorithm, secretOrKey) {
   return algo.verify(securedInput, signature, secretOrKey)
 }
 
-// @ts-expect-error WARNING: Unknown type
 function jwsDecode(jwsSig, opts) {
   opts = opts || {}
   jwsSig = toString(jwsSig)
@@ -68,7 +65,6 @@ function jwsDecode(jwsSig, opts) {
 
   if (!header) return null
 
-  // @ts-expect-error WARNING: Unknown type
   var payload = payloadFromJWS(jwsSig)
   if (header.typ === 'JWT' || opts.json)
     payload = JSON.parse(payload, opts.encoding)
@@ -80,39 +76,26 @@ function jwsDecode(jwsSig, opts) {
   }
 }
 
-// @ts-expect-error WARNING: Unknown type
 function VerifyStream(opts) {
   opts = opts || {}
   var secretOrKey = opts.secret || opts.publicKey || opts.key
-  // @ts-expect-error WARNING: Unknown type
   var secretStream = new DataStream(secretOrKey)
-  // @ts-expect-error WARNING: Unknown type
   this.readable = true
-  // @ts-expect-error WARNING: Unknown type
   this.algorithm = opts.algorithm
-  // @ts-expect-error WARNING: Unknown type
   this.encoding = opts.encoding
-  // @ts-expect-error WARNING: Unknown type
   this.secret = this.publicKey = this.key = secretStream
-  // @ts-expect-error WARNING: Unknown type
   this.signature = new DataStream(opts.signature)
-  // @ts-expect-error WARNING: Unknown type
   this.secret.once(
     'close',
     function () {
-      // @ts-expect-error WARNING: Unknown type
       if (!this.signature.writable && this.readable) this.verify()
-      // @ts-expect-error WARNING: Unknown type
     }.bind(this)
   )
 
-  // @ts-expect-error WARNING: Unknown type
   this.signature.once(
     'close',
     function () {
-      // @ts-expect-error WARNING: Unknown type
       if (!this.secret.writable && this.readable) this.verify()
-      // @ts-expect-error WARNING: Unknown type
     }.bind(this)
   )
 }

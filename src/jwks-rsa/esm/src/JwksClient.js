@@ -12,23 +12,8 @@ import {
 
 const logger = debug('jwks')
 
-export interface Options {
-  jwksUri: string
-  rateLimit?: boolean
-  cache?: boolean
-  cacheMaxEntries?: number
-  cacheMaxAge?: number
-  jwksRequestsPerMinute?: number
-  proxy?: string
-  requestHeaders?: Headers
-  timeout?: number
-  getKeysInterceptor?(): Promise<JsonWebKey[]>
-}
-
-export class JwksClient {
-  options
-
-  constructor(options: Options) {
+class JwksClient {
+  constructor(options) {
     this.options = {
       rateLimit: false,
       cache: true,
@@ -45,11 +30,9 @@ export class JwksClient {
       this.getSigningKey = rateLimitSigningKey(this, options)
     }
     if (this.options.cache) {
-      // @ts-expect-error WARNING: Unknown type `cacheSigningKey`
       this.getSigningKey = cacheSigningKey(this, options)
     }
 
-    // @ts-expect-error WARNING: Unknown type
     this.getSigningKey = callbackSupport(this, options)
   }
 
@@ -59,15 +42,18 @@ export class JwksClient {
     try {
       const res = await request({
         uri: this.options.jwksUri,
-        // @ts-expect-error WARNING: Unknown type
-        headers: this.options.requestHeaders
+        headers: this.options.requestHeaders,
+        agent: this.options.requestAgent,
+        timeout: this.options.timeout,
+        fetcher: this.options.fetcher
       })
 
       logger('Keys:', res.keys)
       return res.keys
     } catch (err) {
-      logger('Failure:', err)
-      throw err instanceof Error ? new JwksError(err.message) : err
+      const { errorMsg } = err
+      logger('Failure:', errorMsg || err)
+      throw errorMsg ? new JwksError(errorMsg) : err
     }
   }
 
@@ -88,7 +74,7 @@ export class JwksClient {
     return signingKeys
   }
 
-  async getSigningKey(kid: string | undefined) {
+  async getSigningKey(kid) {
     logger(`Fetching signing key for '${kid}'`)
     const keys = await this.getSigningKeys()
 
@@ -111,3 +97,5 @@ export class JwksClient {
     }
   }
 }
+
+export { JwksClient }
