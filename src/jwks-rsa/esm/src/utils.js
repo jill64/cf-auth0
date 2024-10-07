@@ -1,4 +1,4 @@
-import * as jose from 'jose'
+import jose from 'jose'
 import JwksError from './errors/JwksError.js'
 
 // @ts-expect-error TODO
