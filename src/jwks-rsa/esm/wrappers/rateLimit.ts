@@ -1,9 +1,7 @@
 import debug from 'debug'
-import * as limitter from 'limiter'
+import { RateLimiter } from '../../../limitter/esm/src/index.js'
 import JwksRateLimitError from '../errors/JwksRateLimitError.js'
 import { JwksClient } from '../JwksClient.js'
-
-const { RateLimiter } = limitter
 
 const logger = debug('jwks')
 

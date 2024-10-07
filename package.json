@@ -1,6 +1,6 @@
 {
   "name": "@jill64/cf-auth0",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -23,7 +23,6 @@
   },
   "prettier": "@jill64/prettier-config",
   "dependencies": {
-    "@types/cookies": "0.9.0",
     "@types/debug": "4.1.12",
     "@types/lodash.clonedeep": "4.5.9",
     "@types/lodash.includes": "4.3.9",
@@ -48,7 +47,8 @@
     "lru-cache": "11.0.1",
     "ms": "2.1.3",
     "semver": "7.6.3",
-    "limiter": "2.1.0"
+    "@sveltejs/kit": "2.6.2",
+    "@types/node": "22.7.4"
   },
   "devDependencies": {
     "@jill64/eslint-config-ts": "1.1.43",
@@ -68,7 +68,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/f764b2d85794ab1fe495961363dc5364118b1a20b137222fd5d0999186b6655f/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/daf98f22da6a0f44b316002729581ebf19b617fb53542efbd7b35dce146b105e/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {

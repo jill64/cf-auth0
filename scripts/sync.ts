@@ -34,5 +34,6 @@ await Promise.allSettled([
   repro('jwks-rsa', 'auth0', 'node-jwks-rsa'),
   repro('ecdsa-sig-formatter', 'Brightspace', 'node-ecdsa-sig-formatter'),
   repro('jwa', 'auth0', 'node-jwa'),
-  repro('lru-memoizer', 'jfromaniello', 'lru-memoizer')
+  repro('lru-memoizer', 'jfromaniello', 'lru-memoizer'),
+  repro('limitter', 'jhurliman', 'node-rate-limiter')
 ])
