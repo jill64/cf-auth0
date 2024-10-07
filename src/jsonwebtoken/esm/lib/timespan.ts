@@ -1,6 +1,6 @@
 import ms from 'ms'
 
-export default function (time: Parameters<typeof ms>[0], iat: number) {
+export default function (time: string | number, iat: number) {
   const timestamp = iat || Math.floor(Date.now() / 1000)
 
   if (typeof time === 'string') {
