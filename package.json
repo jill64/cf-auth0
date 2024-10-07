@@ -1,0 +1,78 @@
+{
+  "name": "@jill64/cf-auth0",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "!**/*.test.*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && npx publint",
+    "sync": "npx tsx scripts/sync.ts",
+    "prepack": "npm run build",
+    "test": "vitest",
+    "lint": "npx eslint . && npx depcheck",
+    "format": "npx prettier -w ."
+  },
+  "prettier": "@jill64/prettier-config",
+  "dependencies": {
+    "@types/cookies": "0.9.0",
+    "@types/debug": "4.1.12",
+    "@types/lodash.clonedeep": "4.5.9",
+    "@types/lodash.includes": "4.3.9",
+    "@types/lodash.isboolean": "3.0.9",
+    "@types/lodash.isinteger": "4.0.9",
+    "@types/lodash.isnumber": "3.0.9",
+    "@types/lodash.isplainobject": "4.0.9",
+    "@types/lodash.isstring": "4.0.9",
+    "@types/lodash.once": "4.1.9",
+    "@types/ms": "0.7.34",
+    "@types/semver": "7.5.8",
+    "debug": "4.3.7",
+    "jose": "5.9.3",
+    "lodash.clonedeep": "4.5.0",
+    "lodash.includes": "4.3.0",
+    "lodash.isboolean": "3.0.3",
+    "lodash.isinteger": "4.0.4",
+    "lodash.isnumber": "3.0.3",
+    "lodash.isplainobject": "4.0.6",
+    "lodash.isstring": "4.0.1",
+    "lodash.once": "4.1.1",
+    "lru-cache": "11.0.1",
+    "ms": "2.1.3",
+    "semver": "7.6.3",
+    "limiter": "2.1.0"
+  },
+  "devDependencies": {
+    "@jill64/eslint-config-ts": "1.1.43",
+    "@jill64/prettier-config": "1.0.0",
+    "typescript": "5.6.2",
+    "vitest": "2.1.2"
+  },
+  "homepage": "https://github.com/jill64/cf-auth0#readme",
+  "license": "MIT",
+  "bugs": "https://github.com/jill64/cf-auth0/issues",
+  "author": {
+    "name": "jill64",
+    "email": "contact@jill64.dev",
+    "url": "https://github.com/jill64",
+    "image": "https://avatars.githubusercontent.com/u/143883742?v=4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jill64/cf-auth0.git",
+    "image": "https://opengraph.githubassets.com/b2f5c7dadda856e33907fd0ce7168782ae49cce64708bc0eea0acc871cbabc27/jill64/cf-auth0"
+  },
+  "description": "Auth0 on Cloudflare Pages",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": []
+}
