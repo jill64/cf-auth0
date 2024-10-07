@@ -1,3 +1,5 @@
+'use strict'
+
 import { Buffer } from 'node:buffer'
 import getParamBytesForAlg from './param-bytes-for-alg.js'
 
@@ -9,11 +11,11 @@ var MAX_OCTET = 0x80,
   ENCODED_TAG_SEQ = TAG_SEQ | PRIMITIVE_BIT | (CLASS_UNIVERSAL << 6),
   ENCODED_TAG_INT = TAG_INT | (CLASS_UNIVERSAL << 6)
 
-function base64Url(base64: string) {
+function base64Url(base64) {
   return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
 }
 
-function signatureAsBuffer(signature: string | Buffer) {
+function signatureAsBuffer(signature) {
   if (Buffer.isBuffer(signature)) {
     return signature
   } else if ('string' === typeof signature) {
@@ -23,18 +25,15 @@ function signatureAsBuffer(signature: string | Buffer) {
   throw new TypeError('ECDSA signature must be a Base64 string or a Buffer')
 }
 
-function derToJose(
-  signature: Parameters<typeof signatureAsBuffer>[0],
-  alg: Parameters<typeof getParamBytesForAlg>[0]
-) {
+function derToJose(signature, alg) {
   signature = signatureAsBuffer(signature)
-  const paramBytes = getParamBytesForAlg(alg)
+  var paramBytes = getParamBytesForAlg(alg)
 
   // the DER encoded param should at most be the param size, plus a padding
   // zero, since due to being a signed integer
-  const maxEncodedParamLength = paramBytes + 1
+  var maxEncodedParamLength = paramBytes + 1
 
-  const inputLength = signature.length
+  var inputLength = signature.length
 
   var offset = 0
   if (signature[offset++] !== ENCODED_TAG_SEQ) {
@@ -60,7 +59,7 @@ function derToJose(
     throw new Error('Could not find expected "int" for "r"')
   }
 
-  const rLength = signature[offset++]
+  var rLength = signature[offset++]
 
   if (inputLength - offset - 2 < rLength) {
     throw new Error(
@@ -82,7 +81,7 @@ function derToJose(
     )
   }
 
-  const rOffset = offset
+  var rOffset = offset
   offset += rLength
 
   if (signature[offset++] !== ENCODED_TAG_INT) {
@@ -111,7 +110,7 @@ function derToJose(
     )
   }
 
-  const sOffset = offset
+  var sOffset = offset
   offset += sLength
 
   if (offset !== inputLength) {
@@ -122,10 +121,10 @@ function derToJose(
     )
   }
 
-  const rPadding = paramBytes - rLength,
+  var rPadding = paramBytes - rLength,
     sPadding = paramBytes - sLength
 
-  const dst = Buffer.allocUnsafe(rPadding + rLength + sPadding + sLength)
+  var dst = Buffer.allocUnsafe(rPadding + rLength + sPadding + sLength)
 
   for (offset = 0; offset < rPadding; ++offset) {
     dst[offset] = 0
@@ -149,13 +148,13 @@ function derToJose(
     sOffset + sLength
   )
 
-  const dst2 = dst.toString('base64')
-  const dst3 = base64Url(dst2)
+  dst = dst.toString('base64')
+  dst = base64Url(dst)
 
-  return dst3
+  return dst
 }
 
-function countPadding(buf: Buffer, start: number, stop: number) {
+function countPadding(buf, start, stop) {
   var padding = 0
   while (start + padding < stop && buf[start + padding] === 0) {
     ++padding
@@ -169,10 +168,7 @@ function countPadding(buf: Buffer, start: number, stop: number) {
   return padding
 }
 
-function joseToDer(
-  signature: Parameters<typeof signatureAsBuffer>[0],
-  alg: Parameters<typeof getParamBytesForAlg>[0]
-) {
+function joseToDer(signature, alg) {
   signature = signatureAsBuffer(signature)
   var paramBytes = getParamBytesForAlg(alg)
 
