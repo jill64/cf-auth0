@@ -23,7 +23,7 @@ export default function rateLimitWrapper(
     `Configured rate limiting to JWKS endpoint at ${jwksRequestsPerMinute}/minute`
   )
 
-  return async (kid: unknown) => {
+  return async (kid?: string) => {
     const remaining = await limiter.removeTokens(1)
 
     logger(
