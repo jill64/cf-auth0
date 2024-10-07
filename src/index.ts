@@ -1,4 +1,4 @@
-import type Cookies from 'cookies'
+import type { Cookies } from '@sveltejs/kit'
 import type {
   JwtHeader,
   JwtPayload,
