@@ -1,4 +1,3 @@
-// @ts-expect-error TODO
 import LRU from 'lru-cache'
 import { EventEmitter } from 'events'
 import deepClone from 'lodash.clonedeep'

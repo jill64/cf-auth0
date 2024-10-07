@@ -1,4 +1,3 @@
-// @ts-expect-error TODO
 import LRU from 'lru-cache'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Listener = (...as: any[]) => void

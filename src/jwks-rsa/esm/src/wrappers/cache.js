@@ -14,7 +14,6 @@ function cacheWrapper(client, { cacheMaxEntries = 5, cacheMaxAge = 600000 }) {
       // @ts-expect-error TODO
       hash: (kid) => kid,
       load: callbackify(client.getSigningKey.bind(client)),
-      // @ts-expect-error TODO
       maxAge: cacheMaxAge,
       max: cacheMaxEntries
     })
