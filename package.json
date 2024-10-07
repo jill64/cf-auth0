@@ -1,6 +1,6 @@
 {
   "name": "@jill64/cf-auth0",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -45,7 +45,7 @@
     "lodash.isplainobject": "4.0.6",
     "lodash.isstring": "4.0.1",
     "lodash.once": "4.1.1",
-    "lru-cache": "6.0.0",
+    "lru-cache": "11.0.1",
     "@types/node": "22.7.4",
     "ms": "2.1.3",
     "semver": "7.6.3"
@@ -68,7 +68,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/7d55a4b0db6453eadb2840a5b238a3f485f63cbff44b7fe60b8ba730612f1ca2/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/1fdec1a868dbaf3ff08152148e4f1a8beea3080f47c5c2147b61ff91d40bfbea/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {
