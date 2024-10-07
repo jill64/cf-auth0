@@ -39,19 +39,26 @@ export class CfAuth0 {
   }
 
   private async getKey(header: JwtHeader, callback: SigningKeyCallback) {
+    const client = new JwksClient({ jwksUri: this.jwks_url })
+
     try {
-      const client = new JwksClient({ jwksUri: this.jwks_url })
+      // @ts-expect-error TODO
+      client.getSigningKey(header.kid, (err, key) => {
+        if (err) {
+          callback(err as Error)
+          throw err
+        }
 
-      const key = await client.getSigningKey(header.kid)
+        if (cached_key) {
+          callback(null, cached_key)
+        }
 
-      if (cached_key) {
-        callback(null, cached_key)
-      }
-
-      const signingKey = key?.getPublicKey()
-      cached_key = signingKey
-      callback(null, signingKey)
+        const signingKey = key?.getPublicKey()
+        cached_key = signingKey
+        callback(null, signingKey)
+      })
     } catch (err) {
+      console.log('debug5.1.2.1')
       callback(err as Error)
     }
   }
