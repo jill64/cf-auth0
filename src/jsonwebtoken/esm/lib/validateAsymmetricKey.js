@@ -1,4 +1,3 @@
-import { KeyObject } from 'node:crypto'
 import ASYMMETRIC_KEY_DETAILS_SUPPORTED from './asymmetricKeyDetailsSupported.js'
 import RSA_PSS_KEY_DETAILS_SUPPORTED from './rsaPssKeyDetailsSupported.js'
 
@@ -14,17 +13,13 @@ const allowedCurves = {
   ES512: 'secp521r1'
 }
 
-export default function (
-  algorithm: keyof typeof allowedCurves,
-  key: KeyObject
-) {
+export default function (algorithm, key) {
   if (!algorithm || !key) return
 
   const keyType = key.asymmetricKeyType
   if (!keyType) return
 
-  const allowedAlgorithms =
-    allowedAlgorithmsForKeys[keyType as keyof typeof allowedAlgorithmsForKeys]
+  const allowedAlgorithms = allowedAlgorithmsForKeys[keyType]
 
   if (!allowedAlgorithms) {
     throw new Error(`Unknown key type "${keyType}".`)
@@ -32,9 +27,7 @@ export default function (
 
   if (!allowedAlgorithms.includes(algorithm)) {
     throw new Error(
-      `"alg" parameter for "${keyType}" key type must be one of: ${allowedAlgorithms.join(
-        ', '
-      )}.`
+      `"alg" parameter for "${keyType}" key type must be one of: ${allowedAlgorithms.join(', ')}.`
     )
   }
 
@@ -48,7 +41,7 @@ export default function (
   if (ASYMMETRIC_KEY_DETAILS_SUPPORTED) {
     switch (keyType) {
       case 'ec':
-        const keyCurve = key.asymmetricKeyDetails?.namedCurve
+        const keyCurve = key.asymmetricKeyDetails.namedCurve
         const allowedCurve = allowedCurves[algorithm]
 
         if (keyCurve !== allowedCurve) {
@@ -61,13 +54,6 @@ export default function (
       case 'rsa-pss':
         if (RSA_PSS_KEY_DETAILS_SUPPORTED) {
           const length = parseInt(algorithm.slice(-3), 10)
-
-          if (!key.asymmetricKeyDetails) {
-            throw new Error(
-              `Invalid key for this operation, its RSA-PSS parameters do not meet the requirements of "alg" ${algorithm}.`
-            )
-          }
-
           const { hashAlgorithm, mgf1HashAlgorithm, saltLength } =
             key.asymmetricKeyDetails
 

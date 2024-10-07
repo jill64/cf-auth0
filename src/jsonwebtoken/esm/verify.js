@@ -1,15 +1,6 @@
 import { KeyObject, createPublicKey, createSecretKey } from 'node:crypto'
-import jws from '../../jws/esm/index.js'
+import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
-import {
-  GetPublicKeyOrSecret,
-  Jwt,
-  JwtPayload,
-  PublicKey,
-  Secret,
-  VerifyCallback,
-  VerifyOptions
-} from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
@@ -27,16 +18,9 @@ if (PS_SUPPORTED) {
   RSA_KEY_ALGS.splice(RSA_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
 }
 
-export default function (
-  jwtString: string,
-  secretOrPublicKey: Secret | PublicKey | GetPublicKeyOrSecret,
-  options:
-    | (VerifyOptions & { complete?: boolean })
-    | VerifyCallback<JwtPayload | string>,
-  callback?: VerifyCallback<Jwt | JwtPayload | string> | VerifyCallback
-) {
+export default function (jwtString, secretOrPublicKey, options, callback) {
   if (typeof options === 'function' && !callback) {
-    callback = options as VerifyCallback<Jwt | JwtPayload | string>
+    callback = options
     options = {}
   }
 
@@ -52,22 +36,17 @@ export default function (
   if (callback) {
     done = callback
   } else {
-    done = function (err: unknown, data?: Jwt | JwtPayload | string) {
+    done = function (err, data) {
       if (err) throw err
       return data
     }
   }
 
-  if (
-    typeof options === 'object' &&
-    options.clockTimestamp &&
-    typeof options.clockTimestamp !== 'number'
-  ) {
+  if (options.clockTimestamp && typeof options.clockTimestamp !== 'number') {
     return done(new JsonWebTokenError('clockTimestamp must be a number'))
   }
 
   if (
-    typeof options === 'object' &&
     options.nonce !== undefined &&
     (typeof options.nonce !== 'string' || options.nonce.trim() === '')
   ) {
@@ -75,7 +54,6 @@ export default function (
   }
 
   if (
-    typeof options === 'object' &&
     options.allowInvalidAsymmetricKeyTypes !== undefined &&
     typeof options.allowInvalidAsymmetricKeyTypes !== 'boolean'
   ) {
@@ -84,9 +62,7 @@ export default function (
     )
   }
 
-  const clockTimestamp =
-    (typeof options === 'object' && options.clockTimestamp) ||
-    Math.floor(Date.now() / 1000)
+  const clockTimestamp = options.clockTimestamp || Math.floor(Date.now() / 1000)
 
   if (!jwtString) {
     return done(new JsonWebTokenError('jwt must be provided'))
@@ -107,14 +83,13 @@ export default function (
   try {
     decodedToken = decode(jwtString, { complete: true })
   } catch (err) {
-    return done(err as TokenExpiredError)
+    return done(err)
   }
 
   if (!decodedToken) {
     return done(new JsonWebTokenError('invalid token'))
   }
 
-  // @ts-expect-error WARING: Unknown property
   const header = decodedToken.header
   let getSecret
 
@@ -131,7 +106,7 @@ export default function (
   } else {
     getSecret = function (header, secretCallback) {
       return secretCallback(null, secretOrPublicKey)
-    } satisfies GetPublicKeyOrSecret
+    }
   }
 
   return getSecret(header, function (err, secretOrPublicKey) {
@@ -155,7 +130,7 @@ export default function (
       )
     }
 
-    if (!hasSignature && (typeof options !== 'object' || !options.algorithms)) {
+    if (!hasSignature && !options.algorithms) {
       return done(
         new JsonWebTokenError(
           'please specify "none" in "algorithms" to verify unsigned tokens'
@@ -169,15 +144,14 @@ export default function (
     ) {
       try {
         secretOrPublicKey = createPublicKey(secretOrPublicKey)
-      } catch {
+      } catch (_) {
         try {
           secretOrPublicKey = createSecretKey(
-            // @ts-expect-error WARING: Unknown property
             typeof secretOrPublicKey === 'string'
               ? Buffer.from(secretOrPublicKey)
               : secretOrPublicKey
           )
-        } catch {
+        } catch (_) {
           return done(
             new JsonWebTokenError('secretOrPublicKey is not valid key material')
           )
@@ -185,33 +159,25 @@ export default function (
       }
     }
 
-    if (typeof options !== 'object' || !options.algorithms) {
-      if (secretOrPublicKey?.type === 'secret') {
-        // @ts-expect-error WARING: Unknown property
+    if (!options.algorithms) {
+      if (secretOrPublicKey.type === 'secret') {
         options.algorithms = HS_ALGS
       } else if (
-        ['rsa', 'rsa-pss'].includes(secretOrPublicKey?.asymmetricKeyType || '')
+        ['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)
       ) {
-        // @ts-expect-error WARING: Unknown property
         options.algorithms = RSA_KEY_ALGS
-      } else if (secretOrPublicKey?.asymmetricKeyType === 'ec') {
-        // @ts-expect-error WARING: Unknown property
+      } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
         options.algorithms = EC_KEY_ALGS
       } else {
-        // @ts-expect-error WARING: Unknown property
         options.algorithms = PUB_KEY_ALGS
       }
     }
 
-    if (
-      typeof options === 'object' &&
-      // @ts-expect-error WARING: Unknown property
-      options.algorithms?.indexOf(decodedToken.header.alg) === -1
-    ) {
+    if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
       return done(new JsonWebTokenError('invalid algorithm'))
     }
 
-    if (header.alg.startsWith('HS') && secretOrPublicKey?.type !== 'secret') {
+    if (header.alg.startsWith('HS') && secretOrPublicKey.type !== 'secret') {
       return done(
         new JsonWebTokenError(
           `secretOrPublicKey must be a symmetric key when using ${header.alg}`
@@ -219,7 +185,7 @@ export default function (
       )
     } else if (
       /^(?:RS|PS|ES)/.test(header.alg) &&
-      secretOrPublicKey?.type !== 'public'
+      secretOrPublicKey.type !== 'public'
     ) {
       return done(
         new JsonWebTokenError(
@@ -228,39 +194,32 @@ export default function (
       )
     }
 
-    if (
-      typeof options !== 'object' ||
-      !options.allowInvalidAsymmetricKeyTypes
-    ) {
+    if (!options.allowInvalidAsymmetricKeyTypes) {
       try {
-        validateAsymmetricKey(header.alg, secretOrPublicKey!)
+        validateAsymmetricKey(header.alg, secretOrPublicKey)
       } catch (e) {
-        return done(e as JsonWebTokenError)
+        return done(e)
       }
     }
 
     let valid
 
     try {
-      // @ts-expect-error WARING: Unknown property
       valid = jws.verify(jwtString, decodedToken.header.alg, secretOrPublicKey)
     } catch (e) {
-      return done(e as JsonWebTokenError)
+      return done(e)
     }
 
     if (!valid) {
       return done(new JsonWebTokenError('invalid signature'))
     }
 
-    // @ts-expect-error WARING: Unknown property
     const payload = decodedToken.payload
 
-    // @ts-expect-error WARING: Unknown property
     if (typeof payload.nbf !== 'undefined' && !options.ignoreNotBefore) {
       if (typeof payload.nbf !== 'number') {
         return done(new JsonWebTokenError('invalid nbf value'))
       }
-      // @ts-expect-error WARING: Unknown property
       if (payload.nbf > clockTimestamp + (options.clockTolerance || 0)) {
         return done(
           new NotBeforeError('jwt not active', new Date(payload.nbf * 1000))
@@ -268,12 +227,10 @@ export default function (
       }
     }
 
-    // @ts-expect-error WARING: Unknown property
     if (typeof payload.exp !== 'undefined' && !options.ignoreExpiration) {
       if (typeof payload.exp !== 'number') {
         return done(new JsonWebTokenError('invalid exp value'))
       }
-      // @ts-expect-error WARING: Unknown property
       if (clockTimestamp >= payload.exp + (options.clockTolerance || 0)) {
         return done(
           new TokenExpiredError('jwt expired', new Date(payload.exp * 1000))
@@ -281,14 +238,14 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.audience) {
+    if (options.audience) {
       const audiences = Array.isArray(options.audience)
         ? options.audience
         : [options.audience]
       const target = Array.isArray(payload.aud) ? payload.aud : [payload.aud]
 
-      const match = target.some(function (targetAudience: string) {
-        return audiences.some(function (audience: string | RegExp) {
+      const match = target.some(function (targetAudience) {
+        return audiences.some(function (audience) {
           return audience instanceof RegExp
             ? audience.test(targetAudience)
             : audience === targetAudience
@@ -304,7 +261,7 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.issuer) {
+    if (options.issuer) {
       const invalid_issuer =
         (typeof options.issuer === 'string' &&
           payload.iss !== options.issuer) ||
@@ -320,7 +277,7 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.subject) {
+    if (options.subject) {
       if (payload.sub !== options.subject) {
         return done(
           new JsonWebTokenError(
@@ -330,7 +287,7 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.jwtid) {
+    if (options.jwtid) {
       if (payload.jti !== options.jwtid) {
         return done(
           new JsonWebTokenError('jwt jwtid invalid. expected: ' + options.jwtid)
@@ -338,7 +295,7 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.nonce) {
+    if (options.nonce) {
       if (payload.nonce !== options.nonce) {
         return done(
           new JsonWebTokenError('jwt nonce invalid. expected: ' + options.nonce)
@@ -346,7 +303,7 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.maxAge) {
+    if (options.maxAge) {
       if (typeof payload.iat !== 'number') {
         return done(
           new JsonWebTokenError('iat required when maxAge is specified')
@@ -371,8 +328,7 @@ export default function (
       }
     }
 
-    if (typeof options === 'object' && options.complete === true) {
-      // @ts-expect-error WARING: Unknown property
+    if (options.complete === true) {
       const signature = decodedToken.signature
 
       return done(null, {

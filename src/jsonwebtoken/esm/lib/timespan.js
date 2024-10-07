@@ -1,7 +1,7 @@
 import ms from 'ms'
 
-export default function (time: string | number, iat: number) {
-  const timestamp = iat || Math.floor(Date.now() / 1000)
+export default function (time, iat) {
+  var timestamp = iat || Math.floor(Date.now() / 1000)
 
   if (typeof time === 'string') {
     var milliseconds = ms(time)

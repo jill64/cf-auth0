@@ -1,13 +1,6 @@
-import jws from '../../jws/esm/index.js'
-import { DecodeOptions, Jwt, JwtPayload } from './index.js'
+import * as jws from '../../jws/esm/index.js'
 
-export default function (
-  jwt: string,
-  options?: DecodeOptions & {
-    complete?: true
-    json?: true
-  }
-): null | Jwt | JwtPayload | string {
+export default function (jwt, options) {
   options = options || {}
   var decoded = jws.decode(jwt, options)
   if (!decoded) {
@@ -22,7 +15,7 @@ export default function (
       if (obj !== null && typeof obj === 'object') {
         payload = obj
       }
-    } catch {}
+    } catch (e) {}
   }
 
   //return header if `complete` option is enabled.  header includes claims
