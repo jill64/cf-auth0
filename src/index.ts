@@ -1,5 +1,9 @@
 import type Cookies from 'cookies'
-import type { JwtHeader, JwtPayload } from './jsonwebtoken/esm/index.js'
+import type {
+  JwtHeader,
+  JwtPayload,
+  SigningKeyCallback
+} from './jsonwebtoken/esm/index.js'
 import jwt from './jsonwebtoken/esm/index.js'
 import { JwksClient } from './jwks-rsa/esm/index.js'
 
@@ -34,19 +38,23 @@ export class CfAuth {
     this.base_url = arg.base_url
   }
 
-  async getKey(header: JwtHeader) {
-    const client = new JwksClient({ jwksUri: this.jwks_url })
+  async getKey(header: JwtHeader, callback: SigningKeyCallback) {
+    try {
+      const client = new JwksClient({ jwksUri: this.jwks_url })
 
-    // 1
-    const key = await client.getSigningKey(header.kid)
+      // 1
+      const key = await client.getSigningKey(header.kid)
 
-    if (cached_key) {
-      return cached_key
+      if (cached_key) {
+        callback(null, cached_key)
+      }
+
+      const signingKey = key?.getPublicKey()
+      cached_key = signingKey
+      callback(null, signingKey)
+    } catch (err) {
+      callback(err as Error)
     }
-
-    const signingKey = key?.getPublicKey()
-    cached_key = signingKey
-    return signingKey
   }
 
   verifyToken(token: string): Promise<JwtPayload | string> {
