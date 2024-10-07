@@ -100,6 +100,14 @@ export class CfAuth {
     return jwt.decode(jwtToken)
   }
 
+  verify(
+    token: Parameters<typeof jwt.verify>[0],
+    secretOrPublicKey: Parameters<typeof jwt.verify>[1],
+    options: Parameters<typeof jwt.verify>[2]
+  ) {
+    return jwt.verify(token, secretOrPublicKey, options)
+  }
+
   setAuthCookie(cookies: Cookies, user: JwtPayload | string) {
     // 4
     const cookieValue = jwt.sign(user, this.session_secret)
