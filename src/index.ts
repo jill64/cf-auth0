@@ -91,7 +91,7 @@ export const CfAuth0 = ({
 
   const verify = (
     token: string,
-    secretOrPublicKey: jwt.Secret | jwt.PublicKey | jwt.GetPublicKeyOrSecret
+    secretOrPublicKey: jwt.Secret | jwt.PublicKey
   ) => {
     return jwt.verify(token, secretOrPublicKey)
   }
