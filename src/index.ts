@@ -32,19 +32,9 @@ export const CfAuth0 = ({
 
       console.log('debug:1')
 
-      // wait 1 sec
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      console.log('debug:2')
-
       const key = await client.getSigningKey(header.kid)
 
-      console.log('debug:3')
-
-      // wait 1 sec
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      console.log('debug:4')
+      console.log('debug:2')
 
       if (cached_key) {
         callback(null, cached_key)
