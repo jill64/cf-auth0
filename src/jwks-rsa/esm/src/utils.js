@@ -47,6 +47,8 @@ async function retrieveSigningKeys(jwks) {
 
   for (const jwk of jwks) {
     try {
+      // eslint-disable-next-line no-undef
+      console.log('jwk', jwk)
       const key = await importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
       // @ts-expect-error TODO
       if (key.type !== 'public') {
