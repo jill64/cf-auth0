@@ -92,6 +92,11 @@ class JwksClient {
     if (key) {
       // eslint-disable-next-line no-undef
       console.log('Determined Key:', key)
+
+      // Wait 1sec
+      // eslint-disable-next-line no-undef
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
       return key
     } else {
       logger(`Unable to find a signing key that matches '${kid}'`)
