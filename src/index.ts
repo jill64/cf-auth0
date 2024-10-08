@@ -32,17 +32,23 @@ export const CfAuth0 = ({
 
       console.log('debug:1')
 
-      client.getSigningKey(header.kid)
+      client
+        .getSigningKey(header.kid)
+        .then((key) => {
+          console.log('debug:2')
 
-      console.log('debug:2')
+          if (cached_key) {
+            callback(null, cached_key)
+          }
 
-      if (cached_key) {
-        callback(null, cached_key)
-      }
-
-      // const signingKey = key?.getPublicKey()
-      // cached_key = signingKey
-      callback(null, 'signingKey')
+          const signingKey = key?.getPublicKey()
+          cached_key = signingKey
+          callback(null, signingKey)
+        })
+        .catch((err) => {
+          console.error('getKey Error:', err)
+          callback(err as Error)
+        })
     } catch (err) {
       console.error('getKey Error:', err)
       callback(err as Error)
