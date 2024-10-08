@@ -38,7 +38,7 @@
     "@types/node": "22.7.4",
     "@types/semver": "7.5.8",
     "debug": "4.3.4",
-    "jose": "4.15.9",
+    "jose": "5.9.3",
     "lodash.clonedeep": "4.5.0",
     "lodash.includes": "4.3.0",
     "lodash.isboolean": "3.0.3",
