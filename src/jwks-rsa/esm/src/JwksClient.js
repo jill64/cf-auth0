@@ -47,8 +47,6 @@ class JwksClient {
         headers: this.options.requestHeaders
       })
 
-      // eslint-disable-next-line no-undef
-      console.log('res', res)
       logger('Keys:', res.keys)
       return res.keys
     } catch (err) {
@@ -66,9 +64,6 @@ class JwksClient {
       throw new JwksError('The JWKS endpoint did not contain any keys')
     }
 
-    // eslint-disable-next-line no-undef
-    console.log('keys', keys)
-
     const signingKeys = await retrieveSigningKeys(keys)
 
     if (!signingKeys.length) {
@@ -83,18 +78,10 @@ class JwksClient {
   async getSigningKey(kid) {
     logger(`Fetching signing key for '${kid}'`)
 
-    // eslint-disable-next-line no-undef
-    console.log('getSigningKey', kid)
-
     const keys = await this.getSigningKeys()
-
-    // eslint-disable-next-line no-undef
-    console.log('keys', keys)
 
     const kidDefined = kid !== undefined && kid !== null
     if (!kidDefined && keys.length > 1) {
-      // eslint-disable-next-line no-undef
-      console.log('No KID specified and JWKS endpoint returned more than 1 key')
       logger('No KID specified and JWKS endpoint returned more than 1 key')
       throw new SigningKeyNotFoundError(
         'No KID specified and JWKS endpoint returned more than 1 key'
@@ -104,11 +91,9 @@ class JwksClient {
     const key = keys.find((k) => !kidDefined || k.kid === kid)
     if (key) {
       // eslint-disable-next-line no-undef
-      console.log('key', key)
+      console.log('Determined Key:', key)
       return key
     } else {
-      // eslint-disable-next-line no-undef
-      console.log(`Unable to find a signing key that matches '${kid}'`)
       logger(`Unable to find a signing key that matches '${kid}'`)
       throw new SigningKeyNotFoundError(
         `Unable to find a signing key that matches '${kid}'`
