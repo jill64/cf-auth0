@@ -1,7 +1,6 @@
 import ms from 'ms'
 
-// @ts-expect-error TODO
-export default function (time, iat) {
+export default function (time: string | number, iat: number) {
   var timestamp = iat || Math.floor(Date.now() / 1000)
 
   if (typeof time === 'string') {
