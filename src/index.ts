@@ -90,11 +90,10 @@ export const CfAuth0 = ({
   }
 
   const verify = (
-    token: Parameters<typeof jwt.verify>[0],
-    secretOrPublicKey: Parameters<typeof jwt.verify>[1],
-    options: Parameters<typeof jwt.verify>[2]
+    token: string,
+    secretOrPublicKey: jwt.Secret | jwt.PublicKey | jwt.GetPublicKeyOrSecret
   ) => {
-    return jwt.verify(token, secretOrPublicKey, options)
+    return jwt.verify(token, secretOrPublicKey)
   }
 
   const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
