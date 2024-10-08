@@ -1,4 +1,4 @@
-import { importJWK, exportSPKI } from 'jose'
+import { importJWK, exportSPKI } from '../../../jose/esm/src/index.js'
 import JwksError from './errors/JwksError.js'
 
 // @ts-expect-error TODO
