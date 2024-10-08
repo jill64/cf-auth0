@@ -91,6 +91,8 @@ class JwksClient {
 
     const kidDefined = kid !== undefined && kid !== null
     if (!kidDefined && keys.length > 1) {
+      // eslint-disable-next-line no-undef
+      console.log('No KID specified and JWKS endpoint returned more than 1 key')
       logger('No KID specified and JWKS endpoint returned more than 1 key')
       throw new SigningKeyNotFoundError(
         'No KID specified and JWKS endpoint returned more than 1 key'
