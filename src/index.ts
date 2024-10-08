@@ -94,11 +94,11 @@ export const CfAuth0 = ({
     return jwt.decode(jwtToken)
   }
 
-  const verify = async (
+  const verify = (
     token: string,
     secretOrPublicKey: jwt.Secret | jwt.PublicKey
-  ): Promise<jwt.JwtPayload | string> => {
-    return await jwt.verify(token, secretOrPublicKey)
+  ): jwt.JwtPayload | string => {
+    return jwt.verify(token, secretOrPublicKey)
   }
 
   const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
