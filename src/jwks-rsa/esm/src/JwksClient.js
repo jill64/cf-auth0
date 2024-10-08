@@ -101,8 +101,12 @@ class JwksClient {
 
     const key = keys.find((k) => !kidDefined || k.kid === kid)
     if (key) {
+      // eslint-disable-next-line no-undef
+      console.log('key', key)
       return key
     } else {
+      // eslint-disable-next-line no-undef
+      console.log(`Unable to find a signing key that matches '${kid}'`)
       logger(`Unable to find a signing key that matches '${kid}'`)
       throw new SigningKeyNotFoundError(
         `Unable to find a signing key that matches '${kid}'`
