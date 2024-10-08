@@ -13,14 +13,23 @@ const allowedCurves = {
   ES512: 'secp521r1'
 }
 
-// @ts-expect-error TODO
-export default function (algorithm, key) {
+export default function (
+  algorithm: keyof typeof allowedCurves,
+  key: {
+    asymmetricKeyType: keyof typeof allowedAlgorithmsForKeys
+    asymmetricKeyDetails: {
+      namedCurve: string
+      hashAlgorithm: string
+      mgf1HashAlgorithm: string
+      saltLength: number
+    }
+  }
+) {
   if (!algorithm || !key) return
 
   const keyType = key.asymmetricKeyType
   if (!keyType) return
 
-  // @ts-expect-error TODO
   const allowedAlgorithms = allowedAlgorithmsForKeys[keyType]
 
   if (!allowedAlgorithms) {
@@ -45,10 +54,8 @@ export default function (algorithm, key) {
   if (ASYMMETRIC_KEY_DETAILS_SUPPORTED) {
     switch (keyType) {
       case 'ec':
-        // eslint-disable-next-line no-case-declarations
         const keyCurve = key.asymmetricKeyDetails.namedCurve
-        // @ts-expect-error TODO
-        // eslint-disable-next-line no-case-declarations
+
         const allowedCurve = allowedCurves[algorithm]
 
         if (keyCurve !== allowedCurve) {
