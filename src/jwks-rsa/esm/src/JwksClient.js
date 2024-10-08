@@ -44,12 +44,11 @@ class JwksClient {
     try {
       const res = await request({
         uri: this.options.jwksUri,
-        headers: this.options.requestHeaders,
-        agent: this.options.requestAgent,
-        timeout: this.options.timeout,
-        fetcher: this.options.fetcher
+        headers: this.options.requestHeaders
       })
 
+      // eslint-disable-next-line no-undef
+      console.log('res', JSON.stringify(res))
       logger('Keys:', res.keys)
       return res.keys
     } catch (err) {
