@@ -1,4 +1,4 @@
-import * as jose from 'jose'
+import { importJWK, exportSPKI } from 'jose'
 import JwksError from './errors/JwksError.js'
 
 // @ts-expect-error TODO
@@ -47,7 +47,7 @@ async function retrieveSigningKeys(jwks) {
 
   for (const jwk of jwks) {
     try {
-      const key = await jose.importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
+      const key = await importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
       // @ts-expect-error TODO
       if (key.type !== 'public') {
         continue
@@ -57,7 +57,7 @@ async function retrieveSigningKeys(jwks) {
       switch (key[Symbol.toStringTag]) {
         case 'CryptoKey': {
           // @ts-expect-error TODO
-          const spki = await jose.exportSPKI(key)
+          const spki = await exportSPKI(key)
           getSpki = () => spki
           break
         }
