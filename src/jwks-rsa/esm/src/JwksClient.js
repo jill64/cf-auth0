@@ -75,7 +75,7 @@ class JwksClient {
   }
 
   // @ts-expect-error TODO
-  async getSigningKey(kid) {
+  async getSigningKey(kid, cb) {
     logger(`Fetching signing key for '${kid}'`)
 
     const keys = await this.getSigningKeys()
@@ -92,7 +92,7 @@ class JwksClient {
     if (key) {
       // eslint-disable-next-line no-undef
       console.log('Determined Key:', key)
-      return key
+      cb(key)
     } else {
       logger(`Unable to find a signing key that matches '${kid}'`)
       throw new SigningKeyNotFoundError(
