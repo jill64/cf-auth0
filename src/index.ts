@@ -32,7 +32,7 @@ export const CfAuth0 = ({
 
       console.log('debug:1')
 
-      await client.getSigningKey(header.kid)
+      client.getSigningKey(header.kid)
 
       console.log('debug:2')
 
@@ -40,9 +40,9 @@ export const CfAuth0 = ({
         callback(null, cached_key)
       }
 
-      const signingKey = ''
-      cached_key = signingKey
-      callback(null, signingKey)
+      // const signingKey = key?.getPublicKey()
+      // cached_key = signingKey
+      callback(null, 'signingKey')
     } catch (err) {
       console.error('getKey Error:', err)
       callback(err as Error)
