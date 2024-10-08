@@ -47,23 +47,12 @@ async function retrieveSigningKeys(jwks) {
 
   for (const jwk of jwks) {
     try {
-      // eslint-disable-next-line no-undef
-      console.log('jwk', jwk)
       const key = await importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
-      // eslint-disable-next-line no-undef
-      console.log('JwkKey', JSON.stringify(key))
       // @ts-expect-error TODO
       if (key.type !== 'public') {
         continue
       }
       let getSpki
-
-      // eslint-disable-next-line no-undef
-      console.log(
-        'key[Symbol.toStringTag]',
-        // @ts-expect-error TODO
-        JSON.stringify(key[Symbol.toStringTag])
-      )
 
       // @ts-expect-error TODO
       switch (key[Symbol.toStringTag]) {
@@ -105,9 +94,6 @@ async function retrieveSigningKeys(jwks) {
       continue
     }
   }
-
-  // eslint-disable-next-line no-undef
-  console.log('results', JSON.stringify(results))
 
   return results
 }
