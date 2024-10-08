@@ -80,7 +80,14 @@ class JwksClient {
   // @ts-expect-error TODO
   async getSigningKey(kid) {
     logger(`Fetching signing key for '${kid}'`)
+
+    // eslint-disable-next-line no-undef
+    console.log('getSigningKey', kid)
+
     const keys = await this.getSigningKeys()
+
+    // eslint-disable-next-line no-undef
+    console.log('keys', keys)
 
     const kidDefined = kid !== undefined && kid !== null
     if (!kidDefined && keys.length > 1) {
