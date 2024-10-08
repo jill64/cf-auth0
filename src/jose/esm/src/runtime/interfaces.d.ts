@@ -78,6 +78,7 @@ export interface FetchFunction {
   (
     url: URL,
     timeout: number,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options?: any
   ): Promise<{ [propName: string]: unknown }>
 }

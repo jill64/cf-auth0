@@ -280,6 +280,7 @@ export interface GenericGetKeyFunction<
  * @param IProtectedHeader Type definition of the JWE or JWS Protected Header.
  * @param IToken Type definition of the consumed JWE or JWS token.
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GetKeyFunction<IProtectedHeader, IToken>
   extends GenericGetKeyFunction<
     IProtectedHeader,
@@ -569,6 +570,7 @@ export interface DecryptOptions extends CritOption {
 }
 
 /** JWE Encryption options. */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface EncryptOptions extends CritOption {}
 
 /** JWT Claims Set verification options. */
@@ -647,6 +649,7 @@ export interface VerifyOptions extends CritOption {
 }
 
 /** JWS Signing options. */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SignOptions extends CritOption {}
 
 /** Recognized JWT Claims Set members, any other members may also be present. */
@@ -721,6 +724,7 @@ export interface FlattenedDecryptResult {
   unprotectedHeader?: JWEHeaderParameters
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GeneralDecryptResult extends FlattenedDecryptResult {}
 
 export interface CompactDecryptResult {
@@ -742,6 +746,7 @@ export interface FlattenedVerifyResult {
   unprotectedHeader?: JWSHeaderParameters
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface GeneralVerifyResult extends FlattenedVerifyResult {}
 
 export interface CompactVerifyResult {
