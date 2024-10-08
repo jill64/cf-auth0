@@ -1,6 +1,6 @@
 {
   "name": "@jill64/cf-auth0",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -69,7 +69,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/a62ef13f86888b94e16840acd76880ec65e1a485046596fa2196530ea8c1b52d/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/7d480113b7415cee526827258c6b0ace00ec859e85d23a3840d201bb0cca11ed/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {
