@@ -23,10 +23,7 @@ export const CfAuth0 = ({
   session_secret: string
   base_url: string
 }) => {
-  const getKey = async (
-    header: jwt.JwtHeader,
-    callback: jwt.SigningKeyCallback
-  ) => {
+  const getKey = (header: jwt.JwtHeader, callback: jwt.SigningKeyCallback) => {
     try {
       const client = new JwksClient({ jwksUri: jwks_url })
 
