@@ -50,6 +50,8 @@ async function retrieveSigningKeys(jwks) {
       // eslint-disable-next-line no-undef
       console.log('jwk', jwk)
       const key = await importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
+      // eslint-disable-next-line no-undef
+      console.log('JwkKey', key)
       // @ts-expect-error TODO
       if (key.type !== 'public') {
         continue
