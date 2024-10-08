@@ -91,11 +91,10 @@ class JwksClient {
     const key = keys.find((k) => !kidDefined || k.kid === kid)
     if (key) {
       // eslint-disable-next-line no-undef
-      console.log('Determined Key:', key)
-
-      // Wait 1sec
-      // eslint-disable-next-line no-undef
       await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // eslint-disable-next-line no-undef
+      console.log('Determined Key:', key)
 
       return key
     } else {
