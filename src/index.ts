@@ -41,7 +41,7 @@ export const CfAuth0 = ({
         return
       }
 
-      const signingKey = key?.getPublicKey()
+      const signingKey = key.spkiVal
       cached_key = signingKey
       callback(null, signingKey)
     } catch (err) {
