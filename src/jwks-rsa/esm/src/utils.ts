@@ -1,8 +1,8 @@
 import { exportSPKI, importJWK } from '../../../jose/esm/src/index.js'
+import { JWK } from '../../../jose/esm/src/types.js'
 import JwksError from './errors/JwksError.js'
 
-// @ts-expect-error TODO
-function resolveAlg(jwk) {
+const resolveAlg = (jwk: JWK) => {
   if (jwk.alg) {
     return jwk.alg
   }
@@ -35,29 +35,30 @@ function resolveAlg(jwk) {
   throw new JwksError('Unsupported JWK')
 }
 
-// @ts-expect-error TODO
-async function retrieveSigningKeys(jwks) {
+const retrieveSigningKeys = async (jwks: JWK[]) => {
   const results = []
 
-  jwks = jwks
-    // @ts-expect-error TODO
+  const jwks2 = jwks
     .filter(({ use }) => use === 'sig' || use === undefined)
-    // @ts-expect-error TODO
     .filter(({ kty }) => kty === 'RSA' || kty === 'EC' || kty === 'OKP')
 
-  for (const jwk of jwks) {
+  for (const jwk of jwks2) {
     try {
       const key = await importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
-      // @ts-expect-error TODO
+
+      if (!('type' in key)) {
+        continue
+      }
+
       if (key.type !== 'public') {
         continue
       }
+
       let getSpki
 
       // @ts-expect-error TODO
       switch (key[Symbol.toStringTag]) {
         case 'CryptoKey': {
-          // @ts-expect-error TODO
           const spki = await exportSPKI(key)
           getSpki = () => spki
           break
@@ -66,7 +67,6 @@ async function retrieveSigningKeys(jwks) {
         // Assume legacy Node.js version without the Symbol.toStringTag backported
         // Fall through
         default:
-          // @ts-expect-error TODO
           // getSpki = () => key.export({ format: 'pem', type: 'spki' })
           const spki = await exportSPKI(key)
           getSpki = () => spki
@@ -89,7 +89,6 @@ async function retrieveSigningKeys(jwks) {
           : undefined)
       })
     } catch {
-      // eslint-disable-next-line no-undef
       console.error('Failed to create a public key from the JWK')
       continue
     }
