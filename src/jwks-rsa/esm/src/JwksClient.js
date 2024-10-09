@@ -69,6 +69,9 @@ class JwksClient {
 
     const signingKeys = await retrieveSigningKeys(keys)
 
+    // eslint-disable-next-line no-undef
+    console.log('Signing Keys:', signingKeys)
+
     if (!signingKeys.length) {
       throw new JwksError('The JWKS endpoint did not contain any signing keys')
     }
