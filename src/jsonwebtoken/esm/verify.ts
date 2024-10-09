@@ -1,8 +1,7 @@
-import { Buffer } from 'node:buffer'
 import { createPublicKey, createSecretKey } from 'node:crypto'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
-import { JwtPayload } from './index.js'
+import { GetPublicKeyOrSecret, JwtPayload } from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
@@ -20,10 +19,8 @@ if (PS_SUPPORTED) {
 }
 
 export default async function (
-  // @ts-expect-error TODO
-  jwtString,
-  // @ts-expect-error TODO
-  secretOrPublicKey
+  jwtString: string,
+  secretOrPublicKey: GetPublicKeyOrSecret
 ): Promise<JwtPayload> {
   const clockTimestamp = Math.floor(Date.now() / 1000)
 
@@ -55,7 +52,7 @@ export default async function (
 
   const hasSignature = parts[2].trim() !== ''
 
-  if (!hasSignature && secretOrPublicKey) {
+  if (!hasSignature) {
     throw new JsonWebTokenError('jwt signature is required')
   }
 
@@ -72,14 +69,12 @@ export default async function (
   let secretOrPublicKey2
 
   try {
+    // @ts-expect-error TODO
     secretOrPublicKey2 = createPublicKey(secretOrPublicKey)
   } catch {
     try {
-      secretOrPublicKey2 = createSecretKey(
-        typeof secretOrPublicKey === 'string'
-          ? Buffer.from(secretOrPublicKey)
-          : secretOrPublicKey
-      )
+      // @ts-expect-error TODO
+      secretOrPublicKey2 = createSecretKey(secretOrPublicKey)
     } catch {
       throw new JsonWebTokenError('secretOrPublicKey is not valid key material')
     }
