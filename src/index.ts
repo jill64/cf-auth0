@@ -5,7 +5,6 @@ import { JwksClient } from './jwks-rsa/esm/src/index.js'
 const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 
 let cached_key: string | undefined = undefined
-let key
 
 export const CfAuth0 = ({
   auth0_client_id,
@@ -24,30 +23,33 @@ export const CfAuth0 = ({
   session_secret: string
   base_url: string
 }) => {
-  const getKey = async (
-    header: jwt.JwtHeader,
-    callback: jwt.SigningKeyCallback
-  ) => {
-    try {
-      const client = new JwksClient({ jwksUri: jwks_url })
+  const getKey = (header: jwt.JwtHeader, callback: jwt.SigningKeyCallback) => {
+    const client = new JwksClient({ jwksUri: jwks_url })
 
-      console.log('debug:1')
+    console.log('debug:1')
 
-      key = await client.getSigningKey(header.kid)
+    client.getSigningKey(
+      header.kid,
+      (key: {
+        alg?: unknown
+        kid?: unknown
+        publicKey: string
+        rsaPublicKey: string
+        getPublicKey: () => string
+      }) => {
+        console.log('debug:3')
 
-      console.log('debug:2')
+        if (cached_key) {
+          callback(null, cached_key)
+        }
 
-      if (cached_key) {
-        callback(null, cached_key)
+        const signingKey = key?.getPublicKey()
+        cached_key = signingKey
+        callback(null, signingKey)
       }
+    )
 
-      const signingKey = key?.getPublicKey()
-      cached_key = signingKey
-      callback(null, signingKey)
-    } catch (err) {
-      console.error('getKey Error:', err)
-      callback(err as Error)
-    }
+    console.log('debug:2')
   }
 
   const verifyToken = (token: string): Promise<jwt.JwtPayload | string> => {
