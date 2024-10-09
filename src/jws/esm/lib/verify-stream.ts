@@ -19,9 +19,8 @@ function safeJsonParse(thing) {
   }
 }
 
-// @ts-expect-error TODO
-function headerFromJWS(jwsSig) {
-  var encodedHeader = jwsSig.split('.', 1)[0]
+const headerFromJWS = (jwsSig: string) => {
+  const encodedHeader = jwsSig.split('.', 1)[0]
   return safeJsonParse(Buffer.from(encodedHeader, 'base64').toString('binary'))
 }
 
@@ -30,22 +29,15 @@ function securedInputFromJWS(jwsSig) {
   return jwsSig.split('.', 2).join('.')
 }
 
-// @ts-expect-error TODO
-function signatureFromJWS(jwsSig) {
-  return jwsSig.split('.')[2]
-}
+const signatureFromJWS = (jwsSig: string) => jwsSig.split('.')[2]
 
-// @ts-expect-error TODO
-function payloadFromJWS(jwsSig, encoding) {
-  encoding = encoding || 'utf8'
-  var payload = jwsSig.split('.')[1]
+const payloadFromJWS = (jwsSig: string, encoding: BufferEncoding = 'utf8') => {
+  const payload = jwsSig.split('.')[1]
   return Buffer.from(payload, 'base64').toString(encoding)
 }
 
-// @ts-expect-error TODO
-function isValidJws(string) {
-  return JWS_REGEX.test(string) && !!headerFromJWS(string)
-}
+const isValidJws = (string: string) =>
+  JWS_REGEX.test(string) && !!headerFromJWS(string)
 
 // @ts-expect-error TODO
 function jwsVerify(jwsSig, algorithm, secretOrKey) {
@@ -62,29 +54,33 @@ function jwsVerify(jwsSig, algorithm, secretOrKey) {
   return algo.verify(securedInput, signature, secretOrKey)
 }
 
-// @ts-expect-error TODO
-function jwsDecode(jwsSig, opts) {
-  opts = opts || {}
+export const decode = (
+  jwsSig: string,
+  opts?: {
+    json?: boolean
+    encoding?: Parameters<JSON['parse']>[1]
+  }
+) => {
   jwsSig = toString(jwsSig)
 
   if (!isValidJws(jwsSig)) return null
 
-  var header = headerFromJWS(jwsSig)
+  const header = headerFromJWS(jwsSig)
 
   if (!header) return null
 
-  // @ts-expect-error TODO
-  var payload = payloadFromJWS(jwsSig)
-  if (header.typ === 'JWT' || opts.json)
-    payload = JSON.parse(payload, opts.encoding)
+  let payload = payloadFromJWS(jwsSig)
+
+  if (header.typ === 'JWT' || opts?.json) {
+    payload = JSON.parse(payload, opts?.encoding)
+  }
 
   return {
-    header: header,
-    payload: payload,
+    header,
+    payload,
     signature: signatureFromJWS(jwsSig)
   }
 }
 
-export const decode = jwsDecode
 export const isValid = isValidJws
 export const verify = jwsVerify
