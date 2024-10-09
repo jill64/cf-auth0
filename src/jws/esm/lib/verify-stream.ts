@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer'
-import { KeyObject } from 'node:crypto'
+import type { KeyObject } from 'node:crypto'
 import { JwtHeader, JwtPayload } from '../../../jsonwebtoken/esm/index.js'
 import jwa from '../../../jwa/esm/index.js'
 import toString from './tostring.js'

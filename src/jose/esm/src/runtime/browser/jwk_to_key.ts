@@ -1,6 +1,6 @@
 import type { JWK } from '../../types.d.ts'
 import { JOSENotSupported } from '../../util/errors.js'
-import crypto from './webcrypto.js'
+import { subtle } from '../../../../../lib/crypto.js'
 
 function subtleMapping(jwk: JWK): {
   algorithm: RsaHashedImportParams | EcKeyAlgorithm | Algorithm
@@ -118,6 +118,6 @@ const parse = async (jwk: JWK) => {
   const keyData: JWK = { ...jwk }
   delete keyData.alg
   delete keyData.use
-  return crypto.subtle.importKey('jwk', keyData, ...rest)
+  return subtle.importKey('jwk', keyData, ...rest)
 }
 export default parse

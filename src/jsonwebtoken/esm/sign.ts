@@ -5,7 +5,11 @@ import isNumber from 'lodash.isnumber'
 import isPlainObject from 'lodash.isplainobject'
 import isString from 'lodash.isstring'
 import once from 'lodash.once'
-import { KeyObject, createPrivateKey, createSecretKey } from 'node:crypto'
+import {
+  KeyObject,
+  createPrivateKey,
+  createSecretKey
+} from '../../lib/crypto.js'
 import * as jws from '../../jws/esm/index.js'
 import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'

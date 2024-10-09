@@ -1,5 +1,6 @@
 import { Buffer } from 'node:buffer'
-import crypto, {
+import type {
+  BinaryLike,
   KeyLike,
   KeyObject,
   SignJsonWebKeyInput,
@@ -9,6 +10,13 @@ import crypto, {
   VerifyKeyObjectInput,
   VerifyPublicKeyInput
 } from 'node:crypto'
+import {
+  createSign,
+  createHmac,
+  createPublicKey,
+  createVerify,
+  constants
+} from '../../lib/crypto.js'
 import util from 'node:util'
 import bufferEqual from '../../buffer-equal-constant-time/esm/index.js'
 import formatEcdsa from '../../ecdsa-sig-formatter/esm/ecdsa-sig-formatter.js'
@@ -19,7 +27,7 @@ let MSG_INVALID_SECRET = 'secret must be a string or buffer'
 let MSG_INVALID_VERIFIER_KEY = 'key must be a string or a buffer'
 const MSG_INVALID_SIGNER_KEY = 'key must be a string, a buffer or an object'
 
-const supportsKeyObjects = typeof crypto.createPublicKey === 'function'
+const supportsKeyObjects = typeof createPublicKey === 'function'
 
 if (supportsKeyObjects) {
   MSG_INVALID_VERIFIER_KEY += ' or a KeyObject'
@@ -134,10 +142,10 @@ const normalizeInput = (thing: unknown) =>
 
 const createHmacSigner =
   (bits: number | string) =>
-  (thing: unknown, secret: crypto.BinaryLike | crypto.KeyObject) => {
+  (thing: unknown, secret: BinaryLike | KeyObject) => {
     checkIsSecretKey(secret)
     const thing2 = normalizeInput(thing)
-    const hmac = crypto.createHmac('sha' + bits, secret)
+    const hmac = createHmac('sha' + bits, secret)
     const sig = (hmac.update(thing2), hmac.digest('base64'))
 
     return fromBase64(sig)
@@ -145,11 +153,7 @@ const createHmacSigner =
 
 const createHmacVerifier =
   (bits: number | string) =>
-  (
-    thing: unknown,
-    signature: string,
-    secret: crypto.BinaryLike | crypto.KeyObject
-  ) => {
+  (thing: unknown, signature: string, secret: BinaryLike | KeyObject) => {
     const computedSig = createHmacSigner(bits)(thing, secret)
 
     return bufferEqual(Buffer.from(signature), Buffer.from(computedSig))
@@ -158,7 +162,7 @@ const createHmacVerifier =
 const createKeySigner =
   (bits: string | number) =>
   (
-    thing: crypto.BinaryLike | string,
+    thing: BinaryLike | string,
     privateKey:
       | KeyLike
       | SignKeyObjectInput
@@ -171,7 +175,7 @@ const createKeySigner =
 
     // Even though we are specifying "RSA" here, this works with ECDSA
     // keys as well.
-    const signer = crypto.createSign('RSA-SHA' + bits)
+    const signer = createSign('RSA-SHA' + bits)
     const sig = (signer.update(thing2), signer.sign(privateKey, 'base64'))
 
     return fromBase64(sig)
@@ -191,7 +195,7 @@ const createKeyVerifier =
     checkIsPublicKey(publicKey)
     const thing2 = normalizeInput(thing)
     const signature2 = toBase64(signature)
-    const verifier = crypto.createVerify('RSA-SHA' + bits)
+    const verifier = createVerify('RSA-SHA' + bits)
 
     verifier.update(thing2)
 
@@ -202,15 +206,15 @@ const createPSSKeySigner =
   (bits: string | number) => (thing: unknown, privateKey: KeyObject) => {
     checkIsPrivateKey(privateKey)
     const thing2 = normalizeInput(thing)
-    const signer = crypto.createSign('RSA-SHA' + bits)
+    const signer = createSign('RSA-SHA' + bits)
 
     const sig =
       (signer.update(thing2),
       signer.sign(
         {
           key: privateKey,
-          padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-          saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST
+          padding: constants.RSA_PKCS1_PSS_PADDING,
+          saltLength: constants.RSA_PSS_SALTLEN_DIGEST
         },
         'base64'
       ))
@@ -226,14 +230,14 @@ const createPSSKeyVerifier =
     const thing2 = normalizeInput(thing)
     const signature2 = toBase64(signature)
 
-    const verifier = crypto.createVerify('RSA-SHA' + bits)
+    const verifier = createVerify('RSA-SHA' + bits)
     verifier.update(thing2)
 
     return verifier.verify(
       {
         key: publicKey,
-        padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST
+        padding: constants.RSA_PKCS1_PSS_PADDING,
+        saltLength: constants.RSA_PSS_SALTLEN_DIGEST
       },
       signature2,
       'base64'
@@ -244,7 +248,7 @@ const createECDSASigner = (bits: number | string) => {
   const inner = createKeySigner(bits)
 
   return (
-    thing: crypto.BinaryLike | string,
+    thing: BinaryLike | string,
     privateKey:
       | KeyLike
       | SignKeyObjectInput

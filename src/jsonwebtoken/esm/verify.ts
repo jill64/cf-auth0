@@ -1,4 +1,4 @@
-import { createPublicKey, createSecretKey } from 'node:crypto'
+import { createPublicKey, createSecretKey } from '../../lib/crypto.js'
 import process from 'node:process'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'

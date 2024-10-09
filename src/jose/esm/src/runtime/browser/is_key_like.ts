@@ -1,5 +1,5 @@
 import type { KeyLike } from '../../types.d.ts'
-import { isCryptoKey } from './webcrypto.js'
+import { isCryptoKey } from '../../../../../lib/crypto.js'
 
 export default (key: unknown): key is KeyLike => {
   if (isCryptoKey(key)) {
