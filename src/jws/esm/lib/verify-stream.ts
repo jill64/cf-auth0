@@ -4,13 +4,10 @@ import toString from './tostring.js'
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
 
-// @ts-expect-error TODO
-function isObject(thing) {
-  return Object.prototype.toString.call(thing) === '[object Object]'
-}
+const isObject = (thing: unknown) =>
+  Object.prototype.toString.call(thing) === '[object Object]'
 
-// @ts-expect-error TODO
-function safeJsonParse(thing) {
+const safeJsonParse = (thing: string) => {
   if (isObject(thing)) return thing
   try {
     return JSON.parse(thing)
@@ -24,10 +21,7 @@ const headerFromJWS = (jwsSig: string) => {
   return safeJsonParse(Buffer.from(encodedHeader, 'base64').toString('binary'))
 }
 
-// @ts-expect-error TODO
-function securedInputFromJWS(jwsSig) {
-  return jwsSig.split('.', 2).join('.')
-}
+const securedInputFromJWS = (jwsSig: string) => jwsSig.split('.', 2).join('.')
 
 const signatureFromJWS = (jwsSig: string) => jwsSig.split('.')[2]
 
@@ -36,21 +30,27 @@ const payloadFromJWS = (jwsSig: string, encoding: BufferEncoding = 'utf8') => {
   return Buffer.from(payload, 'base64').toString(encoding)
 }
 
-const isValidJws = (string: string) =>
+export const isValid = (string: string) =>
   JWS_REGEX.test(string) && !!headerFromJWS(string)
 
-// @ts-expect-error TODO
-function jwsVerify(jwsSig, algorithm, secretOrKey) {
+export const verify = (
+  jwsSig: string,
+  algorithm: Parameters<typeof jwa>[0],
+  secretOrKey: Parameters<ReturnType<typeof jwa>['verify']>[1]
+) => {
   if (!algorithm) {
-    var err = new Error('Missing algorithm parameter for jws.verify')
+    let err = new Error('Missing algorithm parameter for jws.verify')
     // @ts-expect-error TODO
     err.code = 'MISSING_ALGORITHM'
     throw err
   }
-  jwsSig = toString(jwsSig)
-  var signature = signatureFromJWS(jwsSig)
-  var securedInput = securedInputFromJWS(jwsSig)
-  var algo = jwa(algorithm)
+
+  const jwsSig2 = toString(jwsSig)
+
+  const signature = signatureFromJWS(jwsSig2)
+  const securedInput = securedInputFromJWS(jwsSig2)
+  const algo = jwa(algorithm)
+
   return algo.verify(securedInput, signature, secretOrKey)
 }
 
@@ -61,15 +61,15 @@ export const decode = (
     encoding?: Parameters<JSON['parse']>[1]
   }
 ) => {
-  jwsSig = toString(jwsSig)
+  const jwsSig2 = toString(jwsSig)
 
-  if (!isValidJws(jwsSig)) return null
+  if (!isValid(jwsSig2)) return null
 
-  const header = headerFromJWS(jwsSig)
+  const header = headerFromJWS(jwsSig2)
 
   if (!header) return null
 
-  let payload = payloadFromJWS(jwsSig)
+  let payload = payloadFromJWS(jwsSig2)
 
   if (header.typ === 'JWT' || opts?.json) {
     payload = JSON.parse(payload, opts?.encoding)
@@ -81,6 +81,3 @@ export const decode = (
     signature: signatureFromJWS(jwsSig)
   }
 }
-
-export const isValid = isValidJws
-export const verify = jwsVerify
