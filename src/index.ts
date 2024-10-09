@@ -92,17 +92,20 @@ export const CfAuth0 = ({
       return null
     }
 
+    // @ts-expect-error TODO
     return jwt.decode(jwtToken)
   }
 
-  const verify = (
+  const verify = async (
     token: string,
     secretOrPublicKey: jwt.Secret | jwt.PublicKey
   ): Promise<jwt.JwtPayload | string> => {
-    return jwt.verify(token, secretOrPublicKey)
+    // @ts-expect-error TODO
+    return await jwt.verify(token, secretOrPublicKey)
   }
 
   const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
+    // @ts-expect-error TODO
     const cookieValue = jwt.sign(user, session_secret)
     cookies.set(auth0_cookie_name, cookieValue, {
       httpOnly: true,
