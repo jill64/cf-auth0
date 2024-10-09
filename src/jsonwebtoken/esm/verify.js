@@ -20,7 +20,12 @@ if (PS_SUPPORTED) {
 }
 
 // @ts-expect-error TODO
-export default function (jwtString, secretOrPublicKey, options, callback) {
+export default async function (
+  jwtString,
+  secretOrPublicKey,
+  options,
+  callback
+) {
   if (typeof options === 'function' && !callback) {
     callback = options
     options = {}
@@ -115,7 +120,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
   }
 
   // @ts-expect-error TODO
-  return getSecret(header, function (err, secretOrPublicKey) {
+  return await getSecret(header, function (err, secretOrPublicKey) {
     // eslint-disable-next-line no-undef
     console.log('getSecret', err, secretOrPublicKey)
 
