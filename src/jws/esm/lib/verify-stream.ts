@@ -51,6 +51,7 @@ export const verify = (
   const securedInput = securedInputFromJWS(jwsSig2)
   const algo = jwa(algorithm)
 
+  // @ts-expect-error TODO
   return algo.verify(securedInput, signature, secretOrKey)
 }
 
