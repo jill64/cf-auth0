@@ -75,6 +75,7 @@ function jwsDecode(jwsSig, opts) {
 
   if (!header) return null
 
+  // @ts-expect-error TODO
   var payload = payloadFromJWS(jwsSig)
   if (header.typ === 'JWT' || opts.json)
     payload = JSON.parse(payload, opts.encoding)
@@ -90,11 +91,17 @@ function jwsDecode(jwsSig, opts) {
 function VerifyStream(opts) {
   opts = opts || {}
   var secretOrKey = opts.secret || opts.publicKey || opts.key
+  // @ts-expect-error TODO
   var secretStream = new DataStream(secretOrKey)
+  // @ts-expect-error TODO
   this.readable = true
+  // @ts-expect-error TODO
   this.algorithm = opts.algorithm
+  // @ts-expect-error TODO
   this.encoding = opts.encoding
+  // @ts-expect-error TODO
   this.secret = this.publicKey = this.key = secretStream
+  // @ts-expect-error TODO
   this.signature = new DataStream(opts.signature)
   // @ts-expect-error TODO
   this.secret.once(
@@ -102,6 +109,7 @@ function VerifyStream(opts) {
     function () {
       // @ts-expect-error TODO
       if (!this.signature.writable && this.readable) this.verify()
+      // @ts-expect-error TODO
     }.bind(this)
   )
 
@@ -111,6 +119,7 @@ function VerifyStream(opts) {
     function () {
       // @ts-expect-error TODO
       if (!this.secret.writable && this.readable) this.verify()
+      // @ts-expect-error TODO
     }.bind(this)
   )
 }
@@ -123,19 +132,14 @@ VerifyStream.prototype.verify = function verify() {
       this.key.buffer
     )
     var obj = jwsDecode(this.signature.buffer, this.encoding)
-    // @ts-expect-error TODO
     this.emit('done', valid, obj)
-    // @ts-expect-error TODO
     this.emit('data', valid)
-    // @ts-expect-error TODO
     this.emit('end')
     this.readable = false
     return valid
   } catch (e) {
     this.readable = false
-    // @ts-expect-error TODO
     this.emit('error', e)
-    // @ts-expect-error TODO
     this.emit('close')
   }
 }

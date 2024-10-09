@@ -350,7 +350,6 @@ export default function (payload, secretOrPrivateKey, options, callback) {
         payload: payload,
         encoding: encoding
       })
-      // @ts-expect-error TODO
       .once('error', callback)
       // @ts-expect-error TODO
       .once('done', function (signature) {

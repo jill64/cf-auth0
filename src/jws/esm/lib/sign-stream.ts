@@ -37,11 +37,17 @@ function jwsSign(opts) {
 // @ts-expect-error TODO
 function SignStream(opts) {
   var secret = opts.secret || opts.privateKey || opts.key
+  // @ts-expect-error TODO
   var secretStream = new DataStream(secret)
+  // @ts-expect-error TODO
   this.readable = true
+  // @ts-expect-error TODO
   this.header = opts.header
+  // @ts-expect-error TODO
   this.encoding = opts.encoding
+  // @ts-expect-error TODO
   this.secret = this.privateKey = this.key = secretStream
+  // @ts-expect-error TODO
   this.payload = new DataStream(opts.payload)
   // @ts-expect-error TODO
   this.secret.once(
@@ -49,6 +55,7 @@ function SignStream(opts) {
     function () {
       // @ts-expect-error TODO
       if (!this.payload.writable && this.readable) this.sign()
+      // @ts-expect-error TODO
     }.bind(this)
   )
 
@@ -58,6 +65,7 @@ function SignStream(opts) {
     function () {
       // @ts-expect-error TODO
       if (!this.secret.writable && this.readable) this.sign()
+      // @ts-expect-error TODO
     }.bind(this)
   )
 }
@@ -71,19 +79,14 @@ SignStream.prototype.sign = function sign() {
       secret: this.secret.buffer,
       encoding: this.encoding
     })
-    // @ts-expect-error TODO
     this.emit('done', signature)
-    // @ts-expect-error TODO
     this.emit('data', signature)
-    // @ts-expect-error TODO
     this.emit('end')
     this.readable = false
     return signature
   } catch (e) {
     this.readable = false
-    // @ts-expect-error TODO
     this.emit('error', e)
-    // @ts-expect-error TODO
     this.emit('close')
   }
 }

@@ -22,9 +22,11 @@ export const decode = VerifyStream.decode
 export const isValid = VerifyStream.isValid
 // @ts-expect-error TODO
 export const createSign = function createSign(opts) {
+  // @ts-expect-error TODO
   return new SignStream(opts)
 }
 // @ts-expect-error TODO
 export const createVerify = function createVerify(opts) {
+  // @ts-expect-error TODO
   return new VerifyStream(opts)
 }
