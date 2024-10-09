@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer'
 import { KeyObject, createPublicKey, createSecretKey } from 'node:crypto'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
@@ -7,7 +8,6 @@ import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'
 import TokenExpiredError from './lib/TokenExpiredError.js'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
-import { Buffer } from 'node:buffer'
 
 const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512']
 const EC_KEY_ALGS = ['ES256', 'ES384', 'ES512']
@@ -19,8 +19,16 @@ if (PS_SUPPORTED) {
   RSA_KEY_ALGS.splice(RSA_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
 }
 
-// @ts-expect-error TODO
-export default function (jwtString, secretOrPublicKey, options, callback) {
+export default async function (
+  // @ts-expect-error TODO
+  jwtString,
+  // @ts-expect-error TODO
+  secretOrPublicKey,
+  // @ts-expect-error TODO
+  options,
+  // @ts-expect-error TODO
+  callback
+) {
   if (typeof options === 'function' && !callback) {
     callback = options
     options = {}
@@ -115,7 +123,7 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
   }
 
   // @ts-expect-error TODO
-  return getSecret(header, function (err, secretOrPublicKey) {
+  return await getSecret(header, function (err, secretOrPublicKey) {
     // eslint-disable-next-line no-undef
     console.log('getSecret', err, secretOrPublicKey)
 

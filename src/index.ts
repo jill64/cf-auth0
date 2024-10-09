@@ -98,7 +98,7 @@ export const CfAuth0 = ({
   const verify = (
     token: string,
     secretOrPublicKey: jwt.Secret | jwt.PublicKey
-  ): jwt.JwtPayload | string => {
+  ): Promise<jwt.JwtPayload | string> => {
     return jwt.verify(token, secretOrPublicKey)
   }
 
