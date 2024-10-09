@@ -43,7 +43,7 @@ export const JwksClient = (jwksUri: string) => {
     return signingKeys
   }
 
-  const getSigningKey = async (kid: string) => {
+  const getSigningKey = async (kid?: string) => {
     console.log(`Fetching signing key for '${kid}'`)
 
     const keys = await getSigningKeys()

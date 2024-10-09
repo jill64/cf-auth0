@@ -25,7 +25,7 @@ export const CfAuth0 = ({
 }) => {
   const getKey = async (header: jwt.JwtHeader) => {
     try {
-      const client = new JwksClient({ jwksUri: jwks_url })
+      const client = JwksClient(jwks_url)
 
       console.log('debug:1')
 
