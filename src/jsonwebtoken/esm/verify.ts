@@ -73,6 +73,8 @@ export default async function (
 
   let secretOrPublicKey2
 
+  console.log('debug1.1')
+
   const sig = await new Promise<
     Secret | PublicKeyInput | JsonWebKeyInput | undefined
   >((resolve, reject) =>
@@ -83,6 +85,8 @@ export default async function (
       resolve(data)
     })
   )
+
+  console.log('sig', sig)
 
   if (!sig) {
     throw new JsonWebTokenError('sig must be provided')
