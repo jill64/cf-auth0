@@ -1,6 +1,5 @@
 import { Buffer } from 'node:buffer'
 import { KeyObject } from 'node:crypto'
-import { JwtHeader, JwtPayload } from '../../../jsonwebtoken/esm/index.js'
 import jwa from '../../../jwa/esm/index.js'
 import toString from './tostring.js'
 
@@ -9,11 +8,8 @@ const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
 const isObject = (thing: unknown) =>
   Object.prototype.toString.call(thing) === '[object Object]'
 
-const safeJsonParse = <T>(thing: string): T | undefined => {
-  if (isObject(thing)) {
-    return thing as T
-  }
-
+const safeJsonParse = (thing: string) => {
+  if (isObject(thing)) return thing
   try {
     return JSON.parse(thing)
   } catch {
@@ -23,9 +19,7 @@ const safeJsonParse = <T>(thing: string): T | undefined => {
 
 const headerFromJWS = (jwsSig: string) => {
   const encodedHeader = jwsSig.split('.', 1)[0]
-  return safeJsonParse<JwtHeader>(
-    Buffer.from(encodedHeader, 'base64').toString('binary')
-  )
+  return safeJsonParse(Buffer.from(encodedHeader, 'base64').toString('binary'))
 }
 
 const securedInputFromJWS = (jwsSig: string) => jwsSig.split('.', 2).join('.')
@@ -73,16 +67,15 @@ export const decode = (
 
   if (!header) return null
 
-  const payload = payloadFromJWS(jwsSig2)
+  let payload = payloadFromJWS(jwsSig2)
 
-  const payload2 =
-    header.typ === 'JWT' || opts?.json
-      ? (JSON.parse(payload, opts?.encoding) as JwtPayload)
-      : payload
+  if (header.typ === 'JWT' || opts?.json) {
+    payload = JSON.parse(payload, opts?.encoding)
+  }
 
   return {
     header,
-    payload: payload2,
+    payload,
     signature: signatureFromJWS(jwsSig)
   }
 }
