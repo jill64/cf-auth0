@@ -27,11 +27,7 @@ export const CfAuth0 = ({
     try {
       const client = JwksClient(jwks_url)
 
-      console.log('debug:1')
-
       const key = await client.getSigningKey(header.kid)
-
-      console.log('debug:2')
 
       if (cached_key) {
         return cached_key

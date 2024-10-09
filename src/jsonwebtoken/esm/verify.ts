@@ -49,8 +49,6 @@ export default async function (
   // @ts-expect-error TODO
   const header = decodedToken.header
 
-  console.log('secretOrPublicKey', secretOrPublicKey)
-
   const hasSignature = parts[2].trim() !== ''
 
   if (!hasSignature) {
@@ -69,14 +67,10 @@ export default async function (
 
   let secretOrPublicKey2
 
-  console.log('debug1.1')
-
   const sig =
     typeof secretOrPublicKey === 'string'
       ? secretOrPublicKey
       : await secretOrPublicKey(header)
-
-  console.log('sig', sig)
 
   if (!sig) {
     throw new JsonWebTokenError('sig must be provided')
@@ -127,7 +121,10 @@ export default async function (
     options.algorithms = PUB_KEY_ALGS
   }
 
+  console.log('sig', sig)
+  console.log('secretOrPublicKey2', secretOrPublicKey2)
   console.log('options', options)
+  console.log('decodedToken', decodedToken)
 
   // @ts-expect-error TODO
   if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
