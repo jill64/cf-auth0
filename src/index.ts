@@ -23,34 +23,31 @@ export const CfAuth0 = ({
   session_secret: string
   base_url: string
 }) => {
-  const getKey = (header: jwt.JwtHeader, callback: jwt.SigningKeyCallback) => {
-    const client = new JwksClient({ jwksUri: jwks_url })
+  const getKey = async (
+    header: jwt.JwtHeader,
+    callback: jwt.SigningKeyCallback
+  ) => {
+    try {
+      const client = new JwksClient({ jwksUri: jwks_url })
 
-    console.log('debug:1')
+      console.log('debug:1')
 
-    client.getSigningKey(
-      header.kid,
-      (key: {
-        alg?: unknown
-        kid?: unknown
-        publicKey: string
-        rsaPublicKey: string
-        getPublicKey: () => string
-      }) => {
-        console.log('debug:3')
+      const key = await client.getSigningKey(header.kid)
 
-        if (cached_key) {
-          callback(null, cached_key)
-          return
-        }
+      console.log('debug:2')
 
-        const signingKey = key?.getPublicKey()
-        cached_key = signingKey
-        callback(null, signingKey)
+      if (cached_key) {
+        callback(null, cached_key)
+        return
       }
-    )
 
-    console.log('debug:2')
+      const signingKey = key?.getPublicKey()
+      cached_key = signingKey
+      callback(null, signingKey)
+    } catch (err) {
+      console.error('getKey Error:', err)
+      callback(err as Error)
+    }
   }
 
   const verifyToken = (token: string): Promise<jwt.JwtPayload | string> => {
