@@ -1,11 +1,12 @@
 import { decode } from '../../jws/esm/index.js'
+import { Jwt, JwtPayload } from './index.js'
 
 export default (
   jwt: string,
   options: Parameters<typeof decode>[1] & {
     complete?: boolean
   } = {}
-) => {
+): string | JwtPayload | null | Jwt => {
   const decoded = decode(jwt, options)
 
   if (!decoded) {
