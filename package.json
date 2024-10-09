@@ -54,7 +54,7 @@
   "devDependencies": {
     "@jill64/eslint-config-ts": "1.1.43",
     "@jill64/prettier-config": "1.0.0",
-    "typescript": "5.6.2",
+    "typescript": "5.6.3",
     "vitest": "2.1.2"
   },
   "homepage": "https://github.com/jill64/cf-auth0#readme",
@@ -69,7 +69,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/6801a90807fb450720828b83f611b529f349f93497ea47b8be072def66f2ddb8/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/7e42875ea2845156bf84cc511e59bfc6d74f38b03b1d3587be59cd054ad16d12/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {
