@@ -47,7 +47,7 @@ async function retrieveSigningKeys(jwks) {
 
   for (const jwk of jwks) {
     try {
-      const key = await importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
+      const key = importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
       // @ts-expect-error TODO
       if (key.type !== 'public') {
         continue
@@ -68,8 +68,8 @@ async function retrieveSigningKeys(jwks) {
         default:
           // getSpki = () => key.export({ format: 'pem', type: 'spki' })
           // @ts-expect-error TODO
-          var spki = await exportSPKI(key)
-          getSpki = () => spki
+          var spki2 = await exportSPKI(key)
+          getSpki = () => spki2
       }
       results.push({
         get publicKey() {
