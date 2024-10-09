@@ -13,10 +13,10 @@ export interface PEMImportOptions {
   extractable?: boolean
 }
 
-export async function importJWK<KeyLikeType extends KeyLike = KeyLike>(
+export function importJWK<KeyLikeType extends KeyLike = KeyLike>(
   jwk: JWK,
   alg?: string
-): Promise<KeyLikeType | Uint8Array> {
+): KeyLikeType | Uint8Array {
   if (!isObject(jwk)) {
     throw new TypeError('JWK must be an object')
   }
