@@ -50,8 +50,7 @@ export const CfAuth0 = ({
     }
   }
 
-  const verifyToken = (token: string): Promise<jwt.JwtPayload> =>
-    jwt.verify(token, getKey)
+  const verifyToken = (token: string) => jwt.verify(token, getKey)
 
   const getToken = async ({
     code
@@ -88,10 +87,8 @@ export const CfAuth0 = ({
     return jwt.decode(jwtToken)
   }
 
-  const verify = (
-    token: string,
-    secretOrPublicKey: jwt.GetPublicKeyOrSecret
-  ): Promise<jwt.JwtPayload> => jwt.verify(token, secretOrPublicKey)
+  const verify = (token: string, secretOrPublicKey: string) =>
+    jwt.verify(token, secretOrPublicKey)
 
   const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
     // @ts-expect-error TODO
