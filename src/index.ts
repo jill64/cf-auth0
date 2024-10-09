@@ -79,8 +79,7 @@ export const CfAuth0 = ({
     return jwt.decode(jwtToken)
   }
 
-  const verify = (token: string, secretOrPublicKey: string) =>
-    jwt.verify(token, secretOrPublicKey)
+  const verify = jwt.verify
 
   const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
     // @ts-expect-error TODO
