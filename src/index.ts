@@ -28,28 +28,17 @@ export const CfAuth0 = ({
 
     console.log('debug:1')
 
-    client.getSigningKey(
-      header.kid,
-      (key: {
-        alg?: unknown
-        kid?: unknown
-        publicKey: string
-        rsaPublicKey: string
-        getPublicKey: () => string
-      }) => {
-        console.log('debug:3')
+    client.getSigningKey(header.kid)
 
-        if (cached_key) {
-          callback(null, cached_key)
-        }
+    console.log('debug:3')
 
-        const signingKey = key?.getPublicKey()
-        cached_key = signingKey
-        callback(null, signingKey)
-      }
-    )
+    if (cached_key) {
+      callback(null, cached_key)
+    }
 
-    console.log('debug:2')
+    // const signingKey = key?.getPublicKey()
+    // cached_key = signingKey
+    callback(null, 'signingKey')
   }
 
   const verifyToken = (token: string): Promise<jwt.JwtPayload | string> => {
