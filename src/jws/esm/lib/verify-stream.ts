@@ -1,5 +1,4 @@
 import { Buffer } from 'node:buffer'
-import { KeyObject } from 'node:crypto'
 import jwa from '../../../jwa/esm/index.js'
 import toString from './tostring.js'
 
@@ -37,10 +36,13 @@ export const isValid = (string: string) =>
 export const verify = (
   jwsSig: string,
   algorithm: Parameters<typeof jwa>[0],
-  secretOrKey: KeyObject
+  secretOrKey: Parameters<ReturnType<typeof jwa>['verify']>[1]
 ) => {
   if (!algorithm) {
-    throw new Error('MISSING_ALGORITHM: parameter for jws.verify')
+    let err = new Error('Missing algorithm parameter for jws.verify')
+    // @ts-expect-error TODO
+    err.code = 'MISSING_ALGORITHM'
+    throw err
   }
 
   const jwsSig2 = toString(jwsSig)
@@ -49,6 +51,7 @@ export const verify = (
   const securedInput = securedInputFromJWS(jwsSig2)
   const algo = jwa(algorithm)
 
+  // @ts-expect-error TODO
   return algo.verify(securedInput, signature, secretOrKey)
 }
 

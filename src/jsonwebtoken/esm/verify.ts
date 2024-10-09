@@ -152,6 +152,7 @@ export default async function (
     jwtString,
     // @ts-expect-error TODO
     decodedToken.header.alg,
+    // @ts-expect-error TODO
     secretOrPublicKey2
   )
 
