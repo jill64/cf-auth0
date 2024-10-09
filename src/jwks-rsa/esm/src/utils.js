@@ -66,10 +66,10 @@ async function retrieveSigningKeys(jwks) {
         // Assume legacy Node.js version without the Symbol.toStringTag backported
         // Fall through
         default:
-          // getSpki = () => key.export({ format: 'pem', type: 'spki' })
           // @ts-expect-error TODO
-          var spki = await exportSPKI(key)
-          getSpki = () => spki
+          getSpki = () => key.export({ format: 'pem', type: 'spki' })
+        // var spki = await exportSPKI(key)
+        // getSpki = () => spki
       }
       results.push({
         get publicKey() {
