@@ -1,8 +1,7 @@
+import isObject from '../lib/is_object.js'
 import { decode as decodeBase64URL } from '../runtime/browser/base64url.js'
 import asKeyObject from '../runtime/browser/jwk_to_key.js'
-
-import isObject from '../lib/is_object.js'
-import type { JWK, KeyLike } from '../types.d.ts'
+import type { JWK } from '../types.d.ts'
 import { JOSENotSupported } from '../util/errors.js'
 
 export interface PEMImportOptions {
@@ -13,10 +12,7 @@ export interface PEMImportOptions {
   extractable?: boolean
 }
 
-export async function importJWK<KeyLikeType extends KeyLike = KeyLike>(
-  jwk: JWK,
-  alg?: string
-): Promise<KeyLikeType | Uint8Array> {
+export const importJWK = async (jwk: JWK, alg?: string) => {
   if (!isObject(jwk)) {
     throw new TypeError('JWK must be an object')
   }
@@ -38,7 +34,6 @@ export async function importJWK<KeyLikeType extends KeyLike = KeyLike>(
       }
     case 'EC':
     case 'OKP':
-      // @ts-expect-error TODO
       return asKeyObject({ ...jwk, alg })
     default:
       throw new JOSENotSupported('Unsupported "kty" (Key Type) Parameter value')
