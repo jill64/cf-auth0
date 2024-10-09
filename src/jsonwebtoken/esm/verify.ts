@@ -1,4 +1,5 @@
 import { createPublicKey, createSecretKey } from 'node:crypto'
+import process from 'node:process'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
 import { JwtHeader, JwtPayload, PublicKey, Secret } from './index.js'
@@ -6,16 +7,11 @@ import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
 import TokenExpiredError from './lib/TokenExpiredError.js'
-import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
-import process from 'node:process'
 
 const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512']
-const EC_KEY_ALGS = ['ES256', 'ES384', 'ES512']
 const RSA_KEY_ALGS = ['RS256', 'RS384', 'RS512']
-const HS_ALGS = ['HS256', 'HS384', 'HS512']
 
 if (PS_SUPPORTED) {
-  console.log('PS_SUPPORTED')
   PUB_KEY_ALGS.splice(PUB_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
   RSA_KEY_ALGS.splice(RSA_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
 }
@@ -95,69 +91,68 @@ export default async function (
   //   throw new JsonWebTokenError('invalid key')
   // }
 
-  const secretOrPublicKey3 = secretOrPublicKey2 as unknown as {
-    asymmetricKeyType: 'rsa' | 'rsa-pss' | 'ec'
-    asymmetricKeyDetails: {
-      namedCurve: string
-      hashAlgorithm: string
-      mgf1HashAlgorithm: string
-      saltLength: number
-    }
-  }
+  // const secretOrPublicKey3 = secretOrPublicKey2 as unknown as {
+  //   asymmetricKeyType: 'rsa' | 'rsa-pss' | 'ec'
+  //   asymmetricKeyDetails: {
+  //     namedCurve: string
+  //     hashAlgorithm: string
+  //     mgf1HashAlgorithm: string
+  //     saltLength: number
+  //   }
+  // }
 
-  let options: {
-    algorithms: string[]
-  } = {
-    algorithms: []
-  }
+  // let options: {
+  //   algorithms: string[]
+  // } = {
+  //   algorithms: []
+  // }
 
-  if (secretOrPublicKey2.type === 'secret') {
-    console.log('USE HS_ALGS')
-    options.algorithms = HS_ALGS
-  } else if (
-    ['rsa', 'rsa-pss'].includes(secretOrPublicKey3.asymmetricKeyType)
-  ) {
-    console.log('USE RSA_KEY_ALGS')
-    options.algorithms = RSA_KEY_ALGS
-  } else if (secretOrPublicKey2.asymmetricKeyType === 'ec') {
-    console.log('USE EC_KEY_ALGS')
-    options.algorithms = EC_KEY_ALGS
-  } else {
-    console.log('USE PUB_KEY_ALGS')
-    options.algorithms = PUB_KEY_ALGS
-  }
+  // if (secretOrPublicKey2.type === 'secret') {
+  //   console.log('USE HS_ALGS')
+  //   options.algorithms = HS_ALGS
+  // } else if (
+  //   ['rsa', 'rsa-pss'].includes(secretOrPublicKey3.asymmetricKeyType)
+  // ) {
+  //   console.log('USE RSA_KEY_ALGS')
+  //   options.algorithms = RSA_KEY_ALGS
+  // } else if (secretOrPublicKey2.asymmetricKeyType === 'ec') {
+  //   console.log('USE EC_KEY_ALGS')
+  //   options.algorithms = EC_KEY_ALGS
+  // } else {
+  //   console.log('USE PUB_KEY_ALGS')
+  //   options.algorithms = PUB_KEY_ALGS
+  // }
 
   console.log(process.version)
   console.log('sig', sig)
   console.log('secretOrPublicKey2', secretOrPublicKey2)
-  console.log('options', options)
+  // console.log('options', options)
   console.log('decodedToken', decodedToken)
 
-  // @ts-expect-error TODO
-  if (options.algorithms.includes(decodedToken.header.alg)) {
-    throw new JsonWebTokenError('invalid algorithm')
-  }
+  // if (options.algorithms.includes(decodedToken.header.alg)) {
+  //   throw new JsonWebTokenError('invalid algorithm')
+  // }
 
-  if (header.alg.startsWith('HS') && secretOrPublicKey2.type !== 'secret') {
-    throw new JsonWebTokenError(
-      `secretOrPublicKey must be a symmetric key when using ${header.alg}`
-    )
-  } else if (
-    /^(?:RS|PS|ES)/.test(header.alg) &&
-    secretOrPublicKey2.type !== 'public'
-  ) {
-    throw new JsonWebTokenError(
-      `secretOrPublicKey must be an asymmetric key when using ${header.alg}`
-    )
-  }
+  // if (header.alg.startsWith('HS') && secretOrPublicKey2.type !== 'secret') {
+  //   throw new JsonWebTokenError(
+  //     `secretOrPublicKey must be a symmetric key when using ${header.alg}`
+  //   )
+  // } else if (
+  //   /^(?:RS|PS|ES)/.test(header.alg) &&
+  //   secretOrPublicKey2.type !== 'public'
+  // ) {
+  //   throw new JsonWebTokenError(
+  //     `secretOrPublicKey must be an asymmetric key when using ${header.alg}`
+  //   )
+  // }
 
-  validateAsymmetricKey(header.alg, secretOrPublicKey3)
+  // validateAsymmetricKey(header.alg, secretOrPublicKey3)
 
   const valid = jws.verify(
     jwtString,
     // @ts-expect-error TODO
     decodedToken.header.alg,
-    secretOrPublicKey3
+    secretOrPublicKey2
   )
 
   if (!valid) {
