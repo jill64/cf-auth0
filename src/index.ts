@@ -50,15 +50,17 @@ export const CfAuth0 = ({
     }
   }
 
-  const verifyToken = (token: string): Promise<jwt.JwtPayload | string> => {
-    return new Promise((resolve, reject) => {
-      jwt.verify(token, getKey, {}, (err: Error, payload: jwt.JwtPayload) => {
-        if (err || !payload) {
-          return reject(err)
-        }
-        return resolve(payload)
-      })
-    })
+  const verifyToken = async (
+    token: string
+  ): Promise<jwt.JwtPayload | string> => {
+    try {
+      const payload = await jwt.verify(token, getKey)
+      console.log('payload:', payload)
+      return payload
+    } catch (err) {
+      console.error('verifyToken Error:', err)
+      throw err
+    }
   }
 
   const getToken = async ({
