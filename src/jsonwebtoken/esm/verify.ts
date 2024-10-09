@@ -1,7 +1,12 @@
-import { createPublicKey, createSecretKey } from 'node:crypto'
+import {
+  createPublicKey,
+  createSecretKey,
+  JsonWebKeyInput,
+  PublicKeyInput
+} from 'node:crypto'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
-import { GetPublicKeyOrSecret, JwtPayload } from './index.js'
+import { GetPublicKeyOrSecret, JwtPayload, Secret } from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
@@ -68,14 +73,28 @@ export default async function (
 
   let secretOrPublicKey2
 
+  const sig = await new Promise<
+    Secret | PublicKeyInput | JsonWebKeyInput | undefined
+  >((resolve, reject) =>
+    secretOrPublicKey(header, (err, data) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(data)
+    })
+  )
+
+  if (!sig) {
+    throw new JsonWebTokenError('sig must be provided')
+  }
+
   try {
-    // @ts-expect-error TODO
-    secretOrPublicKey2 = createPublicKey(secretOrPublicKey)
+    secretOrPublicKey2 = createPublicKey(sig)
   } catch (e) {
     console.error('createPublicKey Error:', e)
     try {
       // @ts-expect-error TODO
-      secretOrPublicKey2 = createSecretKey(secretOrPublicKey)
+      secretOrPublicKey2 = createSecretKey(sig)
     } catch (e) {
       console.error('createSecretKey Error:', e)
       throw new JsonWebTokenError('secretOrPublicKey is not valid key material')
