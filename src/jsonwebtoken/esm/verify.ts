@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer'
-import { KeyObject, createPublicKey, createSecretKey } from 'node:crypto'
+import { createPublicKey, createSecretKey } from 'node:crypto'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
 import { JwtPayload } from './index.js'
@@ -69,21 +69,33 @@ export default async function (
     )
   }
 
-  if (secretOrPublicKey != null && !(secretOrPublicKey instanceof KeyObject)) {
+  let secretOrPublicKey2
+
+  try {
+    secretOrPublicKey2 = createPublicKey(secretOrPublicKey)
+  } catch {
     try {
-      secretOrPublicKey = createPublicKey(secretOrPublicKey)
+      secretOrPublicKey2 = createSecretKey(
+        typeof secretOrPublicKey === 'string'
+          ? Buffer.from(secretOrPublicKey)
+          : secretOrPublicKey
+      )
     } catch {
-      try {
-        secretOrPublicKey = createSecretKey(
-          typeof secretOrPublicKey === 'string'
-            ? Buffer.from(secretOrPublicKey)
-            : secretOrPublicKey
-        )
-      } catch {
-        throw new JsonWebTokenError(
-          'secretOrPublicKey is not valid key material'
-        )
-      }
+      throw new JsonWebTokenError('secretOrPublicKey is not valid key material')
+    }
+  }
+
+  if (secretOrPublicKey2.asymmetricKeyType !== undefined) {
+    throw new JsonWebTokenError('invalid key')
+  }
+
+  const secretOrPublicKey3 = secretOrPublicKey2 as unknown as {
+    asymmetricKeyType: 'rsa' | 'rsa-pss' | 'ec'
+    asymmetricKeyDetails: {
+      namedCurve: string
+      hashAlgorithm: string
+      mgf1HashAlgorithm: string
+      saltLength: number
     }
   }
 
@@ -93,11 +105,13 @@ export default async function (
     algorithms: []
   }
 
-  if (secretOrPublicKey.type === 'secret') {
+  if (secretOrPublicKey2.type === 'secret') {
     options.algorithms = HS_ALGS
-  } else if (['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)) {
+  } else if (
+    ['rsa', 'rsa-pss'].includes(secretOrPublicKey3.asymmetricKeyType)
+  ) {
     options.algorithms = RSA_KEY_ALGS
-  } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
+  } else if (secretOrPublicKey2.asymmetricKeyType === 'ec') {
     options.algorithms = EC_KEY_ALGS
   } else {
     options.algorithms = PUB_KEY_ALGS
@@ -108,26 +122,26 @@ export default async function (
     throw new JsonWebTokenError('invalid algorithm')
   }
 
-  if (header.alg.startsWith('HS') && secretOrPublicKey.type !== 'secret') {
+  if (header.alg.startsWith('HS') && secretOrPublicKey2.type !== 'secret') {
     throw new JsonWebTokenError(
       `secretOrPublicKey must be a symmetric key when using ${header.alg}`
     )
   } else if (
     /^(?:RS|PS|ES)/.test(header.alg) &&
-    secretOrPublicKey.type !== 'public'
+    secretOrPublicKey2.type !== 'public'
   ) {
     throw new JsonWebTokenError(
       `secretOrPublicKey must be an asymmetric key when using ${header.alg}`
     )
   }
 
-  validateAsymmetricKey(header.alg, secretOrPublicKey)
+  validateAsymmetricKey(header.alg, secretOrPublicKey3)
 
   const valid = jws.verify(
     jwtString,
     // @ts-expect-error TODO
     decodedToken.header.alg,
-    secretOrPublicKey
+    secretOrPublicKey3
   )
 
   if (!valid) {
