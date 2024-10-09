@@ -139,7 +139,6 @@ export default async function (
   console.log(process.version)
   console.log('sig', sig)
   console.log('secretOrPublicKey2', secretOrPublicKey2)
-  // console.log('options', options)
   console.log('decodedToken', decodedToken)
 
   // if (options.algorithms.includes(decodedToken.header.alg)) {
