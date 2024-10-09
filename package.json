@@ -1,6 +1,6 @@
 {
   "name": "@jill64/cf-auth0",
-  "version": "0.0.70",
+  "version": "0.0.71",
   "type": "module",
   "main": "dist/index.js",
   "files": [
