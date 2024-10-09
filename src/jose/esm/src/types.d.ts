@@ -798,5 +798,3 @@ export interface CompactJWEHeaderParameters extends JWEHeaderParameters {
 export interface JSONWebKeySet {
   keys: JWK[]
 }
-
-export type CryptoRuntime = 'WebCryptoAPI' | 'node:crypto'

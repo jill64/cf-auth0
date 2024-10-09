@@ -1,6 +1,6 @@
-import { createPublicKey, createSecretKey } from 'node:crypto'
 import process from 'node:process'
 import * as jws from '../../jws/esm/index.js'
+import { createPublicKey, createSecretKey } from '../../lib/crypto/index.js'
 import decode from './decode.js'
 import { Jwt, JwtHeader, JwtPayload, PublicKey, Secret } from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'

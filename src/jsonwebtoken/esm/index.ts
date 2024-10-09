@@ -1,4 +1,4 @@
-import { createPrivateKey, createPublicKey, KeyObject } from 'node:crypto'
+import type { createPrivateKey, createPublicKey, KeyObject } from 'node:crypto'
 import decode from './decode.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'

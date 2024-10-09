@@ -5,11 +5,15 @@ import isNumber from 'lodash.isnumber'
 import isPlainObject from 'lodash.isplainobject'
 import isString from 'lodash.isstring'
 import once from 'lodash.once'
-import { KeyObject, createPrivateKey, createSecretKey } from 'node:crypto'
+import { Buffer } from 'node:buffer'
 import * as jws from '../../jws/esm/index.js'
+import {
+  KeyObject,
+  createPrivateKey,
+  createSecretKey
+} from '../../lib/crypto/index.js'
 import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'
-import { Buffer } from 'node:buffer'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
 
 const SUPPORTED_ALGS = [

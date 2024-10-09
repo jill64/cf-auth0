@@ -1,4 +1,4 @@
-import crypto from './webcrypto.js'
+import { subtle } from '../../../../../lib/crypto/index.js'
 import type { DigestFunction } from '../interfaces.d.ts'
 
 const digest: DigestFunction = async (
@@ -6,6 +6,6 @@ const digest: DigestFunction = async (
   data: Uint8Array
 ): Promise<Uint8Array> => {
   const subtleDigest = `SHA-${algorithm.slice(-3)}`
-  return new Uint8Array(await crypto.subtle.digest(subtleDigest, data))
+  return new Uint8Array(await subtle.digest(subtleDigest, data))
 }
 export default digest
