@@ -70,7 +70,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/1cfe5645036f1d68efc7c59a5c60688bb03e1ac7b4c34deddd376c1832fe4588/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/defebb636e627b06c82d847236516ee9f79cddf5a33f1aa7d668f38daa81d0a7/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {
