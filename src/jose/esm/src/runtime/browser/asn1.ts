@@ -1,9 +1,9 @@
+import { isCryptoKey, subtle } from '../../../../../lib/crypto/index.js'
 import formatPEM from '../../lib/format_pem.js'
 import invalidKeyInput from '../../lib/invalid_key_input.js'
 import type { PEMExportFunction } from '../interfaces.d.ts'
 import { encodeBase64 } from './base64url.js'
 import { types } from './is_key_like.js'
-import { isCryptoKey, subtle } from '../../../../../lib/crypto.js'
 
 const genericExport = async (
   keyType: 'private' | 'public',

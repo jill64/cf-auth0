@@ -10,16 +10,16 @@ import type {
   VerifyKeyObjectInput,
   VerifyPublicKeyInput
 } from 'node:crypto'
-import {
-  createSign,
-  createHmac,
-  createPublicKey,
-  createVerify,
-  constants
-} from '../../lib/crypto.js'
 import util from 'node:util'
 import bufferEqual from '../../buffer-equal-constant-time/esm/index.js'
 import formatEcdsa from '../../ecdsa-sig-formatter/esm/ecdsa-sig-formatter.js'
+import {
+  constants,
+  createHmac,
+  createPublicKey,
+  createSign,
+  createVerify
+} from '../../lib/crypto/index.js'
 
 const MSG_INVALID_ALGORITHM =
   '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'

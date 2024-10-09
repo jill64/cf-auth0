@@ -1,4 +1,4 @@
-import { subtle } from '../../../../../lib/crypto.js'
+import { subtle } from '../../../../../lib/crypto/index.js'
 import type { DigestFunction } from '../interfaces.d.ts'
 
 const digest: DigestFunction = async (

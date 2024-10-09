@@ -1,6 +1,6 @@
+import { subtle } from '../../../../../lib/crypto/index.js'
 import type { JWK } from '../../types.d.ts'
 import { JOSENotSupported } from '../../util/errors.js'
-import { subtle } from '../../../../../lib/crypto.js'
 
 function subtleMapping(jwk: JWK): {
   algorithm: RsaHashedImportParams | EcKeyAlgorithm | Algorithm
