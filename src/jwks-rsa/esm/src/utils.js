@@ -1,4 +1,4 @@
-import { importJWK, exportSPKI } from '../../../jose/esm/src/index.js'
+import { exportSPKI, importJWK } from '../../../jose/esm/src/index.js'
 import JwksError from './errors/JwksError.js'
 
 // @ts-expect-error TODO
@@ -47,6 +47,8 @@ async function retrieveSigningKeys(jwks) {
 
   for (const jwk of jwks) {
     try {
+      // eslint-disable-next-line no-undef
+      console.log('jwk:', jwk)
       const key = importJWK({ ...jwk, ext: true }, resolveAlg(jwk))
       // @ts-expect-error TODO
       if (key.type !== 'public') {
