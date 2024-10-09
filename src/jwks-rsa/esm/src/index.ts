@@ -1,10 +1,7 @@
 import { JwksClient } from './JwksClient.js'
 import errors from './errors/index.js'
 
-// @ts-expect-error TODO
-export default (options) => {
-  return new JwksClient(options)
-}
+export default JwksClient
 
 export { JwksClient }
 
