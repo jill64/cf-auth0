@@ -139,6 +139,9 @@ export default async function (
   console.log(process.version)
   console.log('sig', sig)
   console.log('secretOrPublicKey2', secretOrPublicKey2)
+  Object.keys(secretOrPublicKey2).forEach((key) => {
+    console.log(`secretOrPublicKey2.${key}`, secretOrPublicKey)
+  })
   console.log('decodedToken', decodedToken)
 
   // if (options.algorithms.includes(decodedToken.header.alg)) {
