@@ -1,34 +1,32 @@
-import * as jws from '../../jws/esm/index.js'
+import { decode } from '../../jws/esm/index.js'
+import { JwtPayload } from './index.js'
 
-// @ts-expect-error TODO
-export default function (jwt, options) {
-  options = options || {}
-  var decoded = jws.decode(jwt, options)
+export default (jwt: string, options?: Parameters<typeof decode>[1]) => {
+  const decoded = decode(jwt, options)
+
   if (!decoded) {
     return null
   }
-  var payload = decoded.payload
+
+  const { header, payload, signature } = decoded
+
+  let payload2: JwtPayload | undefined
 
   //try parse the payload
   if (typeof payload === 'string') {
-    try {
-      var obj = JSON.parse(payload)
-      if (obj !== null && typeof obj === 'object') {
-        payload = obj
-      }
-      // eslint-disable-next-line no-empty
-    } catch {}
+    const obj = JSON.parse(payload)
+
+    if (obj !== null && typeof obj === 'object') {
+      payload2 = obj
+    }
   }
 
   //return header if `complete` option is enabled.  header includes claims
   //such as `kid` and `alg` used to select the key within a JWKS needed to
   //verify the signature
-  if (options.complete === true) {
-    return {
-      header: decoded.header,
-      payload: payload,
-      signature: decoded.signature
-    }
+  return {
+    header,
+    payload: payload2,
+    signature
   }
-  return payload
 }
