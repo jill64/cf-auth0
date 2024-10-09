@@ -2,6 +2,7 @@ import { Buffer } from 'node:buffer'
 import { KeyObject, createPublicKey, createSecretKey } from 'node:crypto'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
+import { JwtPayload } from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
@@ -22,203 +23,137 @@ export default async function (
   // @ts-expect-error TODO
   jwtString,
   // @ts-expect-error TODO
-  secretOrPublicKey,
-  // @ts-expect-error TODO
-  callback
-) {
-  let done
-
-  if (callback) {
-    done = callback
-  } else {
-    // @ts-expect-error TODO
-    done = function (err, data) {
-      if (err) throw err
-      return data
-    }
-  }
-
+  secretOrPublicKey
+): Promise<JwtPayload> {
   const clockTimestamp = Math.floor(Date.now() / 1000)
 
   if (!jwtString) {
-    return done(new JsonWebTokenError('jwt must be provided'))
+    throw new JsonWebTokenError('jwt must be provided')
   }
 
   if (typeof jwtString !== 'string') {
-    return done(new JsonWebTokenError('jwt must be a string'))
+    throw new JsonWebTokenError('jwt must be a string')
   }
 
   const parts = jwtString.split('.')
 
   if (parts.length !== 3) {
-    return done(new JsonWebTokenError('jwt malformed'))
+    throw new JsonWebTokenError('jwt malformed')
   }
 
-  let decodedToken
-
-  try {
-    decodedToken = decode(jwtString, { complete: true })
-  } catch (err) {
-    return done(err)
-  }
+  const decodedToken = decode(jwtString, { complete: true })
 
   if (!decodedToken) {
-    return done(new JsonWebTokenError('invalid token'))
+    throw new JsonWebTokenError('invalid token')
   }
 
   // @ts-expect-error TODO
   const header = decodedToken.header
-  let getSecret
 
-  if (typeof secretOrPublicKey === 'function') {
-    if (!callback) {
-      return done(
-        new JsonWebTokenError(
-          'verify must be called asynchronous if secret or public key is provided as a callback'
+  // eslint-disable-next-line no-undef
+  console.log('secretOrPublicKey', secretOrPublicKey)
+
+  const hasSignature = parts[2].trim() !== ''
+
+  if (!hasSignature && secretOrPublicKey) {
+    throw new JsonWebTokenError('jwt signature is required')
+  }
+
+  if (hasSignature && !secretOrPublicKey) {
+    throw new JsonWebTokenError('secret or public key must be provided')
+  }
+
+  if (!hasSignature) {
+    throw new JsonWebTokenError(
+      'please specify "none" in "algorithms" to verify unsigned tokens'
+    )
+  }
+
+  if (secretOrPublicKey != null && !(secretOrPublicKey instanceof KeyObject)) {
+    try {
+      secretOrPublicKey = createPublicKey(secretOrPublicKey)
+    } catch {
+      try {
+        secretOrPublicKey = createSecretKey(
+          typeof secretOrPublicKey === 'string'
+            ? Buffer.from(secretOrPublicKey)
+            : secretOrPublicKey
         )
-      )
-    }
-
-    getSecret = secretOrPublicKey
-  } else {
-    // @ts-expect-error TODO
-    getSecret = function (header, secretCallback) {
-      return secretCallback(null, secretOrPublicKey)
+      } catch {
+        throw new JsonWebTokenError(
+          'secretOrPublicKey is not valid key material'
+        )
+      }
     }
   }
 
+  let options: {
+    algorithms: string[]
+  } = {
+    algorithms: []
+  }
+
+  if (secretOrPublicKey.type === 'secret') {
+    options.algorithms = HS_ALGS
+  } else if (['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)) {
+    options.algorithms = RSA_KEY_ALGS
+  } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
+    options.algorithms = EC_KEY_ALGS
+  } else {
+    options.algorithms = PUB_KEY_ALGS
+  }
+
   // @ts-expect-error TODO
-  return await getSecret(header, function (err, secretOrPublicKey) {
-    // eslint-disable-next-line no-undef
-    console.log('getSecret', err, secretOrPublicKey)
+  if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
+    throw new JsonWebTokenError('invalid algorithm')
+  }
 
-    if (err) {
-      return done(
-        new JsonWebTokenError(
-          'error in secret or public key callback: ' + err.message
-        )
-      )
-    }
-
-    const hasSignature = parts[2].trim() !== ''
-
-    if (!hasSignature && secretOrPublicKey) {
-      return done(new JsonWebTokenError('jwt signature is required'))
-    }
-
-    if (hasSignature && !secretOrPublicKey) {
-      return done(
-        new JsonWebTokenError('secret or public key must be provided')
-      )
-    }
-
-    if (!hasSignature) {
-      return done(
-        new JsonWebTokenError(
-          'please specify "none" in "algorithms" to verify unsigned tokens'
-        )
-      )
-    }
-
-    if (
-      secretOrPublicKey != null &&
-      !(secretOrPublicKey instanceof KeyObject)
-    ) {
-      try {
-        secretOrPublicKey = createPublicKey(secretOrPublicKey)
-      } catch {
-        try {
-          secretOrPublicKey = createSecretKey(
-            typeof secretOrPublicKey === 'string'
-              ? Buffer.from(secretOrPublicKey)
-              : secretOrPublicKey
-          )
-        } catch {
-          return done(
-            new JsonWebTokenError('secretOrPublicKey is not valid key material')
-          )
-        }
-      }
-    }
-
-    let options: {
-      algorithms: string[]
-    } = {
-      algorithms: []
-    }
-
-    if (secretOrPublicKey.type === 'secret') {
-      options.algorithms = HS_ALGS
-    } else if (
-      ['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)
-    ) {
-      options.algorithms = RSA_KEY_ALGS
-    } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
-      options.algorithms = EC_KEY_ALGS
-    } else {
-      options.algorithms = PUB_KEY_ALGS
-    }
-
-    // @ts-expect-error TODO
-    if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
-      return done(new JsonWebTokenError('invalid algorithm'))
-    }
-
-    if (header.alg.startsWith('HS') && secretOrPublicKey.type !== 'secret') {
-      return done(
-        new JsonWebTokenError(
-          `secretOrPublicKey must be a symmetric key when using ${header.alg}`
-        )
-      )
-    } else if (
-      /^(?:RS|PS|ES)/.test(header.alg) &&
-      secretOrPublicKey.type !== 'public'
-    ) {
-      return done(
-        new JsonWebTokenError(
-          `secretOrPublicKey must be an asymmetric key when using ${header.alg}`
-        )
-      )
-    }
-
-    validateAsymmetricKey(header.alg, secretOrPublicKey)
-
-    const valid = jws.verify(
-      jwtString,
-      // @ts-expect-error TODO
-      decodedToken.header.alg,
-      secretOrPublicKey
+  if (header.alg.startsWith('HS') && secretOrPublicKey.type !== 'secret') {
+    throw new JsonWebTokenError(
+      `secretOrPublicKey must be a symmetric key when using ${header.alg}`
     )
+  } else if (
+    /^(?:RS|PS|ES)/.test(header.alg) &&
+    secretOrPublicKey.type !== 'public'
+  ) {
+    throw new JsonWebTokenError(
+      `secretOrPublicKey must be an asymmetric key when using ${header.alg}`
+    )
+  }
 
-    if (!valid) {
-      return done(new JsonWebTokenError('invalid signature'))
-    }
+  validateAsymmetricKey(header.alg, secretOrPublicKey)
 
+  const valid = jws.verify(
+    jwtString,
     // @ts-expect-error TODO
-    const payload = decodedToken.payload
+    decodedToken.header.alg,
+    secretOrPublicKey
+  )
 
-    if (typeof payload.nbf !== 'undefined') {
-      if (typeof payload.nbf !== 'number') {
-        return done(new JsonWebTokenError('invalid nbf value'))
-      }
-      if (payload.nbf > clockTimestamp) {
-        return done(
-          new NotBeforeError('jwt not active', new Date(payload.nbf * 1000))
-        )
-      }
+  if (!valid) {
+    throw new JsonWebTokenError('invalid signature')
+  }
+
+  // @ts-expect-error TODO
+  const payload = decodedToken.payload
+
+  if (typeof payload.nbf !== 'undefined') {
+    if (typeof payload.nbf !== 'number') {
+      throw new JsonWebTokenError('invalid nbf value')
     }
-
-    if (typeof payload.exp !== 'undefined') {
-      if (typeof payload.exp !== 'number') {
-        return done(new JsonWebTokenError('invalid exp value'))
-      }
-      if (clockTimestamp >= payload.exp) {
-        return done(
-          new TokenExpiredError('jwt expired', new Date(payload.exp * 1000))
-        )
-      }
+    if (payload.nbf > clockTimestamp) {
+      throw new NotBeforeError('jwt not active', new Date(payload.nbf * 1000))
     }
+  }
 
-    return done(null, payload)
-  })
+  if (typeof payload.exp !== 'undefined') {
+    if (typeof payload.exp !== 'number') {
+      throw new JsonWebTokenError('invalid exp value')
+    }
+    if (clockTimestamp >= payload.exp) {
+      throw new TokenExpiredError('jwt expired', new Date(payload.exp * 1000))
+    }
+  }
+
+  return payload
 }

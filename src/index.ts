@@ -50,16 +50,8 @@ export const CfAuth0 = ({
     }
   }
 
-  const verifyToken = (token: string): Promise<jwt.JwtPayload | string> => {
-    return new Promise((resolve, reject) => {
-      jwt.verify(token, getKey, (err: Error, payload: jwt.JwtPayload) => {
-        if (err || !payload) {
-          return reject(err)
-        }
-        return resolve(payload)
-      })
-    })
-  }
+  const verifyToken = (token: string): Promise<jwt.JwtPayload> =>
+    jwt.verify(token, getKey)
 
   const getToken = async ({
     code
@@ -96,13 +88,10 @@ export const CfAuth0 = ({
     return jwt.decode(jwtToken)
   }
 
-  const verify = async (
+  const verify = (
     token: string,
     secretOrPublicKey: jwt.Secret | jwt.PublicKey
-  ): Promise<jwt.JwtPayload | string> => {
-    // @ts-expect-error TODO
-    return await jwt.verify(token, secretOrPublicKey)
-  }
+  ): Promise<jwt.JwtPayload> => jwt.verify(token, secretOrPublicKey)
 
   const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
     // @ts-expect-error TODO
