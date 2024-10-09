@@ -76,6 +76,7 @@ export const CfAuth0 = ({
       return null
     }
 
+    // @ts-expect-error TODO
     return jwt.decode(jwtToken)
   }
 
