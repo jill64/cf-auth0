@@ -67,9 +67,9 @@ async function retrieveSigningKeys(jwks) {
         // Fall through
         default:
           // @ts-expect-error TODO
-          getSpki = () => key.export({ format: 'pem', type: 'spki' })
-        // var spki = await exportSPKI(key)
-        // getSpki = () => spki
+          // getSpki = () => key.export({ format: 'pem', type: 'spki' })
+          const spki = await exportSPKI(key)
+          getSpki = () => spki
       }
       results.push({
         get publicKey() {
