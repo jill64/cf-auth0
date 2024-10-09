@@ -52,16 +52,14 @@ async function retrieveSigningKeys(jwks) {
       if (key.type !== 'public') {
         continue
       }
-      // let getSpki
-      let spkiVal
+      let getSpki
 
       // @ts-expect-error TODO
       switch (key[Symbol.toStringTag]) {
         case 'CryptoKey': {
           // @ts-expect-error TODO
           const spki = await exportSPKI(key)
-          // getSpki = () => spki
-          spkiVal = spki
+          getSpki = () => spki
           break
         }
         case 'KeyObject':
@@ -71,20 +69,18 @@ async function retrieveSigningKeys(jwks) {
           // getSpki = () => key.export({ format: 'pem', type: 'spki' })
           // @ts-expect-error TODO
           var spki = await exportSPKI(key)
-          // getSpki = () => spki
-          spkiVal = spki
+          getSpki = () => spki
       }
       results.push({
-        // get publicKey() {
-        //   return getSpki()
-        // },
-        // get rsaPublicKey() {
-        //   return getSpki()
-        // },
-        // getPublicKey() {
-        //   return getSpki()
-        // },
-        spkiVal,
+        get publicKey() {
+          return getSpki()
+        },
+        get rsaPublicKey() {
+          return getSpki()
+        },
+        getPublicKey() {
+          return getSpki()
+        },
         ...(typeof jwk.kid === 'string' && jwk.kid
           ? { kid: jwk.kid }
           : undefined),
