@@ -127,6 +127,8 @@ export default async function (
     options.algorithms = PUB_KEY_ALGS
   }
 
+  console.log('options', options)
+
   // @ts-expect-error TODO
   if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
     throw new JsonWebTokenError('invalid algorithm')
