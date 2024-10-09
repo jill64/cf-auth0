@@ -7,6 +7,7 @@ import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
 import TokenExpiredError from './lib/TokenExpiredError.js'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
+import process from 'node:process'
 
 const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512']
 const EC_KEY_ALGS = ['ES256', 'ES384', 'ES512']
@@ -14,6 +15,7 @@ const RSA_KEY_ALGS = ['RS256', 'RS384', 'RS512']
 const HS_ALGS = ['HS256', 'HS384', 'HS512']
 
 if (PS_SUPPORTED) {
+  console.log('PS_SUPPORTED')
   PUB_KEY_ALGS.splice(PUB_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
   RSA_KEY_ALGS.splice(RSA_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
 }
@@ -110,24 +112,29 @@ export default async function (
   }
 
   if (secretOrPublicKey2.type === 'secret') {
+    console.log('USE HS_ALGS')
     options.algorithms = HS_ALGS
   } else if (
     ['rsa', 'rsa-pss'].includes(secretOrPublicKey3.asymmetricKeyType)
   ) {
+    console.log('USE RSA_KEY_ALGS')
     options.algorithms = RSA_KEY_ALGS
   } else if (secretOrPublicKey2.asymmetricKeyType === 'ec') {
+    console.log('USE EC_KEY_ALGS')
     options.algorithms = EC_KEY_ALGS
   } else {
+    console.log('USE PUB_KEY_ALGS')
     options.algorithms = PUB_KEY_ALGS
   }
 
+  console.log(process.version)
   console.log('sig', sig)
   console.log('secretOrPublicKey2', secretOrPublicKey2)
   console.log('options', options)
   console.log('decodedToken', decodedToken)
 
   // @ts-expect-error TODO
-  if (options.algorithms.indexOf(decodedToken.header.alg) === -1) {
+  if (options.algorithms.includes(decodedToken.header.alg)) {
     throw new JsonWebTokenError('invalid algorithm')
   }
 
