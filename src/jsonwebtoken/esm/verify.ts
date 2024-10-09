@@ -5,7 +5,6 @@ import decode from './decode.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
-import timespan from './lib/timespan.js'
 import TokenExpiredError from './lib/TokenExpiredError.js'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
 
@@ -25,22 +24,8 @@ export default async function (
   // @ts-expect-error TODO
   secretOrPublicKey,
   // @ts-expect-error TODO
-  options,
-  // @ts-expect-error TODO
   callback
 ) {
-  if (typeof options === 'function' && !callback) {
-    callback = options
-    options = {}
-  }
-
-  if (!options) {
-    options = {}
-  }
-
-  //clone this object since we are going to mutate it.
-  options = Object.assign({}, options)
-
   let done
 
   if (callback) {
@@ -53,27 +38,7 @@ export default async function (
     }
   }
 
-  if (options.clockTimestamp && typeof options.clockTimestamp !== 'number') {
-    return done(new JsonWebTokenError('clockTimestamp must be a number'))
-  }
-
-  if (
-    options.nonce !== undefined &&
-    (typeof options.nonce !== 'string' || options.nonce.trim() === '')
-  ) {
-    return done(new JsonWebTokenError('nonce must be a non-empty string'))
-  }
-
-  if (
-    options.allowInvalidAsymmetricKeyTypes !== undefined &&
-    typeof options.allowInvalidAsymmetricKeyTypes !== 'boolean'
-  ) {
-    return done(
-      new JsonWebTokenError('allowInvalidAsymmetricKeyTypes must be a boolean')
-    )
-  }
-
-  const clockTimestamp = options.clockTimestamp || Math.floor(Date.now() / 1000)
+  const clockTimestamp = Math.floor(Date.now() / 1000)
 
   if (!jwtString) {
     return done(new JsonWebTokenError('jwt must be provided'))
@@ -147,7 +112,7 @@ export default async function (
       )
     }
 
-    if (!hasSignature && !options.algorithms) {
+    if (!hasSignature) {
       return done(
         new JsonWebTokenError(
           'please specify "none" in "algorithms" to verify unsigned tokens'
@@ -176,18 +141,22 @@ export default async function (
       }
     }
 
-    if (!options.algorithms) {
-      if (secretOrPublicKey.type === 'secret') {
-        options.algorithms = HS_ALGS
-      } else if (
-        ['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)
-      ) {
-        options.algorithms = RSA_KEY_ALGS
-      } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
-        options.algorithms = EC_KEY_ALGS
-      } else {
-        options.algorithms = PUB_KEY_ALGS
-      }
+    let options: {
+      algorithms: string[]
+    } = {
+      algorithms: []
+    }
+
+    if (secretOrPublicKey.type === 'secret') {
+      options.algorithms = HS_ALGS
+    } else if (
+      ['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)
+    ) {
+      options.algorithms = RSA_KEY_ALGS
+    } else if (secretOrPublicKey.asymmetricKeyType === 'ec') {
+      options.algorithms = EC_KEY_ALGS
+    } else {
+      options.algorithms = PUB_KEY_ALGS
     }
 
     // @ts-expect-error TODO
@@ -212,22 +181,14 @@ export default async function (
       )
     }
 
-    if (!options.allowInvalidAsymmetricKeyTypes) {
-      try {
-        validateAsymmetricKey(header.alg, secretOrPublicKey)
-      } catch (e) {
-        return done(e)
-      }
-    }
+    validateAsymmetricKey(header.alg, secretOrPublicKey)
 
-    let valid
-
-    try {
+    const valid = jws.verify(
+      jwtString,
       // @ts-expect-error TODO
-      valid = jws.verify(jwtString, decodedToken.header.alg, secretOrPublicKey)
-    } catch (e) {
-      return done(e)
-    }
+      decodedToken.header.alg,
+      secretOrPublicKey
+    )
 
     if (!valid) {
       return done(new JsonWebTokenError('invalid signature'))
@@ -236,129 +197,26 @@ export default async function (
     // @ts-expect-error TODO
     const payload = decodedToken.payload
 
-    if (typeof payload.nbf !== 'undefined' && !options.ignoreNotBefore) {
+    if (typeof payload.nbf !== 'undefined') {
       if (typeof payload.nbf !== 'number') {
         return done(new JsonWebTokenError('invalid nbf value'))
       }
-      if (payload.nbf > clockTimestamp + (options.clockTolerance || 0)) {
+      if (payload.nbf > clockTimestamp) {
         return done(
           new NotBeforeError('jwt not active', new Date(payload.nbf * 1000))
         )
       }
     }
 
-    if (typeof payload.exp !== 'undefined' && !options.ignoreExpiration) {
+    if (typeof payload.exp !== 'undefined') {
       if (typeof payload.exp !== 'number') {
         return done(new JsonWebTokenError('invalid exp value'))
       }
-      if (clockTimestamp >= payload.exp + (options.clockTolerance || 0)) {
+      if (clockTimestamp >= payload.exp) {
         return done(
           new TokenExpiredError('jwt expired', new Date(payload.exp * 1000))
         )
       }
-    }
-
-    if (options.audience) {
-      const audiences = Array.isArray(options.audience)
-        ? options.audience
-        : [options.audience]
-      const target = Array.isArray(payload.aud) ? payload.aud : [payload.aud]
-
-      // @ts-expect-error TODO
-      const match = target.some(function (targetAudience) {
-        // @ts-expect-error TODO
-        return audiences.some(function (audience) {
-          return audience instanceof RegExp
-            ? audience.test(targetAudience)
-            : audience === targetAudience
-        })
-      })
-
-      if (!match) {
-        return done(
-          new JsonWebTokenError(
-            'jwt audience invalid. expected: ' + audiences.join(' or ')
-          )
-        )
-      }
-    }
-
-    if (options.issuer) {
-      const invalid_issuer =
-        (typeof options.issuer === 'string' &&
-          payload.iss !== options.issuer) ||
-        (Array.isArray(options.issuer) &&
-          options.issuer.indexOf(payload.iss) === -1)
-
-      if (invalid_issuer) {
-        return done(
-          new JsonWebTokenError(
-            'jwt issuer invalid. expected: ' + options.issuer
-          )
-        )
-      }
-    }
-
-    if (options.subject) {
-      if (payload.sub !== options.subject) {
-        return done(
-          new JsonWebTokenError(
-            'jwt subject invalid. expected: ' + options.subject
-          )
-        )
-      }
-    }
-
-    if (options.jwtid) {
-      if (payload.jti !== options.jwtid) {
-        return done(
-          new JsonWebTokenError('jwt jwtid invalid. expected: ' + options.jwtid)
-        )
-      }
-    }
-
-    if (options.nonce) {
-      if (payload.nonce !== options.nonce) {
-        return done(
-          new JsonWebTokenError('jwt nonce invalid. expected: ' + options.nonce)
-        )
-      }
-    }
-
-    if (options.maxAge) {
-      if (typeof payload.iat !== 'number') {
-        return done(
-          new JsonWebTokenError('iat required when maxAge is specified')
-        )
-      }
-
-      const maxAgeTimestamp = timespan(options.maxAge, payload.iat)
-      if (typeof maxAgeTimestamp === 'undefined') {
-        return done(
-          new JsonWebTokenError(
-            '"maxAge" should be a number of seconds or string representing a timespan eg: "1d", "20h", 60'
-          )
-        )
-      }
-      if (clockTimestamp >= maxAgeTimestamp + (options.clockTolerance || 0)) {
-        return done(
-          new TokenExpiredError(
-            'maxAge exceeded',
-            new Date(maxAgeTimestamp * 1000)
-          )
-        )
-      }
-    }
-
-    if (options.complete === true) {
-      // @ts-expect-error TODO
-      const signature = decodedToken.signature
-
-      return done(null, {
-        header: header,
-        payload: payload,
-        signature: signature
-      })
     }
 
     return done(null, payload)
