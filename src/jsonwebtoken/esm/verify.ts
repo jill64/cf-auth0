@@ -105,9 +105,9 @@ export default async function (
     }
   }
 
-  if (secretOrPublicKey2.asymmetricKeyType !== undefined) {
-    throw new JsonWebTokenError('invalid key')
-  }
+  // if (secretOrPublicKey2.asymmetricKeyType !== undefined) {
+  //   throw new JsonWebTokenError('invalid key')
+  // }
 
   const secretOrPublicKey3 = secretOrPublicKey2 as unknown as {
     asymmetricKeyType: 'rsa' | 'rsa-pss' | 'ec'
