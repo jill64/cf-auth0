@@ -25,7 +25,7 @@ if (PS_SUPPORTED) {
 
 export default async function (
   jwtString: string,
-  secretOrPublicKey: GetPublicKeyOrSecret
+  secretOrPublicKey: GetPublicKeyOrSecret | string
 ): Promise<JwtPayload> {
   const clockTimestamp = Math.floor(Date.now() / 1000)
 
@@ -52,7 +52,6 @@ export default async function (
   // @ts-expect-error TODO
   const header = decodedToken.header
 
-  // eslint-disable-next-line no-undef
   console.log('secretOrPublicKey', secretOrPublicKey)
 
   const hasSignature = parts[2].trim() !== ''
@@ -75,16 +74,19 @@ export default async function (
 
   console.log('debug1.1')
 
-  const sig = await new Promise<
-    Secret | PublicKeyInput | JsonWebKeyInput | undefined
-  >((resolve, reject) =>
-    secretOrPublicKey(header, (err, data) => {
-      if (err) {
-        reject(err)
-      }
-      resolve(data)
-    })
-  )
+  const sig =
+    typeof secretOrPublicKey === 'string'
+      ? secretOrPublicKey
+      : await new Promise<
+          Secret | PublicKeyInput | JsonWebKeyInput | undefined
+        >((resolve, reject) =>
+          secretOrPublicKey(header, (err, data) => {
+            if (err) {
+              reject(err)
+            }
+            resolve(data)
+          })
+        )
 
   console.log('sig', sig)
 
