@@ -2,7 +2,7 @@ import { createPublicKey, createSecretKey } from 'node:crypto'
 import process from 'node:process'
 import * as jws from '../../jws/esm/index.js'
 import decode from './decode.js'
-import { JwtHeader, JwtPayload, PublicKey, Secret } from './index.js'
+import { Jwt, JwtHeader, JwtPayload, PublicKey, Secret } from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
 import PS_SUPPORTED from './lib/psSupported.js'
@@ -44,8 +44,21 @@ export default async function (
     throw new JsonWebTokenError('invalid token')
   }
 
-  // @ts-expect-error TODO
-  const header = decodedToken.header
+  if (typeof decodedToken === 'string') {
+    throw new JsonWebTokenError('decodedToken must be an object')
+  }
+
+  if (
+    !(decodedToken.header && decodedToken.payload && decodedToken.signature)
+  ) {
+    throw new JsonWebTokenError('invalid decodedToken')
+  }
+
+  const { header, payload } = decodedToken as Jwt
+
+  if (typeof payload === 'string') {
+    throw new JsonWebTokenError('decodedToken.payload must be an object')
+  }
 
   const hasSignature = parts[2].trim() !== ''
 
@@ -148,35 +161,29 @@ export default async function (
 
   // validateAsymmetricKey(header.alg, secretOrPublicKey3)
 
-  const valid = jws.verify(
-    jwtString,
-    // @ts-expect-error TODO
-    decodedToken.header.alg,
-    secretOrPublicKey2
-  )
+  const valid = jws.verify(jwtString, header.alg, secretOrPublicKey2)
 
   if (!valid) {
     throw new JsonWebTokenError('invalid signature')
   }
 
-  // @ts-expect-error TODO
-  const payload = decodedToken.payload
+  if (typeof payload !== 'string') {
+    if (typeof payload.nbf !== 'undefined') {
+      if (typeof payload.nbf !== 'number') {
+        throw new JsonWebTokenError('invalid nbf value')
+      }
+      if (payload.nbf > clockTimestamp) {
+        throw new NotBeforeError('jwt not active', new Date(payload.nbf * 1000))
+      }
+    }
 
-  if (typeof payload.nbf !== 'undefined') {
-    if (typeof payload.nbf !== 'number') {
-      throw new JsonWebTokenError('invalid nbf value')
-    }
-    if (payload.nbf > clockTimestamp) {
-      throw new NotBeforeError('jwt not active', new Date(payload.nbf * 1000))
-    }
-  }
-
-  if (typeof payload.exp !== 'undefined') {
-    if (typeof payload.exp !== 'number') {
-      throw new JsonWebTokenError('invalid exp value')
-    }
-    if (clockTimestamp >= payload.exp) {
-      throw new TokenExpiredError('jwt expired', new Date(payload.exp * 1000))
+    if (typeof payload.exp !== 'undefined') {
+      if (typeof payload.exp !== 'number') {
+        throw new JsonWebTokenError('invalid exp value')
+      }
+      if (clockTimestamp >= payload.exp) {
+        throw new TokenExpiredError('jwt expired', new Date(payload.exp * 1000))
+      }
     }
   }
 
