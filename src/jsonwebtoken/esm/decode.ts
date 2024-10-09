@@ -1,18 +1,23 @@
-import * as jws from '../../jws/esm/index.js'
+import { decode } from '../../jws/esm/index.js'
 
-// @ts-expect-error TODO
-export default function (jwt, options) {
-  options = options || {}
-  var decoded = jws.decode(jwt, options)
+export default (
+  jwt: string,
+  options: Parameters<typeof decode>[1] & {
+    complete?: boolean
+  } = {}
+) => {
+  const decoded = decode(jwt, options)
+
   if (!decoded) {
     return null
   }
-  var payload = decoded.payload
+
+  let payload = decoded.payload
 
   //try parse the payload
   if (typeof payload === 'string') {
     try {
-      var obj = JSON.parse(payload)
+      const obj = JSON.parse(payload)
       if (obj !== null && typeof obj === 'object') {
         payload = obj
       }
@@ -30,5 +35,6 @@ export default function (jwt, options) {
       signature: decoded.signature
     }
   }
+
   return payload
 }
