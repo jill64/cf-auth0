@@ -1,5 +1,5 @@
 import SignStream from './lib/sign-stream.js'
-import VerifyStream from './lib/verify-stream.js'
+export { verify, decode, isValid } from './lib/verify-stream.js'
 
 export const ALGORITHMS = [
   'HS256',
@@ -17,16 +17,8 @@ export const ALGORITHMS = [
 ]
 
 export const sign = SignStream.sign
-export const verify = VerifyStream.verify
-export const decode = VerifyStream.decode
-export const isValid = VerifyStream.isValid
 // @ts-expect-error TODO
 export const createSign = function createSign(opts) {
   // @ts-expect-error TODO
   return new SignStream(opts)
-}
-// @ts-expect-error TODO
-export const createVerify = function createVerify(opts) {
-  // @ts-expect-error TODO
-  return new VerifyStream(opts)
 }

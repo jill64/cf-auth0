@@ -1,10 +1,8 @@
 import { Buffer } from 'node:buffer'
-import Stream from 'node:stream'
-import util from 'node:util'
 import jwa from '../../../jwa/esm/index.js'
-import DataStream from './data-stream.js'
 import toString from './tostring.js'
-var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
+
+const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
 
 // @ts-expect-error TODO
 function isObject(thing) {
@@ -87,65 +85,6 @@ function jwsDecode(jwsSig, opts) {
   }
 }
 
-// @ts-expect-error TODO
-function VerifyStream(opts) {
-  opts = opts || {}
-  var secretOrKey = opts.secret || opts.publicKey || opts.key
-  // @ts-expect-error TODO
-  var secretStream = new DataStream(secretOrKey)
-  // @ts-expect-error TODO
-  this.readable = true
-  // @ts-expect-error TODO
-  this.algorithm = opts.algorithm
-  // @ts-expect-error TODO
-  this.encoding = opts.encoding
-  // @ts-expect-error TODO
-  this.secret = this.publicKey = this.key = secretStream
-  // @ts-expect-error TODO
-  this.signature = new DataStream(opts.signature)
-  // @ts-expect-error TODO
-  this.secret.once(
-    'close',
-    function () {
-      // @ts-expect-error TODO
-      if (!this.signature.writable && this.readable) this.verify()
-      // @ts-expect-error TODO
-    }.bind(this)
-  )
-
-  // @ts-expect-error TODO
-  this.signature.once(
-    'close',
-    function () {
-      // @ts-expect-error TODO
-      if (!this.secret.writable && this.readable) this.verify()
-      // @ts-expect-error TODO
-    }.bind(this)
-  )
-}
-util.inherits(VerifyStream, Stream)
-VerifyStream.prototype.verify = function verify() {
-  try {
-    var valid = jwsVerify(
-      this.signature.buffer,
-      this.algorithm,
-      this.key.buffer
-    )
-    var obj = jwsDecode(this.signature.buffer, this.encoding)
-    this.emit('done', valid, obj)
-    this.emit('data', valid)
-    this.emit('end')
-    this.readable = false
-    return valid
-  } catch (e) {
-    this.readable = false
-    this.emit('error', e)
-    this.emit('close')
-  }
-}
-
-VerifyStream.decode = jwsDecode
-VerifyStream.isValid = isValidJws
-VerifyStream.verify = jwsVerify
-
-export default VerifyStream
+export const decode = jwsDecode
+export const isValid = isValidJws
+export const verify = jwsVerify
