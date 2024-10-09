@@ -116,6 +116,9 @@ export default function (jwtString, secretOrPublicKey, options, callback) {
 
   // @ts-expect-error TODO
   return getSecret(header, function (err, secretOrPublicKey) {
+    // eslint-disable-next-line no-undef
+    console.log('getSecret', err, secretOrPublicKey)
+
     if (err) {
       return done(
         new JsonWebTokenError(
