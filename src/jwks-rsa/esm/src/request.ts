@@ -1,2 +1,1 @@
-export default async (uri: string, headers?: Headers) => {
-}
+export default async (uri: string, headers?: Headers) => {}

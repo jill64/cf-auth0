@@ -48,7 +48,6 @@ export const JwksClient = (jwksUri: string) => {
 
     const keys = await getSigningKeys()
 
-    // eslint-disable-next-line no-undef
     console.log('Keys:', keys)
 
     const kidDefined = kid !== undefined && kid !== null
@@ -61,7 +60,6 @@ export const JwksClient = (jwksUri: string) => {
 
     const key = keys.find((k) => !kidDefined || k.kid === kid)
     if (key) {
-      // eslint-disable-next-line no-undef
       console.log('Determined Key:', key)
 
       return key
