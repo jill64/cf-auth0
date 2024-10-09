@@ -15,6 +15,7 @@ const logger = debug('jwks')
 class JwksClient {
   // @ts-expect-error TODO
   constructor(options) {
+    // @ts-expect-error TODO
     this.options = {
       rateLimit: false,
       cache: true,
@@ -23,13 +24,16 @@ class JwksClient {
     }
 
     // Initialize wrappers.
+    // @ts-expect-error TODO
     if (this.options.getKeysInterceptor) {
       this.getSigningKey = getKeysInterceptor(this, options)
     }
 
+    // @ts-expect-error TODO
     if (this.options.rateLimit) {
       this.getSigningKey = rateLimitSigningKey(this, options)
     }
+    // @ts-expect-error TODO
     if (this.options.cache) {
       this.getSigningKey = cacheSigningKey(this, options)
     }
@@ -39,11 +43,14 @@ class JwksClient {
   }
 
   async getKeys() {
+    // @ts-expect-error TODO
     logger(`Fetching keys from '${this.options.jwksUri}'`)
 
     try {
       const res = await request({
+        // @ts-expect-error TODO
         uri: this.options.jwksUri,
+        // @ts-expect-error TODO
         headers: this.options.requestHeaders
       })
 
