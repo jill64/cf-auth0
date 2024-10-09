@@ -38,17 +38,14 @@ export default async function (
     throw new JsonWebTokenError('jwt malformed')
   }
 
-  const decodedToken = decode(jwtString)
+  const decodedToken = decode(jwtString, { complete: true })
 
   if (!decodedToken) {
     throw new JsonWebTokenError('invalid token')
   }
 
-  if (typeof decodedToken === 'string') {
-    throw new JsonWebTokenError('string token is not allowed')
-  }
-
-  const { header } = decodedToken
+  // @ts-expect-error TODO
+  const header = decodedToken.header
 
   const hasSignature = parts[2].trim() !== ''
 
@@ -153,6 +150,7 @@ export default async function (
 
   const valid = jws.verify(
     jwtString,
+    // @ts-expect-error TODO
     decodedToken.header.alg,
     secretOrPublicKey2
   )
@@ -161,11 +159,8 @@ export default async function (
     throw new JsonWebTokenError('invalid signature')
   }
 
-  const { payload } = decodedToken
-
-  if (!payload) {
-    throw new JsonWebTokenError('payload must be provided')
-  }
+  // @ts-expect-error TODO
+  const payload = decodedToken.payload
 
   if (typeof payload.nbf !== 'undefined') {
     if (typeof payload.nbf !== 'number') {
