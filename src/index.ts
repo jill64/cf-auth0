@@ -38,6 +38,7 @@ export const CfAuth0 = ({
 
       if (cached_key) {
         callback(null, cached_key)
+        return
       }
 
       const signingKey = key?.getPublicKey()
