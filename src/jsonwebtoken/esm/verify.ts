@@ -71,11 +71,13 @@ export default async function (
   try {
     // @ts-expect-error TODO
     secretOrPublicKey2 = createPublicKey(secretOrPublicKey)
-  } catch {
+  } catch (e) {
+    console.error('createPublicKey Error:', e)
     try {
       // @ts-expect-error TODO
       secretOrPublicKey2 = createSecretKey(secretOrPublicKey)
-    } catch {
+    } catch (e) {
+      console.error('createSecretKey Error:', e)
       throw new JsonWebTokenError('secretOrPublicKey is not valid key material')
     }
   }
