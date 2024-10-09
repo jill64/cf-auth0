@@ -5,6 +5,7 @@ import { JwksClient } from './jwks-rsa/esm/src/index.js'
 const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 
 let cached_key: string | undefined = undefined
+let key
 
 export const CfAuth0 = ({
   auth0_client_id,
@@ -32,7 +33,7 @@ export const CfAuth0 = ({
 
       console.log('debug:1')
 
-      const key = await client.getSigningKey(header.kid)
+      key = await client.getSigningKey(header.kid)
 
       console.log('debug:2')
 
