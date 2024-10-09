@@ -122,7 +122,7 @@ export default async function (
   }
 
   console.log('sig', sig)
-  console.log('secretOrPublicKey2', secretOrPublicKey2)
+  console.log('secretOrPublicKey2', JSON.stringify(secretOrPublicKey2))
   console.log('options', options)
   console.log('decodedToken', decodedToken)
 
