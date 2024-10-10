@@ -20,7 +20,7 @@ class KeyObject {
     return this._key.type
   }
 
-  static from = KeyObject
+  static from = (key: CryptoKey) => new KeyObject(key)
 
   equals(otherKeyObject: KeyObject) {
     try {
