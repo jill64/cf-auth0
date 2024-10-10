@@ -1,4 +1,5 @@
-import type { createPrivateKey, createPublicKey, KeyObject } from 'node:crypto'
+import type { createPrivateKey, createPublicKey } from 'node:crypto'
+import { KeyObjectLike } from '../../lib/crypto/KeyObjectLike.js'
 import decode from './decode.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
@@ -142,14 +143,14 @@ export type PrivateKey = Parameters<typeof createPrivateKey>[0]
 export type Secret =
   | string
   | Buffer
-  | KeyObject
+  | KeyObjectLike
   | { key: string | Buffer; passphrase: string }
 
 export {
+  decode,
   JsonWebTokenError,
   NotBeforeError,
-  TokenExpiredError,
-  decode,
   sign,
+  TokenExpiredError,
   verify
 }

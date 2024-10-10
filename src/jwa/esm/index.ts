@@ -16,10 +16,10 @@ import formatEcdsa from '../../ecdsa-sig-formatter/esm/ecdsa-sig-formatter.js'
 import {
   constants,
   createHmac,
-  createPublicKey,
   createSign,
   createVerify
 } from '../../lib/crypto/index.js'
+import { KeyObjectLike } from '../../lib/crypto/KeyObjectLike.js'
 
 const MSG_INVALID_ALGORITHM =
   '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'
@@ -27,12 +27,8 @@ let MSG_INVALID_SECRET = 'secret must be a string or buffer'
 let MSG_INVALID_VERIFIER_KEY = 'key must be a string or a buffer'
 const MSG_INVALID_SIGNER_KEY = 'key must be a string, a buffer or an object'
 
-const supportsKeyObjects = typeof createPublicKey === 'function'
-
-if (supportsKeyObjects) {
-  MSG_INVALID_VERIFIER_KEY += ' or a KeyObject'
-  MSG_INVALID_SECRET += 'or a KeyObject'
-}
+MSG_INVALID_VERIFIER_KEY += ' or a KeyObject'
+MSG_INVALID_SECRET += 'or a KeyObject'
 
 const checkIsPublicKey = (key: unknown) => {
   if (Buffer.isBuffer(key)) {
@@ -224,7 +220,7 @@ const createPSSKeySigner =
 
 const createPSSKeyVerifier =
   (bits: string | number) =>
-  (thing: unknown, signature: string, publicKey: KeyObject) => {
+  (thing: unknown, signature: string, publicKey: KeyObjectLike) => {
     checkIsPublicKey(publicKey)
 
     const thing2 = normalizeInput(thing)
