@@ -1,24 +1,65 @@
-// import type {
-//   AsymmetricKeyDetails,
-//   KeyObjectType,
-//   KeyExportOptions,
-//   JwkKeyExportOptions
-// } from 'node:crypto'
+import type {
+  AsymmetricKeyDetails,
+  JwkKeyExportOptions,
+  KeyExportOptions
+} from 'node:crypto'
 
-// export class KeyObject {
-//   type: KeyObjectType
-//   asymmetricKeyType?: KeyType | undefined
-//   asymmetricKeySize?: number | undefined
-//   asymmetricKeyDetails?: AsymmetricKeyDetails | undefined
-//   symmetricKeySize?: number | undefined
+class KeyObject {
+  asymmetricKeyType?: KeyType
+  asymmetricKeySize?: number
+  asymmetricKeyDetails?: AsymmetricKeyDetails
+  symmetricKeySize?: number
 
-//   static from(key: CryptoKey): KeyObject
+  private _key
 
-//   export(options: KeyExportOptions<'pem'>): string | Buffer
-//   export(options?: KeyExportOptions<'der'>): Buffer
-//   export(options?: JwkKeyExportOptions): JsonWebKey
+  private constructor(key: CryptoKey) {
+    this._key = key
+  }
 
-//   equals(otherKeyObject: KeyObject): boolean
-// }
+  get type() {
+    return this._key.type
+  }
 
-export { KeyObject } from 'node:crypto'
+  static from = KeyObject
+
+  equals(otherKeyObject: KeyObject) {
+    try {
+      Object.keys(otherKeyObject).forEach((key) => {
+        // @ts-expect-error TODO
+        if (this[key] !== otherKeyObject[key]) {
+          throw new Error('Key objects are not equal')
+        }
+      })
+
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  export(options: KeyExportOptions<'pem'>): string | Buffer
+  export(options?: KeyExportOptions<'der'>): Buffer
+  export(options?: JwkKeyExportOptions): JsonWebKey
+
+  export(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    options?:
+      | KeyExportOptions<'pem'>
+      | KeyExportOptions<'der'>
+      | JwkKeyExportOptions
+  ): string | Buffer | JsonWebKey {
+    // TODO
+    return ''
+  }
+}
+
+Object.defineProperties(KeyObject.prototype, {
+  [Symbol.toStringTag]: {
+    // @ts-expect-error TODO
+    __proto__: null,
+    configurable: true,
+    value: 'KeyObject'
+  }
+})
+
+export { KeyObject }
