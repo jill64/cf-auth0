@@ -1,17 +1,17 @@
 import type {
-  AsymmetricKeyDetails,
   JwkKeyExportOptions,
-  KeyExportOptions
+  KeyExportOptions,
+  KeyObject as KeyObjectType
 } from 'node:crypto'
 
 const kKeyType = Symbol('kKeyType')
 const kHandle = Symbol('kHandle')
 
-class KeyObjectLike {
-  asymmetricKeyType?: KeyType
-  asymmetricKeySize?: number
-  asymmetricKeyDetails?: AsymmetricKeyDetails
-  symmetricKeySize?: number
+class KeyObject {
+  asymmetricKeyType?: KeyObjectType['asymmetricKeyType']
+  asymmetricKeySize?: KeyObjectType['asymmetricKeySize']
+  asymmetricKeyDetails?: KeyObjectType['asymmetricKeyDetails']
+  symmetricKeySize?: KeyObjectType['symmetricKeySize']
 
   private constructor(key: CryptoKey) {
     const { type } = key
@@ -36,12 +36,12 @@ class KeyObjectLike {
 
   get type() {
     // @ts-expect-error TODO
-    return this[kKeyType]
+    return this[kKeyType] as KeyObjectType['type']
   }
 
-  static from = (key: CryptoKey) => new KeyObjectLike(key)
+  static from = (key: CryptoKey) => new KeyObject(key)
 
-  equals(otherKeyObject: KeyObjectLike) {
+  equals(otherKeyObject: KeyObjectType) {
     try {
       Object.keys(otherKeyObject).forEach((key) => {
         // @ts-expect-error TODO
@@ -76,7 +76,7 @@ class KeyObjectLike {
   }
 }
 
-Object.defineProperties(KeyObjectLike.prototype, {
+Object.defineProperties(KeyObject.prototype, {
   [Symbol.toStringTag]: {
     // @ts-expect-error TODO
     __proto__: null,
@@ -85,4 +85,4 @@ Object.defineProperties(KeyObjectLike.prototype, {
   }
 })
 
-export { KeyObjectLike }
+export { KeyObject }

@@ -8,7 +8,7 @@ import once from 'lodash.once'
 import { Buffer } from 'node:buffer'
 import * as jws from '../../jws/esm/index.js'
 import { createPrivateKey, createSecretKey } from '../../lib/crypto/index.js'
-import { isKeyObjectLike } from '../../lib/crypto/isKeyObjectLike.js'
+import { isKeyObject } from '../../lib/crypto/isKeyObject.js'
 import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
@@ -168,7 +168,7 @@ export default async function (payload, secretOrPrivateKey, options, callback) {
     return failure(new Error('secretOrPrivateKey must have a value'))
   }
 
-  if (secretOrPrivateKey != null && !isKeyObjectLike(secretOrPrivateKey)) {
+  if (secretOrPrivateKey != null && !isKeyObject(secretOrPrivateKey)) {
     try {
       secretOrPrivateKey = await createPrivateKey(secretOrPrivateKey)
     } catch {

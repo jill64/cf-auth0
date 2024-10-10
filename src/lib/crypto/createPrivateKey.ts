@@ -1,11 +1,14 @@
-import type { createPrivateKey as CreatePrivateKey } from 'node:crypto'
+import type {
+  createPrivateKey as CreatePrivateKey,
+  KeyObject as KeyObjectType
+} from 'node:crypto'
 import { subtle } from './index.js'
 import { prepareAsymmetricKey } from './internal/prepareAsymmetricKey.js'
-import { KeyObjectLike } from './KeyObjectLike.js'
+import { KeyObject } from './KeyObject.js'
 
 export const createPrivateKey = async (
   key: Parameters<typeof CreatePrivateKey>[0]
-): Promise<KeyObjectLike> => {
+): Promise<KeyObjectType> => {
   const result = prepareAsymmetricKey(key, 'kCreatePrivate')
 
   const { format, data } = result
@@ -28,7 +31,7 @@ export const createPrivateKey = async (
       (jwk.key_ops as KeyUsage[]) ?? []
     )
 
-    return KeyObjectLike.from(key)
+    return KeyObject.from(key) as KeyObjectType
   }
 
   throw new TypeError('Unsupported key format')
