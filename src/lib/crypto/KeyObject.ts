@@ -4,10 +4,10 @@ import type {
   KeyObject as KeyObjectType
 } from 'node:crypto'
 
-const kKeyType = Symbol('kKeyType')
 const kHandle = Symbol('kHandle')
 
 class KeyObject {
+  type: KeyType
   asymmetricKeyType?: KeyObjectType['asymmetricKeyType']
   asymmetricKeySize?: KeyObjectType['asymmetricKeySize']
   asymmetricKeyDetails?: KeyObjectType['asymmetricKeyDetails']
@@ -19,8 +19,7 @@ class KeyObject {
     if (type !== 'secret' && type !== 'public' && type !== 'private')
       throw new Error(`ERR_INVALID_ARG_VALUE: type ${type}`)
 
-    // @ts-expect-error TODO
-    this[kKeyType] = type
+    this.type = type
 
     Object.defineProperty(this, kHandle, {
       // @ts-expect-error TODO
@@ -32,11 +31,6 @@ class KeyObject {
       configurable: false,
       writable: false
     })
-  }
-
-  get type() {
-    // @ts-expect-error TODO
-    return this[kKeyType] as KeyObjectType['type']
   }
 
   static from = (key: CryptoKey) => new KeyObject(key)
