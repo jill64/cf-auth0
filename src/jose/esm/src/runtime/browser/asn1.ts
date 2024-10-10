@@ -28,6 +28,5 @@ const genericExport = async (
   )
 }
 
-export const toSPKI: PEMExportFunction = (key) => {
-  return genericExport('public', 'spki', key)
-}
+export const toSPKI: PEMExportFunction = (key) =>
+  genericExport('public', 'spki', key)
