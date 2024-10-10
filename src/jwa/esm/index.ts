@@ -23,12 +23,10 @@ import { KeyObjectLike } from '../../lib/crypto/KeyObjectLike.js'
 
 const MSG_INVALID_ALGORITHM =
   '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'
-let MSG_INVALID_SECRET = 'secret must be a string or buffer'
-let MSG_INVALID_VERIFIER_KEY = 'key must be a string or a buffer'
+const MSG_INVALID_SECRET = 'secret must be a string or buffer or a KeyObject'
+const MSG_INVALID_VERIFIER_KEY =
+  'key must be a string or a buffer or a KeyObject'
 const MSG_INVALID_SIGNER_KEY = 'key must be a string, a buffer or an object'
-
-MSG_INVALID_VERIFIER_KEY += ' or a KeyObject'
-MSG_INVALID_SECRET += ' or a KeyObject'
 
 const checkIsPublicKey = (key: unknown) => {
   if (Buffer.isBuffer(key)) {
@@ -40,22 +38,22 @@ const checkIsPublicKey = (key: unknown) => {
   }
 
   if (typeof key !== 'object') {
-    throw typeError(MSG_INVALID_VERIFIER_KEY)
+    throw typeError(MSG_INVALID_VERIFIER_KEY, 1, key)
   }
 
   // @ts-expect-error TODO
   if (typeof key.type !== 'string') {
-    throw typeError(MSG_INVALID_VERIFIER_KEY)
+    throw typeError(MSG_INVALID_VERIFIER_KEY, 2, key)
   }
 
   // @ts-expect-error TODO
   if (typeof key.asymmetricKeyType !== 'string') {
-    throw typeError(MSG_INVALID_VERIFIER_KEY)
+    throw typeError(MSG_INVALID_VERIFIER_KEY, 3, key)
   }
 
   // @ts-expect-error TODO
   if (typeof key.export !== 'function') {
-    throw typeError(MSG_INVALID_VERIFIER_KEY)
+    throw typeError(MSG_INVALID_VERIFIER_KEY, 4, key)
   }
 }
 
@@ -85,17 +83,17 @@ const checkIsSecretKey = (key: unknown) => {
   }
 
   if (typeof key !== 'object') {
-    throw typeError(MSG_INVALID_SECRET)
+    throw typeError(MSG_INVALID_SECRET, 1, key)
   }
 
   // @ts-expect-error TODO
   if (key.type !== 'secret') {
-    throw typeError(MSG_INVALID_SECRET)
+    throw typeError(MSG_INVALID_SECRET, 2, key)
   }
 
   // @ts-expect-error TODO
   if (typeof key.export !== 'function') {
-    throw typeError(MSG_INVALID_SECRET)
+    throw typeError(MSG_INVALID_SECRET, 3, key)
   }
 }
 
