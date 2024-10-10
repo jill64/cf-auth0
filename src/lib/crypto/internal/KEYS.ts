@@ -1,5 +1,9 @@
 export const KEYS = {
   kKeyFormatPEM: '',
   kKeyFormatDER: '',
-  kKeyFormatJWK: ''
+  kKeyFormatJWK: '',
+  kKeyEncodingPKCS1: '',
+  kKeyEncodingSEC1: '',
+  kKeyEncodingPKCS8: '',
+  kKeyEncodingSPKI: ''
 }
