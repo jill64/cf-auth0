@@ -81,7 +81,10 @@ export const CfAuth0 = ({
 
   const verify = jwt.verify
 
-  const setAuthCookie = (cookies: Cookies, user: jwt.JwtPayload | string) => {
+  const setAuthCookie = async (
+    cookies: Cookies,
+    user: jwt.JwtPayload | string
+  ) => {
     // @ts-expect-error TODO
     const cookieValue = await jwt.sign(user, session_secret)
     cookies.set(auth0_cookie_name, cookieValue, {
