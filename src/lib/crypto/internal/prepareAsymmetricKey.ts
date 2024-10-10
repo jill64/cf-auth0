@@ -52,7 +52,7 @@ export const prepareAsymmetricKey = (
       validateObject(data, 'key.key')
       return {
         data: getKeyObjectHandleFromJwk(data as JsonWebKey, ctx),
-        format: 'jwk'
+        format: 'jwk' as const
       }
     }
 

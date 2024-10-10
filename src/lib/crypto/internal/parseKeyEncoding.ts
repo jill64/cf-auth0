@@ -35,10 +35,11 @@ export const parseKeyEncoding = (
     objName
   )
 
-  // @ts-expect-error TODO
-  const { cipher, passphrase, encoding } = enc
-
+  let cipher, passphrase, encoding
   if (isPublic !== true) {
+    // @ts-expect-error TODO
+    ;({ cipher, passphrase, encoding } = enc)
+
     if (!isInput) {
       if (cipher != null) {
         if (typeof cipher !== 'string')
@@ -76,10 +77,8 @@ export const parseKeyEncoding = (
     }
   }
 
-  const passphrase2 =
-    passphrase !== undefined
-      ? getArrayBufferOrView(passphrase, 'key.passphrase', encoding)
-      : passphrase
+  if (passphrase !== undefined)
+    passphrase = getArrayBufferOrView(passphrase, 'key.passphrase', encoding)
 
-  return { format, type, cipher, passphrase: passphrase2 }
+  return { format, type, cipher, passphrase }
 }
