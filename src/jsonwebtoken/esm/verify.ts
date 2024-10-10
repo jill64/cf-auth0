@@ -63,12 +63,6 @@ export default async function (
     throw new JsonWebTokenError('secret or public key must be provided')
   }
 
-  if (!hasSignature) {
-    throw new JsonWebTokenError(
-      'please specify "none" in "algorithms" to verify unsigned tokens'
-    )
-  }
-
   let secretOrPublicKey2
 
   const sig =

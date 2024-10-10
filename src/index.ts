@@ -6,6 +6,19 @@ const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 
 let cached_key: string | undefined = undefined
 
+type TokenResponse = {
+  id_token: string
+  access_token: string
+  scope: string
+  expires_in: number
+  token_type: 'Bearer'
+}
+
+type InvalidGrantResponse = {
+  error: 'invalid_grant'
+  error_description: 'Invalid authorization code'
+}
+
 export const CfAuth0 = ({
   auth0_client_id,
   auth0_client_secret,
@@ -45,12 +58,13 @@ export const CfAuth0 = ({
     }
   }
 
-  const verifyToken = (token: string) => {
-    console.log('verifyToken token', token)
-    return jwt.verify(token, getKey)
-  }
+  const verifyToken = (id_token: string) => jwt.verify(id_token, getKey)
 
-  const getToken = async ({ code }: { code: string }) => {
+  const getToken = async ({
+    code
+  }: {
+    code: string
+  }): Promise<TokenResponse | InvalidGrantResponse> => {
     const res = await fetch(`https://${auth0_domain}/oauth/token`, {
       method: 'POST',
       body: JSON.stringify({
@@ -65,13 +79,7 @@ export const CfAuth0 = ({
       }
     })
 
-    const json = await res.json()
-
-    console.log('getToken Response: ', json)
-
-    return json as {
-      id_token: string
-    }
+    return await res.json()
   }
 
   const getAuthUser = (cookies: Cookies) => {
@@ -86,7 +94,7 @@ export const CfAuth0 = ({
     return jwt.decode(jwtToken)
   }
 
-  const verify = jwt.verify
+  const { verify } = jwt
 
   const setAuthCookie = async (
     cookies: Cookies,
