@@ -92,8 +92,7 @@ export default async function (
   } catch (e) {
     console.error('createPublicKey Error:', e)
     try {
-      // @ts-expect-error TODO
-      secretOrPublicKey2 = createSecretKey(sig)
+      secretOrPublicKey2 = createSecretKey(sig as NodeJS.ArrayBufferView)
     } catch (e) {
       console.error('createSecretKey Error:', e)
       throw new JsonWebTokenError('secretOrPublicKey is not valid key material')
