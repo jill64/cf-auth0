@@ -39,10 +39,6 @@ const checkIsPublicKey = (key: unknown) => {
     return
   }
 
-  if (!supportsKeyObjects) {
-    throw typeError(MSG_INVALID_VERIFIER_KEY)
-  }
-
   if (typeof key !== 'object') {
     throw typeError(MSG_INVALID_VERIFIER_KEY)
   }
@@ -86,10 +82,6 @@ const checkIsSecretKey = (key: unknown) => {
 
   if (typeof key === 'string') {
     return key
-  }
-
-  if (!supportsKeyObjects) {
-    throw typeError(MSG_INVALID_SECRET)
   }
 
   if (typeof key !== 'object') {
@@ -138,10 +130,10 @@ const normalizeInput = (thing: unknown) =>
 
 const createHmacSigner =
   (bits: number | string) =>
-  (thing: unknown, secret: BinaryLike | KeyObject) => {
+  (thing: unknown, secret: BinaryLike | KeyObjectLike | KeyObject) => {
     checkIsSecretKey(secret)
     const thing2 = normalizeInput(thing)
-    const hmac = createHmac('sha' + bits, secret)
+    const hmac = createHmac('sha' + bits, secret as BinaryLike)
     const sig = (hmac.update(thing2), hmac.digest('base64'))
 
     return fromBase64(sig)
@@ -149,7 +141,11 @@ const createHmacSigner =
 
 const createHmacVerifier =
   (bits: number | string) =>
-  (thing: unknown, signature: string, secret: BinaryLike | KeyObject) => {
+  (
+    thing: unknown,
+    signature: string,
+    secret: BinaryLike | KeyObject | KeyObjectLike
+  ) => {
     const computedSig = createHmacSigner(bits)(thing, secret)
 
     return bufferEqual(Buffer.from(signature), Buffer.from(computedSig))
@@ -187,6 +183,7 @@ const createKeyVerifier =
       | VerifyKeyObjectInput
       | VerifyPublicKeyInput
       | VerifyJsonWebKeyInput
+      | KeyObjectLike
   ) => {
     checkIsPublicKey(publicKey)
     const thing2 = normalizeInput(thing)
@@ -195,7 +192,7 @@ const createKeyVerifier =
 
     verifier.update(thing2)
 
-    return verifier.verify(publicKey, signature2, 'base64')
+    return verifier.verify(publicKey as KeyLike, signature2, 'base64')
   }
 
 const createPSSKeySigner =
@@ -208,7 +205,7 @@ const createPSSKeySigner =
       (signer.update(thing2),
       signer.sign(
         {
-          key: privateKey,
+          key: privateKey as unknown as KeyObject,
           padding: constants.RSA_PKCS1_PSS_PADDING,
           saltLength: constants.RSA_PSS_SALTLEN_DIGEST
         },
@@ -220,7 +217,7 @@ const createPSSKeySigner =
 
 const createPSSKeyVerifier =
   (bits: string | number) =>
-  (thing: unknown, signature: string, publicKey: KeyObjectLike) => {
+  (thing: unknown, signature: string, publicKey: KeyObject | KeyObjectLike) => {
     checkIsPublicKey(publicKey)
 
     const thing2 = normalizeInput(thing)
@@ -231,7 +228,7 @@ const createPSSKeyVerifier =
 
     return verifier.verify(
       {
-        key: publicKey,
+        key: publicKey as unknown as KeyObject,
         padding: constants.RSA_PKCS1_PSS_PADDING,
         saltLength: constants.RSA_PSS_SALTLEN_DIGEST
       },
