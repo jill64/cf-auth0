@@ -37,18 +37,23 @@ export const prepareAsymmetricKey = (
       data: getArrayBufferOrView(key, 'key')
     }
   } else if (typeof key === 'object') {
-    // @ts-expect-error TODO
-    const { key: data, encoding, format } = key
+    const data = 'key' in key ? key.key : null
+    const encoding = 'encoding' in key ? key.encoding : null
+    const format = 'format' in key ? key.format : null
 
     // The 'key' property can be a KeyObject as well to allow specifying
     // additional options such as padding along with the key.
-    if (isKeyObjectLike(data)) return { data: getKeyObjectHandle(data, ctx) }
-    else if (isCryptoKey(data))
+    if (isKeyObjectLike(data)) {
+      return { data: getKeyObjectHandle(data, ctx) }
+    } else if (isCryptoKey(data)) {
       // @ts-expect-error TODO
       return { data: getKeyObjectHandle(data[kKeyObject], ctx) }
-    else if (format === 'jwk') {
+    } else if (format === 'jwk') {
       validateObject(data, 'key.key')
-      return { data: getKeyObjectHandleFromJwk(data, ctx), format: 'jwk' }
+      return {
+        data: getKeyObjectHandleFromJwk(data as JsonWebKey, ctx),
+        format: 'jwk'
+      }
     }
 
     // Either PEM or DER using PKCS#1 or SPKI.
@@ -64,7 +69,7 @@ export const prepareAsymmetricKey = (
       ctx === 'kConsumePrivate' || ctx === 'kCreatePrivate' ? false : undefined
 
     return {
-      data: getArrayBufferOrView(data, 'key', encoding),
+      data: getArrayBufferOrView(data, 'key', encoding as BufferEncoding),
       ...parseKeyEncoding(key, undefined, isPublic)
     }
   }

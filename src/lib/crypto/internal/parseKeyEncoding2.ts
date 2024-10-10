@@ -11,12 +11,14 @@ export const parseKeyEncoding2 = (
         privateKeyEncoding?: Parameters<typeof parsePrivateKeyEncoding>[0]
       } = kEmptyObject
 ) => {
-  const publicKeyEncoding = 'publicKeyEncoding'in options ? options.publicKeyEncoding : null
-  const privateKeyEncoding = 'privateKeyEncoding'in options ? options.privateKeyEncoding : null
+  const publicKeyEncoding =
+    'publicKeyEncoding' in options ? options.publicKeyEncoding : null
+  const privateKeyEncoding =
+    'privateKeyEncoding' in options ? options.privateKeyEncoding : null
 
   let publicFormat
   let publicType
-  
+
   if (publicKeyEncoding == null) {
     publicFormat = publicType = undefined
   } else if (typeof publicKeyEncoding === 'object') {
