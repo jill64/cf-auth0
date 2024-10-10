@@ -4,9 +4,6 @@ import { validateObject } from './utils/validateObject.js'
 import { validateOneOf } from './utils/validateOneOf.js'
 import { validateString } from './utils/validateString.js'
 
-const kKeyTypePublic = 1
-const kKeyTypePrivate = 2
-
 export const getKeyObjectHandleFromJwk = (key: JsonWebKey, ctx: KIC) => {
   validateObject(key, 'key')
   validateOneOf(key.kty, 'key.kty', ['RSA', 'EC', 'OKP'])
@@ -51,13 +48,9 @@ export const getKeyObjectHandleFromJwk = (key: JsonWebKey, ctx: KIC) => {
         break
     }
 
-    const keyType = isPublic ? kKeyTypePublic : kKeyTypePrivate
-
     return {
-      type: 'OKP',
-      key,
-      keyData,
-      keyType
+      type: 'OKP' as const,
+      jwk: key
     }
   }
 
@@ -80,8 +73,8 @@ export const getKeyObjectHandleFromJwk = (key: JsonWebKey, ctx: KIC) => {
     }
 
     return {
-      type: 'EC',
-      key
+      type: 'EC' as const,
+      jwk: key
     }
   }
 
@@ -115,7 +108,7 @@ export const getKeyObjectHandleFromJwk = (key: JsonWebKey, ctx: KIC) => {
   }
 
   return {
-    type: 'RSA',
-    key
+    type: 'RSA' as const,
+    jwk: key
   }
 }
