@@ -28,7 +28,7 @@ let MSG_INVALID_VERIFIER_KEY = 'key must be a string or a buffer'
 const MSG_INVALID_SIGNER_KEY = 'key must be a string, a buffer or an object'
 
 MSG_INVALID_VERIFIER_KEY += ' or a KeyObject'
-MSG_INVALID_SECRET += 'or a KeyObject'
+MSG_INVALID_SECRET += ' or a KeyObject'
 
 const checkIsPublicKey = (key: unknown) => {
   if (Buffer.isBuffer(key)) {
@@ -54,7 +54,7 @@ const checkIsPublicKey = (key: unknown) => {
   }
 
   // @ts-expect-error TODO
-  if (typeof key.exports !== 'function') {
+  if (typeof key.export !== 'function') {
     throw typeError(MSG_INVALID_VERIFIER_KEY)
   }
 }
@@ -94,7 +94,7 @@ const checkIsSecretKey = (key: unknown) => {
   }
 
   // @ts-expect-error TODO
-  if (typeof key.exports !== 'function') {
+  if (typeof key.export !== 'function') {
     throw typeError(MSG_INVALID_SECRET)
   }
 }
