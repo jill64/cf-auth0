@@ -9,7 +9,6 @@ import { Buffer } from 'node:buffer'
 import * as jws from '../../jws/esm/index.js'
 import { createPrivateKey, createSecretKey } from '../../lib/crypto/index.js'
 import { isKeyObject } from '../../lib/crypto/isKeyObject.js'
-import PS_SUPPORTED from './lib/psSupported.js'
 import timespan from './lib/timespan.js'
 import validateAsymmetricKey from './lib/validateAsymmetricKey.js'
 
@@ -17,6 +16,9 @@ const SUPPORTED_ALGS = [
   'RS256',
   'RS384',
   'RS512',
+  'PS256',
+  'PS384',
+  'PS512',
   'ES256',
   'ES384',
   'ES512',
@@ -25,9 +27,6 @@ const SUPPORTED_ALGS = [
   'HS512',
   'none'
 ]
-if (PS_SUPPORTED) {
-  SUPPORTED_ALGS.splice(3, 0, 'PS256', 'PS384', 'PS512')
-}
 
 const sign_options_schema = {
   expiresIn: {

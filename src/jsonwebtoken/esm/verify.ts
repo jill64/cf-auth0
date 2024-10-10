@@ -1,20 +1,13 @@
-import process from 'node:process'
 import * as jws from '../../jws/esm/index.js'
 import { createPublicKey, createSecretKey } from '../../lib/crypto/index.js'
 import decode from './decode.js'
 import { Jwt, JwtHeader, JwtPayload, PublicKey, Secret } from './index.js'
 import JsonWebTokenError from './lib/JsonWebTokenError.js'
 import NotBeforeError from './lib/NotBeforeError.js'
-import PS_SUPPORTED from './lib/psSupported.js'
 import TokenExpiredError from './lib/TokenExpiredError.js'
 
-const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512']
-const RSA_KEY_ALGS = ['RS256', 'RS384', 'RS512']
-
-if (PS_SUPPORTED) {
-  PUB_KEY_ALGS.splice(PUB_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
-  RSA_KEY_ALGS.splice(RSA_KEY_ALGS.length, 0, 'PS256', 'PS384', 'PS512')
-}
+// const PUB_KEY_ALGS = ['RS256', 'RS384', 'RS512', 'PS256', 'PS384', 'PS512']
+// const RSA_KEY_ALGS = ['RS256', 'RS384', 'RS512', 'PS256', 'PS384', 'PS512']
 
 export default async function (
   jwtString: string,
@@ -135,12 +128,7 @@ export default async function (
   //   options.algorithms = PUB_KEY_ALGS
   // }
 
-  console.log(process.version)
   console.log('sig', sig)
-  console.log('secretOrPublicKey2', secretOrPublicKey2)
-  Object.keys(secretOrPublicKey2).forEach((key) => {
-    console.log(`secretOrPublicKey2.${key}`, secretOrPublicKey)
-  })
   console.log('decodedToken', decodedToken)
 
   // if (options.algorithms.includes(decodedToken.header.alg)) {
