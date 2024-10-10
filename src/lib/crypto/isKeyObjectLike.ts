@@ -10,5 +10,5 @@ export const isKeyObjectLike = (val: unknown): val is KeyObjectLike =>
   typeof val.from === 'function' &&
   'equals' in val &&
   typeof val.equals === 'function' &&
-  'exports' in val &&
-  typeof val.exports === 'function'
+  'export' in val &&
+  typeof val.export === 'function'
