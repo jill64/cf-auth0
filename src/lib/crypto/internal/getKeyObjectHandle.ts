@@ -1,5 +1,5 @@
 import { KeyObjectLike } from '../KeyObjectLike.js'
-import { KIC } from './KIC.js'
+import { KIC } from './utils/KIC.js'
 
 export const getKeyObjectHandle = (key: KeyObjectLike, ctx: KIC) => {
   if (ctx === 'kCreatePrivate') {

@@ -7,10 +7,10 @@ import { getArrayBufferOrView } from './getArrayBufferOrView.js'
 import { getKeyObjectHandle } from './getKeyObjectHandle.js'
 import { getKeyObjectHandleFromJwk } from './getKeyObjectHandleFromJwk.js'
 import { getKeyTypes } from './getKeyTypes.js'
-import { KEYS } from './Keys.js'
-import { KIC } from './KIC.js'
 import { parseKeyEncoding } from './parseKeyEncoding.js'
-import { validateObject } from './validateObject.js'
+import { KEYS } from './utils/KEYS.js'
+import { KIC } from './utils/KIC.js'
+import { validateObject } from './utils/validateObject.js'
 
 const isStringOrBuffer = (val: unknown) =>
   typeof val === 'string' || isArrayBufferView(val) || isAnyArrayBuffer(val)
