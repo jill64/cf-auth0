@@ -19,7 +19,6 @@ import {
   createSign,
   createVerify
 } from '../../lib/crypto/index.js'
-import { KeyObjectLike } from '../../lib/crypto/KeyObjectLike.js'
 
 const MSG_INVALID_ALGORITHM =
   '"%s" is not a valid algorithm.\n  Supported algorithms are:\n  "HS256", "HS384", "HS512", "RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512" and "none".'
@@ -131,7 +130,7 @@ const normalizeInput = (thing: unknown) =>
 
 const createHmacSigner =
   (bits: number | string) =>
-  (thing: unknown, secret: BinaryLike | KeyObjectLike | KeyObject) => {
+  (thing: unknown, secret: BinaryLike | KeyObject) => {
     checkIsSecretKey(secret)
     const thing2 = normalizeInput(thing)
     const hmac = createHmac('sha' + bits, secret as BinaryLike)
@@ -142,11 +141,7 @@ const createHmacSigner =
 
 const createHmacVerifier =
   (bits: number | string) =>
-  (
-    thing: unknown,
-    signature: string,
-    secret: BinaryLike | KeyObject | KeyObjectLike
-  ) => {
+  (thing: unknown, signature: string, secret: BinaryLike | KeyObject) => {
     const computedSig = createHmacSigner(bits)(thing, secret)
 
     return bufferEqual(Buffer.from(signature), Buffer.from(computedSig))
@@ -184,7 +179,6 @@ const createKeyVerifier =
       | VerifyKeyObjectInput
       | VerifyPublicKeyInput
       | VerifyJsonWebKeyInput
-      | KeyObjectLike
   ) => {
     checkIsPublicKey(publicKey)
     const thing2 = normalizeInput(thing)
@@ -193,7 +187,7 @@ const createKeyVerifier =
 
     verifier.update(thing2)
 
-    return verifier.verify(publicKey as KeyLike, signature2, 'base64')
+    return verifier.verify(publicKey, signature2, 'base64')
   }
 
 const createPSSKeySigner =
@@ -218,7 +212,7 @@ const createPSSKeySigner =
 
 const createPSSKeyVerifier =
   (bits: string | number) =>
-  (thing: unknown, signature: string, publicKey: KeyObject | KeyObjectLike) => {
+  (thing: unknown, signature: string, publicKey: KeyObject) => {
     checkIsPublicKey(publicKey)
 
     const thing2 = normalizeInput(thing)

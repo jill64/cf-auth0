@@ -1,7 +1,7 @@
-import { KeyObjectLike } from '../KeyObjectLike.js'
+import type { KeyObject } from 'node:crypto'
 import { KIC } from './utils/KIC.js'
 
-export const getKeyObjectHandle = (key: KeyObjectLike, ctx: KIC) => {
+export const getKeyObjectHandle = (key: KeyObject, ctx: KIC) => {
   if (ctx === 'kCreatePrivate') {
     throw new Error(
       `ERR_INVALID_ARG_TYPE: key must be ['string', 'ArrayBuffer', 'Buffer', 'TypedArray', 'DataView'] but ${key}`

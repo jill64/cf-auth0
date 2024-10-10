@@ -1,8 +1,7 @@
 import type { createPrivateKey, createPublicKey } from 'node:crypto'
 import { isAnyArrayBuffer, isArrayBufferView } from 'node:util/types'
 import { isCryptoKey } from '../isCryptoKey.js'
-import { isKeyObjectLike } from '../isKeyObjectLike.js'
-import { KeyObjectLike } from '../KeyObjectLike.js'
+import { isKeyObject } from '../isKeyObject.js'
 import { getArrayBufferOrView } from './getArrayBufferOrView.js'
 import { getKeyObjectHandle } from './getKeyObjectHandle.js'
 import { getKeyObjectHandleFromJwk } from './getKeyObjectHandleFromJwk.js'
@@ -20,11 +19,10 @@ const kKeyObject = Symbol('kKeyObject')
 export const prepareAsymmetricKey = (
   key:
     | Parameters<typeof createPrivateKey>[0]
-    | Parameters<typeof createPublicKey>[0]
-    | KeyObjectLike,
+    | Parameters<typeof createPublicKey>[0],
   ctx: KIC
 ) => {
-  if (isKeyObjectLike(key)) {
+  if (isKeyObject(key)) {
     // Best case: A key object, as simple as that.
     return { data: getKeyObjectHandle(key, ctx) }
   } else if (isCryptoKey(key)) {
@@ -43,7 +41,7 @@ export const prepareAsymmetricKey = (
 
     // The 'key' property can be a KeyObject as well to allow specifying
     // additional options such as padding along with the key.
-    if (isKeyObjectLike(data)) {
+    if (isKeyObject(data)) {
       return { data: getKeyObjectHandle(data, ctx) }
     } else if (isCryptoKey(data)) {
       // @ts-expect-error TODO

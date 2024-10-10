@@ -1,6 +1,6 @@
-import type { KeyObjectLike } from './KeyObjectLike.js'
+import { KeyObject } from 'node:crypto'
 
-export const isKeyObjectLike = (val: unknown): val is KeyObjectLike =>
+export const isKeyObject = (val: unknown): val is KeyObject =>
   typeof val === 'object' &&
   val !== null &&
   'type' in val &&

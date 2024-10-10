@@ -1,11 +1,14 @@
-import type { createPublicKey as CreatePublicKey } from 'node:crypto'
-import { KeyObjectLike } from './KeyObjectLike.js'
+import type {
+  createPublicKey as CreatePublicKey,
+  KeyObject as KeyObjectType
+} from 'node:crypto'
 import { subtle } from './index.js'
 import { prepareAsymmetricKey } from './internal/prepareAsymmetricKey.js'
+import { KeyObject } from './KeyObject.js'
 
 export const createPublicKey = async (
-  key: Parameters<typeof CreatePublicKey>[0] | KeyObjectLike
-): Promise<KeyObjectLike> => {
+  key: Parameters<typeof CreatePublicKey>[0]
+): Promise<KeyObjectType> => {
   const result = prepareAsymmetricKey(key, 'kCreatePublic')
 
   const { format, data } = result
@@ -25,10 +28,10 @@ export const createPublicKey = async (
       jwk,
       jwk.alg,
       true,
-      (jwk.key_ops as KeyUsage[]) ?? []
+      (jwk.key_ops ?? []) as KeyUsage[]
     )
 
-    return KeyObjectLike.from(key)
+    return KeyObject.from(key) as KeyObjectType
   }
 
   throw new TypeError('Unsupported key format')
