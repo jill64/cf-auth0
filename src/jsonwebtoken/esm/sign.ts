@@ -136,7 +136,7 @@ const options_for_objects = [
 ]
 
 // @ts-expect-error TODO
-export default function (payload, secretOrPrivateKey, options, callback) {
+export default async function (payload, secretOrPrivateKey, options, callback) {
   if (typeof options === 'function') {
     callback = options
     options = {}
@@ -170,7 +170,7 @@ export default function (payload, secretOrPrivateKey, options, callback) {
 
   if (secretOrPrivateKey != null && !isKeyObjectLike(secretOrPrivateKey)) {
     try {
-      secretOrPrivateKey = createPrivateKey(secretOrPrivateKey)
+      secretOrPrivateKey = await createPrivateKey(secretOrPrivateKey)
     } catch {
       try {
         secretOrPrivateKey = createSecretKey(

@@ -1,4 +1,4 @@
-import { KeyObjectLike } from './KeyObjectLike.js'
+import type { KeyObjectLike } from './KeyObjectLike.js'
 
 export const isKeyObjectLike = (val: unknown): val is KeyObjectLike =>
   typeof val === 'object' &&

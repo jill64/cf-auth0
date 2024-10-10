@@ -2,6 +2,7 @@ import { Buffer } from 'node:buffer'
 import type { KeyObject } from 'node:crypto'
 import { JwtHeader, JwtPayload } from '../../../jsonwebtoken/esm/index.js'
 import jwa from '../../../jwa/esm/index.js'
+import { KeyObjectLike } from '../../../lib/crypto/KeyObjectLike.js'
 import toString from './tostring.js'
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/
@@ -40,7 +41,7 @@ export const isValid = (string: string) =>
 export const verify = (
   jwsSig: string,
   algorithm: Parameters<typeof jwa>[0],
-  secretOrKey: KeyObject
+  secretOrKey: KeyObject | KeyObjectLike
 ) => {
   if (!algorithm) {
     throw new Error('MISSING_ALGORITHM: parameter for jws.verify')
@@ -52,7 +53,7 @@ export const verify = (
   const securedInput = securedInputFromJWS(jwsSig2)
   const algo = jwa(algorithm)
 
-  return algo.verify(securedInput, signature, secretOrKey)
+  return algo.verify(securedInput, signature, secretOrKey as KeyObject)
 }
 
 export const decode = (

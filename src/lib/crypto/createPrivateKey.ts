@@ -1,5 +1,35 @@
-// import type { createPrivateKey as CreatePrivateKey } from 'node:crypto'
+import type { createPrivateKey as CreatePrivateKey } from 'node:crypto'
+import { subtle } from './index.js'
+import { prepareAsymmetricKey } from './internal/prepareAsymmetricKey.js'
+import { KeyObjectLike } from './KeyObjectLike.js'
 
-// export const createPrivateKey: typeof CreatePrivateKey = () => {}
+export const createPrivateKey = async (
+  key: Parameters<typeof CreatePrivateKey>[0]
+): Promise<KeyObjectLike> => {
+  const result = prepareAsymmetricKey(key, 'kCreatePrivate')
 
-export { createPrivateKey } from 'node:crypto'
+  const { format, data } = result
+  const jwk = 'jwk' in data ? data.jwk : null
+
+  if (format === 'jwk') {
+    if (jwk === null) {
+      throw new TypeError('ERR_MISSING_VALUE: key.jwk')
+    }
+
+    if (!jwk.alg) {
+      throw new TypeError('ERR_MISSING_ARG: key.jwk.alg')
+    }
+
+    const key = await subtle.importKey(
+      'jwk',
+      jwk,
+      jwk.alg,
+      true,
+      (jwk.key_ops as KeyUsage[]) ?? []
+    )
+
+    return KeyObjectLike.from(key)
+  }
+
+  throw new TypeError('Unsupported key format')
+}

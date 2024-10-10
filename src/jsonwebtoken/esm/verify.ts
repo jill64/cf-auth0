@@ -88,7 +88,7 @@ export default async function (
   }
 
   try {
-    secretOrPublicKey2 = createPublicKey(sig)
+    secretOrPublicKey2 = await createPublicKey(sig)
   } catch (e) {
     console.error('createPublicKey Error:', e)
     try {
