@@ -24,6 +24,8 @@ export const CfAuth0 = ({
   base_url: string
 }) => {
   const getKey = async (header: jwt.JwtHeader) => {
+    console.log('getKey header', header)
+
     try {
       const client = JwksClient(jwks_url)
 
@@ -43,15 +45,12 @@ export const CfAuth0 = ({
     }
   }
 
-  const verifyToken = (token: string) => jwt.verify(token, getKey)
+  const verifyToken = (token: string) => {
+    console.log('verifyToken token', token)
+    return jwt.verify(token, getKey)
+  }
 
-  const getToken = async ({
-    code
-  }: {
-    code: string
-  }): Promise<{
-    id_token: string
-  }> => {
+  const getToken = async ({ code }: { code: string }) => {
     const res = await fetch(`https://${auth0_domain}/oauth/token`, {
       method: 'POST',
       body: JSON.stringify({
@@ -66,7 +65,13 @@ export const CfAuth0 = ({
       }
     })
 
-    return await res.json()
+    const json = await res.json()
+
+    console.log('getToken Response: ', json)
+
+    return json as {
+      id_token: string
+    }
   }
 
   const getAuthUser = (cookies: Cookies) => {
@@ -75,6 +80,8 @@ export const CfAuth0 = ({
     if (!jwtToken) {
       return null
     }
+
+    console.log('getAuthUser jwtToken', jwtToken)
 
     return jwt.decode(jwtToken)
   }
