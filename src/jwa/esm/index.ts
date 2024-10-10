@@ -54,7 +54,7 @@ const checkIsPublicKey = (key: unknown) => {
   }
 
   // @ts-expect-error TODO
-  if (typeof key.export !== 'function') {
+  if (typeof key.exports !== 'function') {
     throw typeError(MSG_INVALID_VERIFIER_KEY)
   }
 }
@@ -94,7 +94,7 @@ const checkIsSecretKey = (key: unknown) => {
   }
 
   // @ts-expect-error TODO
-  if (typeof key.export !== 'function') {
+  if (typeof key.exports !== 'function') {
     throw typeError(MSG_INVALID_SECRET)
   }
 }

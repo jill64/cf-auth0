@@ -60,11 +60,11 @@ class KeyObjectLike {
     }
   }
 
-  export(options: KeyExportOptions<'pem'>): string | Buffer
-  export(options?: KeyExportOptions<'der'>): Buffer
-  export(options?: JwkKeyExportOptions): JsonWebKey
+  exports(options: KeyExportOptions<'pem'>): string | Buffer
+  exports(options?: KeyExportOptions<'der'>): Buffer
+  exports(options?: JwkKeyExportOptions): JsonWebKey
 
-  export(
+  exports(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options?:
       | KeyExportOptions<'pem'>
