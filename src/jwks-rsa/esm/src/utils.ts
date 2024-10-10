@@ -54,23 +54,16 @@ const retrieveSigningKeys = async (jwks: JWK[]) => {
         continue
       }
 
-      let getSpki
-
       // @ts-expect-error TODO
-      switch (key[Symbol.toStringTag]) {
-        case 'CryptoKey': {
-          const spki = await exportSPKI(key)
-          getSpki = () => spki
-          break
-        }
-        case 'KeyObject':
-        // Assume legacy Node.js version without the Symbol.toStringTag backported
-        // Fall through
-        default:
-          // getSpki = () => key.export({ format: 'pem', type: 'spki' })
-          const spki = await exportSPKI(key)
-          getSpki = () => spki
+      const keyTag: unknown = key[Symbol.toStringTag]
+
+      if (keyTag !== 'CryptoKey' && keyTag !== 'KeyObject') {
+        throw new JwksError('Unsupported key type')
       }
+
+      const spki = await exportSPKI(key)
+      const getSpki = () => spki
+
       results.push({
         get publicKey() {
           return getSpki()
