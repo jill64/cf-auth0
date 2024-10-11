@@ -20,7 +20,7 @@ function pemToArrayBuffer(pem: string) {
     .replace(/-----BEGIN PUBLIC KEY-----/, '')
     .replace(/-----END PUBLIC KEY-----/, '')
     .replace(/\n/g, '')
-  const binary = window.atob(b64)
+  const binary = atob(b64)
   const len = binary.length
   const buffer = new ArrayBuffer(len)
   const view = new Uint8Array(buffer)
@@ -29,6 +29,7 @@ function pemToArrayBuffer(pem: string) {
   }
   return buffer
 }
+
 export const prepareAsymmetricKey = (
   key:
     | Parameters<typeof createPrivateKey>[0]
