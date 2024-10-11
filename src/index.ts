@@ -39,22 +39,18 @@ export const CfAuth0 = ({
   const getKey = async (header: jwt.JwtHeader) => {
     console.log('getKey header', header)
 
-    try {
-      const client = JwksClient(jwks_url)
+    const client = JwksClient(jwks_url)
 
-      const key = await client.getSigningKey(header.kid)
+    const key = await client.getSigningKey(header.kid)
 
-      if (cached_key) {
-        return cached_key
-      }
-
-      const signingKey = key?.getPublicKey()
-      cached_key = signingKey
-
-      return signingKey
-    } catch {
-      throw new Error('Error getting key')
+    if (cached_key) {
+      return cached_key
     }
+
+    const signingKey = key.getPublicKey()
+    cached_key = signingKey
+
+    return signingKey
   }
 
   const verifyToken = (id_token: string) => jwt.verify(id_token, getKey)
