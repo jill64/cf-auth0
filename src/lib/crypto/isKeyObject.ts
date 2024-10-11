@@ -1,4 +1,4 @@
-import { KeyObject } from 'node:crypto'
+import type { KeyObject } from 'node:crypto'
 
 export const isKeyObject = (val: unknown): val is KeyObject =>
   typeof val === 'object' &&
