@@ -44,6 +44,8 @@ export const prepareAsymmetricKey = (
     return { data: getKeyObjectHandle(key[kKeyObject], ctx) }
   } else if (isStringOrBuffer(key)) {
     // Expect PEM by default, mostly for backward compatibility.
+    console.log('key:', key)
+    console.log('data', typeof key === 'string' ? pemToArrayBuffer(key) : key)
     return {
       format: 'spki' as const,
       data: typeof key === 'string' ? pemToArrayBuffer(key) : key
