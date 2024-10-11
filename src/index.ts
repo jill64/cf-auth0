@@ -52,8 +52,7 @@ export const CfAuth0 = ({
       cached_key = signingKey
 
       return signingKey
-    } catch (err) {
-      console.error('getKey Error:', err)
+    } catch {
       throw new Error('Error getting key')
     }
   }

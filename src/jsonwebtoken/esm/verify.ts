@@ -76,12 +76,10 @@ export default async function (
 
   try {
     secretOrPublicKey2 = await createPublicKey(sig)
-  } catch (e) {
-    console.error('createPublicKey Error:', e)
+  } catch {
     try {
       secretOrPublicKey2 = createSecretKey(sig as NodeJS.ArrayBufferView)
-    } catch (e) {
-      console.error('createSecretKey Error:', e)
+    } catch {
       throw new JsonWebTokenError('secretOrPublicKey is not valid key material')
     }
   }
