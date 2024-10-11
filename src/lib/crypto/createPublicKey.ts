@@ -34,5 +34,20 @@ export const createPublicKey = async (
     return KeyObject.from(key) as KeyObjectType
   }
 
+  if (format === 'spki') {
+    const key = await subtle.importKey(
+      'spki',
+      data,
+      {
+        name: 'RSA-PSS',
+        hash: 'SHA-256'
+      },
+      true,
+      ['verify']
+    )
+
+    return KeyObject.from(key) as KeyObjectType
+  }
+
   throw new TypeError('Unsupported key format')
 }
