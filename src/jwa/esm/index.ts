@@ -48,12 +48,13 @@ const checkIsPublicKey = (key: unknown) => {
     throw typeError(MSG_INVALID_VERIFIER_KEY, 3, key)
   }
 
-  if (
-    !('asymmetricKeyType' in key) ||
-    typeof key.asymmetricKeyType !== 'string'
-  ) {
-    throw typeError(MSG_INVALID_VERIFIER_KEY, 4, key)
-  }
+  // TODO
+  // if (
+  //   !('asymmetricKeyType' in key) ||
+  //   typeof key.asymmetricKeyType !== 'string'
+  // ) {
+  //   throw typeError(MSG_INVALID_VERIFIER_KEY, 4, key)
+  // }
 
   if (!('export' in key) || typeof key.export !== 'function') {
     throw typeError(MSG_INVALID_VERIFIER_KEY, 5, key)
