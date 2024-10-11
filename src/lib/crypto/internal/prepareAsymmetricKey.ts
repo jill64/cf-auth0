@@ -15,6 +15,20 @@ const isStringOrBuffer = (val: unknown) =>
 
 const kKeyObject = Symbol('kKeyObject')
 
+function pemToArrayBuffer(pem: string) {
+  const b64 = pem
+    .replace(/-----BEGIN PUBLIC KEY-----/, '')
+    .replace(/-----END PUBLIC KEY-----/, '')
+    .replace(/\n/g, '')
+  const binary = window.atob(b64)
+  const len = binary.length
+  const buffer = new ArrayBuffer(len)
+  const view = new Uint8Array(buffer)
+  for (let i = 0; i < len; i++) {
+    view[i] = binary.charCodeAt(i)
+  }
+  return buffer
+}
 export const prepareAsymmetricKey = (
   key:
     | Parameters<typeof createPrivateKey>[0]
@@ -31,7 +45,7 @@ export const prepareAsymmetricKey = (
     // Expect PEM by default, mostly for backward compatibility.
     return {
       format: 'spki' as const,
-      data: getArrayBufferOrView(key, 'key')
+      data: typeof key === 'string' ? pemToArrayBuffer(key) : key
     }
   } else if (typeof key === 'object') {
     const data = 'key' in key ? key.key : null
