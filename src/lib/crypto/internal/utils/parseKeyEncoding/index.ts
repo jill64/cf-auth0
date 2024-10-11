@@ -4,12 +4,12 @@ import type {
   PrivateKeyInput,
   PublicKeyInput
 } from 'node:crypto'
+import { isStringOrBuffer } from '../isStringOrBuffer.js'
+import { KEYS } from '../KEYS.js'
+import { option } from '../option.js'
+import { validateObject } from '../validateObject.js'
 import { getArrayBufferOrView } from './getArrayBufferOrView.js'
 import { parseKeyFormatAndType } from './parseKeyFormatAndType.js'
-import { isStringOrBuffer } from './utils/isStringOrBuffer.js'
-import { KEYS } from './utils/KEYS.js'
-import { option } from './utils/option.js'
-import { validateObject } from './utils/validateObject.js'
 
 const encodingNames = {
   [KEYS.kKeyEncodingPKCS1]: 'pkcs1',

@@ -1,8 +1,8 @@
-import { JWK } from '../../../jose/esm/src/types.js'
-import { KIC } from './utils/KIC.js'
-import { validateObject } from './utils/validateObject.js'
-import { validateOneOf } from './utils/validateOneOf.js'
-import { validateString } from './utils/validateString.js'
+import { JWK } from '../../../../jose/esm/src/types.js'
+import { KIC } from '../utils/KIC.js'
+import { validateObject } from '../utils/validateObject.js'
+import { validateOneOf } from '../utils/validateOneOf.js'
+import { validateString } from '../utils/validateString.js'
 
 export const getKeyObjectHandleFromJwk = (key: JsonWebKey, ctx: KIC) => {
   validateObject(key, 'key')
