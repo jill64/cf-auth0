@@ -10,7 +10,9 @@ export const getKeyObjectHandle = (key: KeyObject, ctx: KIC) => {
 
   if (key.type !== 'private') {
     if (ctx === 'kConsumePrivate' || ctx === 'kCreatePublic')
-      throw new Error(`[ERR_CRYPTO_INVALID_KEY_OBJECT_TYPE]: ${key.type} private`)
+      throw new Error(
+        `[ERR_CRYPTO_INVALID_KEY_OBJECT_TYPE]: ${key.type} private`
+      )
     if (key.type !== 'public') {
       throw new Error(
         `[ERR_CRYPTO_INVALID_KEY_OBJECT_TYPE]: ${key.type} private or public`
