@@ -227,7 +227,7 @@ const createPSSKeyVerifier =
 
     return verifier.verify(
       {
-        key: publicKey as unknown as KeyObject,
+        key: publicKey,
         padding: constants.RSA_PKCS1_PSS_PADDING,
         saltLength: constants.RSA_PSS_SALTLEN_DIGEST
       },

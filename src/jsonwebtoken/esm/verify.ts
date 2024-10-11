@@ -124,6 +124,8 @@ export default async function (
 
   console.log('sig', sig)
   console.log('decodedToken', decodedToken)
+  console.log('secretOrPublicKey2', secretOrPublicKey2)
+  console.log('secretOrPublicKey2.type', secretOrPublicKey2.type)
 
   // if (options.algorithms.includes(decodedToken.header.alg)) {
   //   throw new JsonWebTokenError('invalid algorithm')
