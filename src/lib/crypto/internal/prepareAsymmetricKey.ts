@@ -7,7 +7,6 @@ import { getKeyObjectHandle } from './getKeyObjectHandle.js'
 import { getKeyObjectHandleFromJwk } from './getKeyObjectHandleFromJwk.js'
 import { getKeyTypes } from './getKeyTypes.js'
 import { parseKeyEncoding } from './parseKeyEncoding.js'
-import { KEYS } from './utils/KEYS.js'
 import { KIC } from './utils/KIC.js'
 import { validateObject } from './utils/validateObject.js'
 
@@ -31,7 +30,7 @@ export const prepareAsymmetricKey = (
   } else if (isStringOrBuffer(key)) {
     // Expect PEM by default, mostly for backward compatibility.
     return {
-      format: KEYS.kKeyFormatPEM,
+      format: 'spki' as const,
       data: getArrayBufferOrView(key, 'key')
     }
   } else if (typeof key === 'object') {
