@@ -1,14 +1,14 @@
 import type { createPrivateKey, createPublicKey } from 'node:crypto'
 import { isAnyArrayBuffer, isArrayBufferView } from 'node:util/types'
-import { isCryptoKey } from '../isCryptoKey.js'
-import { isKeyObject } from '../isKeyObject.js'
-import { getArrayBufferOrView } from './getArrayBufferOrView.js'
+import { isCryptoKey } from '../../isCryptoKey.js'
+import { isKeyObject } from '../../isKeyObject.js'
+import { KIC } from '../utils/KIC.js'
+import { getArrayBufferOrView } from '../utils/parseKeyEncoding/getArrayBufferOrView.js'
+import { parseKeyEncoding } from '../utils/parseKeyEncoding/index.js'
+import { validateObject } from '../utils/validateObject.js'
 import { getKeyObjectHandle } from './getKeyObjectHandle.js'
 import { getKeyObjectHandleFromJwk } from './getKeyObjectHandleFromJwk.js'
 import { getKeyTypes } from './getKeyTypes.js'
-import { parseKeyEncoding } from './parseKeyEncoding.js'
-import { KIC } from './utils/KIC.js'
-import { validateObject } from './utils/validateObject.js'
 
 const isStringOrBuffer = (val: unknown) =>
   typeof val === 'string' || isArrayBufferView(val) || isAnyArrayBuffer(val)

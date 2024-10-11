@@ -3,7 +3,7 @@ import type {
   KeyObject as KeyObjectType
 } from 'node:crypto'
 import { subtle } from './index.js'
-import { prepareAsymmetricKey } from './internal/prepareAsymmetricKey.js'
+import { prepareAsymmetricKey } from './internal/prepareAsymmetricKey/index.js'
 import { KeyObject } from './KeyObject.js'
 
 export const createPrivateKey = async (

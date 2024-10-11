@@ -1,8 +1,8 @@
-import { parseKeyEncoding } from './parseKeyEncoding.js'
-import { parseKeyFormat } from './parseKeyFormat.js'
-import { parseKeyType } from './parseKeyType.js'
-import { KEYS } from './utils/KEYS.js'
-import { option } from './utils/option.js'
+import { parseKeyFormat } from '../../parseKeyFormat.js'
+import { parseKeyType } from '../../parseKeyType.js'
+import { KEYS } from '../KEYS.js'
+import { option } from '../option.js'
+import { parseKeyEncoding } from './index.js'
 
 type Params = Parameters<typeof parseKeyEncoding>
 
