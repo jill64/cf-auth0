@@ -37,6 +37,9 @@ type KeyObjectParams = (
   }
 }
 
+const kKeyType = Symbol('kKeyType')
+const kHandle = Symbol('kHandle')
+
 class KeyObject implements KeyObjectType {
   type: KeyType
   asymmetricKeyType?: AsymmetricKeyType
@@ -49,6 +52,9 @@ class KeyObject implements KeyObjectType {
     this.type = key.type
     this.params = params
 
+    // @ts-expect-error TODO
+    this[kKeyType] = key.type
+
     if ('asymmetricKeyType' in params) {
       this.asymmetricKeyType = params.asymmetricKeyType
       this.asymmetricKeySize = params.asymmetricKeySize
@@ -59,6 +65,17 @@ class KeyObject implements KeyObjectType {
 
     console.log('CryptoKey key: ', key)
     console.log('KeyObject params: ', params)
+
+    Object.defineProperty(this, kHandle, {
+      // @ts-expect-error TODO
+      __proto__: null,
+      value: null,
+      // TODO
+      // value: handle,
+      enumerable: false,
+      configurable: false,
+      writable: false
+    })
   }
 
   static from = (key: CryptoKey, params: KeyObjectParams) =>
@@ -153,5 +170,14 @@ class KeyObject implements KeyObjectType {
     throw new Error('Unsupported export format')
   }
 }
+
+Object.defineProperties(KeyObject.prototype, {
+  [Symbol.toStringTag]: {
+    // @ts-expect-error TODO
+    __proto__: null,
+    configurable: true,
+    value: 'KeyObject'
+  }
+})
 
 export { KeyObject }
