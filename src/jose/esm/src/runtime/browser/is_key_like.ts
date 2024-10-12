@@ -1,4 +1,5 @@
 import { isCryptoKey } from '../../../../../lib/crypto/index.js'
+import { isKeyObject } from '../../../../../lib/crypto/isKeyObject.js'
 import type { KeyLike } from '../../types.d.ts'
 
 export default (key: unknown): key is KeyLike => {
@@ -6,8 +7,7 @@ export default (key: unknown): key is KeyLike => {
     return true
   }
 
-  // @ts-expect-error TODO
-  return key?.[Symbol.toStringTag] === 'KeyObject'
+  return isKeyObject(key)
 }
 
 export const types = ['CryptoKey']

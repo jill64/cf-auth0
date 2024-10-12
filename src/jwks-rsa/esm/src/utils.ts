@@ -1,5 +1,7 @@
 import { exportSPKI, importJWK } from '../../../jose/esm/src/index.js'
 import { JWK } from '../../../jose/esm/src/types.js'
+import { isCryptoKey } from '../../../lib/crypto/isCryptoKey.js'
+import { isKeyObject } from '../../../lib/crypto/isKeyObject.js'
 import JwksError from './errors/JwksError.js'
 
 const resolveAlg = (jwk: JWK) => {
@@ -54,10 +56,7 @@ const retrieveSigningKeys = async (jwks: JWK[]) => {
         continue
       }
 
-      // @ts-expect-error TODO
-      const keyTag: unknown = key[Symbol.toStringTag]
-
-      if (keyTag !== 'CryptoKey' && keyTag !== 'KeyObject') {
+      if (!isCryptoKey(key) && !isKeyObject(key)) {
         throw new JwksError('Unsupported key type')
       }
 
