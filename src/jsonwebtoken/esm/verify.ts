@@ -76,7 +76,8 @@ export default async function (
 
   try {
     secretOrPublicKey2 = await createPublicKey(sig)
-  } catch {
+  } catch (err) {
+    console.error('[CreatePublicKey Error]: ', err)
     try {
       secretOrPublicKey2 = createSecretKey(sig as NodeJS.ArrayBufferView)
     } catch {

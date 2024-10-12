@@ -43,7 +43,6 @@ export const createPublicKey = async (
     }
 
     const spki = await subtle.exportKey('spki', key)
-    const pkcs8 = await subtle.exportKey('pkcs8', key)
     const asymmetricKeySize = spki.byteLength
 
     if (!jwk.n) {
@@ -67,8 +66,8 @@ export const createPublicKey = async (
           der: Buffer.from(spki)
         },
         pkcs8: {
-          pem: Buffer.from(pkcs8),
-          der: Buffer.from(pkcs8)
+          pem: '',
+          der: Buffer.from('')
         },
         sec1: {
           pem: '',
@@ -95,7 +94,6 @@ export const createPublicKey = async (
       ['verify']
     )
     const spki = await subtle.exportKey('spki', key)
-    const pkcs8 = await subtle.exportKey('pkcs8', key)
     const jwk = await subtle.exportKey('jwk', key)
 
     const res = KeyObject.from(key, {
@@ -115,8 +113,8 @@ export const createPublicKey = async (
           der: Buffer.from(spki)
         },
         pkcs8: {
-          pem: Buffer.from(pkcs8),
-          der: Buffer.from(pkcs8)
+          pem: '',
+          der: Buffer.from('')
         },
         sec1: {
           pem: '',
