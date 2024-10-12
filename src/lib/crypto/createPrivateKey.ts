@@ -31,7 +31,8 @@ export const createPrivateKey = async (
       (jwk.key_ops as KeyUsage[]) ?? []
     )
 
-    return KeyObject.from(key) as KeyObjectType
+    // @ts-expect-error TODO
+    return KeyObject.from(key)
   }
 
   throw new TypeError('Unsupported key format')
