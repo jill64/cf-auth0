@@ -44,19 +44,20 @@ const checkIsPublicKey = (key: unknown) => {
     throw typeError(MSG_INVALID_VERIFIER_KEY, 2, key)
   }
 
-  if (!('type' in key) || typeof key.type !== 'string') {
+  // @ts-expect-error TODO
+  if (typeof key.type !== 'string') {
     throw typeError(MSG_INVALID_VERIFIER_KEY, 3, key)
   }
 
-  // TODO
-  // if (
-  //   !('asymmetricKeyType' in key) ||
-  //   typeof key.asymmetricKeyType !== 'string'
-  // ) {
-  //   throw typeError(MSG_INVALID_VERIFIER_KEY, 4, key)
-  // }
+  if (
+    !('asymmetricKeyType' in key) ||
+    typeof key.asymmetricKeyType !== 'string'
+  ) {
+    throw typeError(MSG_INVALID_VERIFIER_KEY, 4, key)
+  }
 
-  if (!('export' in key) || typeof key.export !== 'function') {
+  // @ts-expect-error TODO
+  if (typeof key.export !== 'function') {
     throw typeError(MSG_INVALID_VERIFIER_KEY, 5, key)
   }
 }
@@ -94,11 +95,13 @@ const checkIsSecretKey = (key: unknown) => {
     throw typeError(MSG_INVALID_SECRET, 2, key)
   }
 
-  if (!('type' in key) || key.type !== 'secret') {
+  // @ts-expect-error TODO
+  if (key.type !== 'secret') {
     throw typeError(MSG_INVALID_SECRET, 3, key)
   }
 
-  if (!('export' in key) || typeof key.export !== 'function') {
+  // @ts-expect-error TODO
+  if (typeof key.export !== 'function') {
     throw typeError(MSG_INVALID_SECRET, 4, key)
   }
 }
