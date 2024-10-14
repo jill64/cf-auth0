@@ -145,7 +145,13 @@ export default async function (
 
   // validateAsymmetricKey(header.alg, secretOrPublicKey3)
 
-  const valid = jws.verify(jwtString, header.alg, secretOrPublicKey2)
+  const valid = jws.verify(jwtString, header.alg, {
+    key: secretOrPublicKey2.export({
+      format: 'pem',
+      type: 'spki'
+    }),
+    ...secretOrPublicKey2
+  })
 
   if (!valid) {
     throw new JsonWebTokenError('invalid signature')
