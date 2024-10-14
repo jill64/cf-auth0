@@ -76,6 +76,8 @@ class KeyObject implements KeyObjectType {
       configurable: false,
       writable: false
     })
+
+    this.export = this.export.bind(this)
   }
 
   static from = (key: CryptoKey, params: KeyObjectParams) =>

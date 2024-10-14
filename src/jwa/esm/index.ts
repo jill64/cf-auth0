@@ -189,7 +189,7 @@ const createKeyVerifier =
   ) => {
     checkIsPublicKey(publicKey)
     const thing2 = normalizeInput(thing)
-    const signature2 = toBase64(signature)
+    const signature2 = Buffer.from(signature).toString('base64')
     const verifier = createVerify('RSA-SHA' + bits)
 
     verifier.update(thing2)
