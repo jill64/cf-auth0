@@ -23,7 +23,7 @@
   },
   "prettier": "@jill64/prettier-config",
   "dependencies": {
-    "@sveltejs/kit": "2.7.1",
+    "@sveltejs/kit": "2.7.2",
     "@types/debug": "4.1.12",
     "@types/lodash.clonedeep": "4.5.9",
     "@types/lodash.includes": "4.3.9",
