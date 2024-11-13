@@ -1,6 +1,6 @@
 {
   "name": "@jill64/cf-auth0",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "type": "module",
   "main": "dist/index.js",
   "files": [
@@ -23,7 +23,7 @@
   },
   "prettier": "@jill64/prettier-config",
   "dependencies": {
-    "@sveltejs/kit": "2.8.0",
+    "@sveltejs/kit": "2.8.1",
     "@types/debug": "4.1.12",
     "@types/lodash.clonedeep": "4.5.9",
     "@types/lodash.includes": "4.3.9",
