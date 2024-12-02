@@ -56,7 +56,7 @@
     "@types/jsonwebtoken": "9.0.7",
     "@types/jws": "3.2.10",
     "typescript": "5.6.3",
-    "vitest": "2.1.7"
+    "vitest": "2.1.8"
   },
   "homepage": "https://github.com/jill64/cf-auth0#readme",
   "license": "MIT",
@@ -70,7 +70,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/16166f6af52fac45a75771bb54d936bd907b7035082ea7eceb7ef1279f32005b/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/b6ff2e8c30cbf884584c27180247cdd000f2cc88f4d9a7a40009997792e6d822/jill64/cf-auth0"
   },
   "description": "Auth0 on Cloudflare Pages",
   "publishConfig": {
