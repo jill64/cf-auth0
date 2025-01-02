@@ -5,6 +5,7 @@ import {
 import { getToken, setAuthCookie, verifyToken } from '$lib/server/auth/auth0'
 import * as jwt from '$lib/server/auth/jsonwebtoken'
 import type { Cookies } from '@sveltejs/kit'
+import crypto from 'node:crypto'
 
 export class CfAuth0 {
   private auth0ClientId
@@ -97,7 +98,7 @@ export class CfAuth0 {
     /** @description current location */
     url: URL
   }) {
-    const csrfState = Math.random().toString(36).substring(7)
+    const csrfState = crypto.randomBytes(16).toString('hex')
 
     cookies.set('csrfState', csrfState, {
       httpOnly: true,
