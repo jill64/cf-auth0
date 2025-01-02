@@ -1,0 +1,31 @@
+name: Remote Playwright
+
+on: push
+
+jobs:
+  remote-run-playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          run_install: true
+
+      - name: Install Playwright Dependencies
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright
+        run: npx playwright test
+        env:
+          HOSTING_PROVIDER: cloudflare
+          TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
