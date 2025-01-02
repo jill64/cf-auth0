@@ -1,7 +1,7 @@
 {
   "name": "cf-auth0",
   "version": "0.0.1",
-  "description": "",
+  "description": "🔐 Auth0 Client on Cloudflare Pages",
   "main": "dist/index.js",
   "type": "module",
   "files": [
@@ -45,17 +45,46 @@
     "typescript": "5.7.2",
     "vite": "6.0.6",
     "vitest": "2.1.8",
-    "@sveltejs/vite-plugin-svelte": "5.0.3"
+    "@sveltejs/vite-plugin-svelte": "5.0.3",
+    "@types/semver": "7.5.8",
+    "@types/ms": "0.7.34",
+    "@types/jws": "3.2.10",
+    "@types/lodash.isnumber": "3.0.9",
+    "@types/lodash.isplainobject": "4.0.9",
+    "@types/lodash.clonedeep": "4.5.9",
+    "@cloudflare/workers-types": "4.20241230.0",
+    "dotenv": "16.4.7"
   },
-  "homepage": "",
+  "dependencies": {
+    "@jill64/attempt": "1.1.3",
+    "lodash.isnumber": "3.0.3",
+    "lodash.isplainobject": "4.0.6",
+    "ms": "2.1.3",
+    "semver": "7.6.3",
+    "jose": "5.9.6",
+    "lru-cache": "11.0.2",
+    "lodash.clonedeep": "4.5.0"
+  },
+  "homepage": "https://github.com/jill64/cf-auth0#readme",
   "author": {
-    "name": "",
-    "image": "",
-    "url": ""
+    "name": "jill64",
+    "email": "contact@jill64.dev",
+    "url": "https://github.com/jill64",
+    "image": "https://avatars.githubusercontent.com/u/143883742?v=4"
   },
   "repository": {
     "type": "git",
-    "url": "",
-    "image": ""
-  }
+    "url": "git+https://github.com/jill64/cf-auth0.git",
+    "image": "https://opengraph.githubassets.com/61610112949d8118e97578e45ec54e99309f561ed39f318aeda05f4cbc772378/jill64/cf-auth0"
+  },
+  "license": "MIT",
+  "bugs": "https://github.com/jill64/cf-auth0/issues",
+  "keywords": [
+    "auth0",
+    "authentication",
+    "cloudflare",
+    "jwt",
+    "library",
+    "pages"
+  ]
 }

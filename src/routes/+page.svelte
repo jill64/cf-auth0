@@ -1,2 +1,2 @@
 Logged in !
-<a href="/logout">Logout</a>
+<a href="/api/auth/logout">Logout</a>
