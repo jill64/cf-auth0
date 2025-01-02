@@ -28,9 +28,6 @@
     "test": "vitest",
     "test:e2e": "playwright test"
   },
-  "peerDependencies": {
-    "svelte": "^5.0.0"
-  },
   "devDependencies": {
     "@jill64/eslint-config-svelte": "2.0.2",
     "@jill64/npm-demo-layout": "2.0.7",
