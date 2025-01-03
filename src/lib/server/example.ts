@@ -2,7 +2,8 @@ import {
   AUTH0_CLIENT_ID,
   AUTH0_CLIENT_SECRET,
   AUTH0_DOMAIN,
-  BASE_URL
+  BASE_URL,
+  SESSION_SECRET
 } from '$env/static/private'
 import { CfAuth0 } from '$lib'
 
@@ -13,5 +14,6 @@ export const auth = new CfAuth0({
   callbackPath: '/api/auth/callback',
   loginPath: '/api/auth/login',
   baseUrl: BASE_URL,
-  isSvelteKit: true
+  isSvelteKit: true,
+  sessionSecret: SESSION_SECRET
 })

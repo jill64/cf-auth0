@@ -1,6 +1,5 @@
 import {
-  DEFAULT_AUTH0_COOKIE_NAME,
-  DEFAULT_SESSION_SECRET
+  DEFAULT_AUTH0_COOKIE_NAME
 } from '$lib/constants'
 import { getToken, setAuthCookie, verifyToken } from '$lib/server/auth/auth0'
 import * as jwt from '$lib/server/auth/jsonwebtoken'
@@ -20,7 +19,7 @@ export class CfAuth0 {
 
   constructor({
     auth0CookieName = DEFAULT_AUTH0_COOKIE_NAME,
-    sessionSecret = DEFAULT_SESSION_SECRET,
+    sessionSecret,
     auth0ClientId,
     auth0ClientSecret,
     auth0Domain,
@@ -46,7 +45,7 @@ export class CfAuth0 {
     loginPath: string
 
     auth0CookieName?: string
-    sessionSecret?: string
+    sessionSecret: string
     isSvelteKit?: boolean
   }) {
     this.auth0ClientId = auth0ClientId

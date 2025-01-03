@@ -17,9 +17,8 @@ async function generateHash(message: string) {
   return hashHex
 }
 
-const [DEFAULT_AUTH0_COOKIE_NAME, DEFAULT_SESSION_SECRET] = await Promise.all([
-  generateHash(version),
-  generateHash(version.replaceAll('.', ''))
+const [DEFAULT_AUTH0_COOKIE_NAME] = await Promise.all([
+  generateHash(version)
 ])
 
-export { DEFAULT_AUTH0_COOKIE_NAME, DEFAULT_SESSION_SECRET }
+export { DEFAULT_AUTH0_COOKIE_NAME }
