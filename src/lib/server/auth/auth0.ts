@@ -1,9 +1,11 @@
 import type { Cookies } from '@sveltejs/kit'
-import type { JWTHeaderParameters } from 'jose'
+import type { JWTHeaderParameters, JWTPayload } from 'jose'
 import * as jwt from './jsonwebtoken'
 import { JwksClient } from './jwks-rsa'
 
 let cachedKey: string | undefined = undefined
+
+const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 
 export const verifyToken = ({
   token,
@@ -72,4 +74,25 @@ export const getAuthUser = ({
   }
 
   return jwt.decode(jwtToken)
+}
+
+export const setAuthCookie = async ({
+  cookies,
+  payload,
+  session_secret,
+  auth0_cookie_name
+}: {
+  cookies: Cookies
+  payload: JWTPayload
+  session_secret: string
+  auth0_cookie_name: string
+}) => {
+  const cookieValue = await jwt.sign(payload, session_secret)
+
+  cookies.set(auth0_cookie_name, cookieValue, {
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: COOKIE_DURATION_SECONDS,
+    path: '/'
+  })
 }

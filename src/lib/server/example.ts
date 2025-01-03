@@ -11,9 +11,9 @@ export const auth = new CfAuth0({
   auth0ClientId: AUTH0_CLIENT_ID,
   auth0Domain: AUTH0_DOMAIN,
   auth0ClientSecret: AUTH0_CLIENT_SECRET,
-  sessionSecret: SESSION_SECRET,
   callbackPath: '/api/auth/callback',
   loginPath: '/api/auth/login',
   baseUrl: BASE_URL,
-  isSvelteKit: true
+  isSvelteKit: true,
+  sessionSecret: SESSION_SECRET
 })

@@ -1,10 +1,7 @@
-import { getToken, verifyToken } from '$lib/server/auth/auth0'
+import { getToken, setAuthCookie, verifyToken } from '$lib/server/auth/auth0'
 import * as jwt from '$lib/server/auth/jsonwebtoken'
 import type { Cookies } from '@sveltejs/kit'
-import type { JWTPayload } from 'jose'
 import crypto from 'node:crypto'
-
-const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
 
 export class CfAuth0 {
   private auth0ClientId
@@ -73,9 +70,11 @@ export class CfAuth0 {
     if (cookie) {
       const payload = await jwt.verify(cookie, this.sessionSecret)
 
-      await this.setAuthCookie({
+      await setAuthCookie({
         cookies,
-        payload
+        payload,
+        session_secret: this.sessionSecret,
+        auth0_cookie_name: this.auth0CookieName
       })
 
       return payload
@@ -172,30 +171,15 @@ export class CfAuth0 {
       jwksUri: `https://${this.auth0Domain}/.well-known/jwks.json`
     })
 
-    await this.setAuthCookie({
+    await setAuthCookie({
       cookies,
-      payload: authUser
+      payload: authUser,
+      session_secret: this.sessionSecret,
+      auth0_cookie_name: this.auth0CookieName
     })
 
     cookies.delete('csrfState', { path: '/' })
 
     return returnUrl
-  }
-
-  private setAuthCookie = async ({
-    cookies,
-    payload
-  }: {
-    cookies: Cookies
-    payload: JWTPayload
-  }) => {
-    const cookieValue = await jwt.sign(payload, this.sessionSecret)
-
-    cookies.set(this.auth0CookieName, cookieValue, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: COOKIE_DURATION_SECONDS,
-      path: '/'
-    })
   }
 }
