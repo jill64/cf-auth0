@@ -1,6 +1,3 @@
-import {
-  DEFAULT_AUTH0_COOKIE_NAME
-} from '$lib/constants'
 import { getToken, setAuthCookie, verifyToken } from '$lib/server/auth/auth0'
 import * as jwt from '$lib/server/auth/jsonwebtoken'
 import type { Cookies } from '@sveltejs/kit'
@@ -18,7 +15,7 @@ export class CfAuth0 {
   private isSvelteKit
 
   constructor({
-    auth0CookieName = DEFAULT_AUTH0_COOKIE_NAME,
+    auth0CookieName = 'auth0',
     sessionSecret,
     auth0ClientId,
     auth0ClientSecret,
