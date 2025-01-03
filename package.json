@@ -72,7 +72,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/28f79d2ee0e8f4f74e4d979e0d77c8c85c066fb1ccbcfe257c7af1ec1a2d1721/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/317a22f266ab2e34a9f841d0effe54cad0f5418a92d0e8ff64a2b41f65081018/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",
