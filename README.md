@@ -20,6 +20,12 @@
 npm i cf-auth0
 ```
 
+if you are using pnpm
+
+```sh
+pnpm i cf-auth0 jose
+```
+
 ## Before you start
 
 Please enable `nodejs_compat` in pages project settings
