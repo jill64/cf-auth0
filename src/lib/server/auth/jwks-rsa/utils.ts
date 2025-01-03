@@ -82,7 +82,8 @@ const retrieveSigningKeys = async (jwks: JWK[]) => {
           ? { alg: jwk.alg }
           : undefined)
       })
-    } catch {
+    } catch (e) {
+      console.error(e)
       continue
     }
   }
