@@ -151,7 +151,9 @@ export class CfAuth0 {
 
   private async verifyToken(token: string) {
     return jwt.verify(token, async (header: JWTHeaderParameters) => {
-      const client = new JwksClient({ jwksUri:`https://${this.auth0Domain}/.well-known/jwks.json` })
+      const client = new JwksClient({
+        jwksUri: `https://${this.auth0Domain}/.well-known/jwks.json`
+      })
 
       const key = await client.getSigningKey(header.kid)
 
