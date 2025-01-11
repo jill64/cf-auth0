@@ -7,6 +7,8 @@ test('smoke', async ({ page }) => {
 
   await expect(page.getByText('Welcome')).toBeVisible()
 
+  await page.waitForTimeout(1000)
+
   await page.getByText('Sign up').click()
 
   await page.getByLabel('Email address').fill(env.TEST_USER_EMAIL!)
