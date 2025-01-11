@@ -18,6 +18,7 @@ export class CfAuth0 {
   private auth0ClientId
   private auth0ClientSecret
   private auth0Domain
+  private auth0CustomDomain
   private baseUrl
   private auth0CookieName
   private sessionSecret
@@ -34,6 +35,7 @@ export class CfAuth0 {
     auth0ClientId,
     auth0ClientSecret,
     auth0Domain,
+    auth0CustomDomain = auth0Domain,
     baseUrl,
     callbackPath,
     loginPath,
@@ -46,6 +48,9 @@ export class CfAuth0 {
 
     /** @example 'example.us.auth0.com' */
     auth0Domain: string
+
+    /** @example 'auth.example.com' */
+    auth0CustomDomain?: string
 
     /** @example 'http://localhost:3000' */
     baseUrl: string
@@ -66,6 +71,7 @@ export class CfAuth0 {
     this.auth0ClientId = auth0ClientId
     this.auth0ClientSecret = auth0ClientSecret
     this.auth0Domain = auth0Domain
+    this.auth0CustomDomain = auth0CustomDomain
     this.baseUrl = baseUrl
     this.auth0CookieName = auth0CookieName
     this.sessionSecret = sessionSecret
@@ -144,7 +150,7 @@ export class CfAuth0 {
       state: csrfState
     }
 
-    return `https://${this.auth0Domain}/authorize?${new URLSearchParams(
+    return `https://${this.auth0CustomDomain}/authorize?${new URLSearchParams(
       query
     ).toString()}`
   }
@@ -213,7 +219,7 @@ export class CfAuth0 {
   }) {
     cookies.delete(this.auth0CookieName, { path: '/' })
 
-    return `https://${this.auth0Domain}/logout?client_id=${this.auth0ClientId}&returnTo=${returnUrl}`
+    return `https://${this.auth0CustomDomain}/logout?client_id=${this.auth0ClientId}&returnTo=${returnUrl}`
   }
 
   async callback({
