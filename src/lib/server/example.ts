@@ -13,6 +13,7 @@ export const auth = new CfAuth0({
   auth0ClientSecret: AUTH0_CLIENT_SECRET,
   callbackPath: '/api/auth/callback',
   loginPath: '/api/auth/login',
+  logoutPath: '/api/auth/logout',
   baseUrl: BASE_URL,
   isSvelteKit: true,
   sessionSecret: SESSION_SECRET

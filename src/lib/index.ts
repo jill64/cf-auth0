@@ -1,22 +1,33 @@
-import { getToken, verifyToken } from '$lib/server/auth/auth0'
 import * as jwt from '$lib/server/auth/jsonwebtoken'
 import { attempt } from '@jill64/attempt'
 import type { Cookies } from '@sveltejs/kit'
-import type { JWTPayload } from 'jose'
+import type { JWTHeaderParameters, JWTPayload } from 'jose'
 import crypto from 'node:crypto'
+import { JwksClient } from './server/auth/jwks-rsa'
 
 const COOKIE_DURATION_SECONDS = 60 * 60 * 24 * 7 // 1 week
+
+interface Auth0TokenResponse {
+  access_token: string
+  token_type: string
+  expires_in: number
+  scope: string
+}
 
 export class CfAuth0 {
   private auth0ClientId
   private auth0ClientSecret
   private auth0Domain
+  private auth0CustomDomain
   private baseUrl
   private auth0CookieName
   private sessionSecret
   private callbackPath
   private loginPath
+  private logoutPath
   private isSvelteKit
+  private jwtPayload: JWTPayload = {}
+  private cachedKey: string | undefined = undefined
 
   constructor({
     auth0CookieName = 'auth0',
@@ -24,9 +35,11 @@ export class CfAuth0 {
     auth0ClientId,
     auth0ClientSecret,
     auth0Domain,
+    auth0CustomDomain = auth0Domain,
     baseUrl,
     callbackPath,
     loginPath,
+    logoutPath,
     isSvelteKit
   }: {
     auth0ClientId: string
@@ -35,6 +48,9 @@ export class CfAuth0 {
 
     /** @example 'example.us.auth0.com' */
     auth0Domain: string
+
+    /** @example 'auth.example.com' */
+    auth0CustomDomain?: string
 
     /** @example 'http://localhost:3000' */
     baseUrl: string
@@ -45,6 +61,9 @@ export class CfAuth0 {
     /** @example '/api/auth/login' */
     loginPath: string
 
+    /** @example '/api/auth/logout' */
+    logoutPath: string
+
     auth0CookieName?: string
     sessionSecret: string
     isSvelteKit?: boolean
@@ -52,12 +71,14 @@ export class CfAuth0 {
     this.auth0ClientId = auth0ClientId
     this.auth0ClientSecret = auth0ClientSecret
     this.auth0Domain = auth0Domain
+    this.auth0CustomDomain = auth0CustomDomain
     this.baseUrl = baseUrl
     this.auth0CookieName = auth0CookieName
     this.sessionSecret = sessionSecret
     this.callbackPath = callbackPath
     this.loginPath = loginPath
     this.isSvelteKit = isSvelteKit
+    this.logoutPath = logoutPath
   }
 
   /** Please redirect to return URL after calling this function */
@@ -88,6 +109,8 @@ export class CfAuth0 {
         cookies,
         payload
       })
+
+      this.jwtPayload = payload
 
       return payload
     }
@@ -127,9 +150,63 @@ export class CfAuth0 {
       state: csrfState
     }
 
-    return `https://${this.auth0Domain}/authorize?${new URLSearchParams(
+    return `https://${this.auth0CustomDomain}/authorize?${new URLSearchParams(
       query
     ).toString()}`
+  }
+
+  private async verifyToken(token: string) {
+    return jwt.verify(token, async (header: JWTHeaderParameters) => {
+      const client = new JwksClient({
+        jwksUri: `https://${this.auth0Domain}/.well-known/jwks.json`
+      })
+
+      const key = await client.getSigningKey(header.kid)
+
+      if (this.cachedKey) {
+        return this.cachedKey
+      } else {
+        const signingKey = key?.getPublicKey()
+        this.cachedKey = signingKey
+        return signingKey
+      }
+    })
+  }
+
+  private async getToken({
+    code,
+    redirect_uri
+  }: {
+    code: string
+    redirect_uri: string
+  }): Promise<{
+    id_token: string
+  }> {
+    const resp = await fetch(`https://${this.auth0Domain}/oauth/token`, {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        client_id: this.auth0ClientId,
+        client_secret: this.auth0ClientSecret,
+        redirect_uri,
+        grant_type: 'authorization_code'
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    return await resp.json()
+  }
+
+  private async getAuthUser(cookies: Cookies) {
+    const jwtToken = cookies.get(this.auth0CookieName)
+
+    if (!jwtToken) {
+      return null
+    }
+
+    return jwt.decode(jwtToken)
   }
 
   /** Please redirect to return URL after calling this function */
@@ -142,7 +219,7 @@ export class CfAuth0 {
   }) {
     cookies.delete(this.auth0CookieName, { path: '/' })
 
-    return `https://${this.auth0Domain}/logout?client_id=${this.auth0ClientId}&returnTo=${returnUrl}`
+    return `https://${this.auth0CustomDomain}/logout?client_id=${this.auth0ClientId}&returnTo=${returnUrl}`
   }
 
   async callback({
@@ -170,18 +247,12 @@ export class CfAuth0 {
       throw new Error('Invalid state')
     }
 
-    const token = await getToken({
+    const token = await this.getToken({
       code,
-      auth0_domain: this.auth0Domain,
-      auth0_client_id: this.auth0ClientId,
-      auth0_client_secret: this.auth0ClientSecret,
       redirect_uri: `${this.baseUrl}${this.callbackPath}`
     })
 
-    const authUser = await verifyToken({
-      token: token.id_token,
-      jwksUri: `https://${this.auth0Domain}/.well-known/jwks.json`
-    })
+    const authUser = await this.verifyToken(token.id_token)
 
     await this.setAuthCookie({
       cookies,
@@ -191,6 +262,57 @@ export class CfAuth0 {
     cookies.delete('csrfState', { path: '/' })
 
     return returnUrl
+  }
+
+  async delete() {
+    const accessToken = await this.getManagementApiToken()
+    await this.deleteAuth0User(accessToken)
+    return this.logoutPath
+  }
+
+  private async getManagementApiToken(): Promise<string> {
+    const url = `https://${this.auth0Domain}/oauth/token`
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        client_id: this.auth0ClientId,
+        client_secret: this.auth0ClientSecret,
+        audience: `https://${this.auth0Domain}/api/v2/`,
+        grant_type: 'client_credentials'
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to Get Token Error: ${response.status} ${response.statusText}`
+      )
+    }
+
+    const data = (await response.json()) as Auth0TokenResponse
+    return data.access_token
+  }
+
+  private async deleteAuth0User(accessToken: string): Promise<void> {
+    console.log('this.jwtPayload.sub', this.jwtPayload.sub)
+
+    const url = `https://${this.auth0Domain}/api/v2/users/${encodeURIComponent(
+      this.jwtPayload.sub!
+    )}`
+
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to Get Token: ${response.status} ${response.statusText}`
+      )
+    }
   }
 
   private async setAuthCookie({
