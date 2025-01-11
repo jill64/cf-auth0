@@ -39,7 +39,7 @@
     "@sveltejs/adapter-cloudflare": "5.0.0",
     "publint": "0.2.12",
     "typescript": "5.7.3",
-    "svelte": "5.16.5",
+    "svelte": "5.17.3",
     "@sveltejs/kit": "2.15.2",
     "vite": "6.0.7",
     "vitest": "2.1.8",
