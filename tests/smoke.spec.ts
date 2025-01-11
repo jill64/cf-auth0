@@ -15,7 +15,9 @@ test('smoke', async ({ page }) => {
   await page.getByLabel('Password').fill(env.TEST_USER_PASSWORD!)
   await page.click('button[type="submit"]')
 
-  await page.getByText('Accept').click()
+  if (env.HOSTING_PROVIDER !== 'cloudflare') {
+    await page.getByText('Accept').click()
+  }
 
   await expect(page.getByText('Logged in !')).toBeVisible()
 
