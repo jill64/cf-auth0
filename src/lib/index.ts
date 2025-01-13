@@ -270,6 +270,12 @@ export class CfAuth0 {
     return this.logoutPath
   }
 
+  async changeEmail(newEmail: string) {
+    const accessToken = await this.getManagementApiToken()
+    await this.changeUserEmail(newEmail, accessToken)
+    return this.logoutPath
+  }
+
   private async getManagementApiToken(): Promise<string> {
     const url = `https://${this.auth0Domain}/oauth/token`
 
@@ -311,6 +317,34 @@ export class CfAuth0 {
     if (!response.ok) {
       throw new Error(
         `Failed to Get Token: ${response.status} ${response.statusText}`
+      )
+    }
+  }
+  private async changeUserEmail(
+    newEmail: string,
+    accessToken: string
+  ): Promise<void> {
+    const url = `https://${this.auth0Domain}/api/v2/users/${encodeURIComponent(
+      this.jwtPayload.sub!
+    )}`
+
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: newEmail,
+        connection: 'Username-Password-Authentication',
+        verify_email: true
+      })
+    })
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      throw new Error(
+        `Failed to update user email. Status: ${res.status} - ${errorText}`
       )
     }
   }
