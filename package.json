@@ -39,7 +39,7 @@
     "@sveltejs/adapter-cloudflare": "5.0.0",
     "publint": "0.2.12",
     "typescript": "5.7.3",
-    "svelte": "5.16.5",
+    "svelte": "5.17.3",
     "@sveltejs/kit": "2.15.2",
     "vite": "6.0.7",
     "vitest": "2.1.8",
@@ -73,7 +73,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/1456d60cb29e28ea5e21fcc980d80ff3712f2c4ffc246bc8c07327da4b014f11/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/de79a7930fc22e5cc9582d4b13a349d7cca7d9b1148e4ed121dcbf111f2bf4ee/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",
