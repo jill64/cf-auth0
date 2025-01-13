@@ -1,6 +1,6 @@
 {
   "name": "cf-auth0",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "🔐 Auth0 Client on Cloudflare Pages",
   "main": "dist/index.js",
   "type": "module",
@@ -73,7 +73,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/9d825b91b609425ffd1a4d40ab713b02d10c9f8aea34b55e09abb9311af7fb05/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/b6a665a514824b5204792ac0182e18074d0b73b429c2bd40458b9acf2a7b5a9a/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",

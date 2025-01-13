@@ -276,6 +276,17 @@ export class CfAuth0 {
     return this.logoutPath
   }
 
+  async changePassword(newPassword: string) {
+    const accessToken = await this.getManagementApiToken()
+
+    await this.changeUserPassword({
+      new_password: newPassword,
+      access_token: accessToken
+    })
+
+    return this.logoutPath
+  }
+
   private async getManagementApiToken(): Promise<string> {
     const url = `https://${this.auth0Domain}/oauth/token`
 
@@ -345,6 +356,37 @@ export class CfAuth0 {
       const errorText = await res.text()
       throw new Error(
         `Failed to update user email. Status: ${res.status} - ${errorText}`
+      )
+    }
+  }
+
+  private async changeUserPassword({
+    new_password,
+    access_token
+  }: {
+    new_password: string
+    access_token: string
+  }): Promise<void> {
+    const updateUrl = `https://${
+      this.auth0Domain
+    }/api/v2/users/${encodeURIComponent(this.jwtPayload.sub!)}`
+
+    const updateResponse = await fetch(updateUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${access_token}`
+      },
+      body: JSON.stringify({
+        password: new_password,
+        connection: 'Username-Password-Authentication' // Database connection の名前
+      })
+    })
+
+    if (!updateResponse.ok) {
+      const errorText = await updateResponse.text()
+      throw new Error(
+        `Failed to update user password: ${updateResponse.status} - ${errorText}`
       )
     }
   }
