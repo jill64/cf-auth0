@@ -34,7 +34,7 @@
     "@jill64/universal-sanitizer": "1.4.0",
     "@jill64/playwright-config": "2.4.2",
     "@jill64/prettier-config": "1.0.0",
-    "@jill64/sentry-sveltekit-cloudflare": "2.0.2",
+    "@jill64/sentry-sveltekit-cloudflare": "2.0.3",
     "@playwright/test": "1.49.1",
     "@sveltejs/adapter-cloudflare": "5.0.0",
     "typescript": "5.7.3",
@@ -72,7 +72,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/55488eedb7fddbcdfbd20252ee37b3436160d76909620ab0fcca0e8759b3e2fa/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/3cb4aa04227c0dc039aaed795cf95ee0071bd28181222966b726aec291c0bfd5/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",
