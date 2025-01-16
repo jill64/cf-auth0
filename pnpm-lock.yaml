@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@jill64/attempt':
-        specifier: 1.1.3
-        version: 1.1.3
+        specifier: 1.1.4
+        version: 1.1.4
       jose:
         specifier: 5.9.6
         version: 5.9.6
@@ -798,8 +798,8 @@ packages:
     resolution: {integrity: sha512-c7hNEllBlenFTHBky65mhq8WD2kbN9Q6gk0bTk8lSBvc554jpXSkST1iePudpt7+A/AQvuHs9EMqjHDXMY1lrA==}
     engines: {node: '>=18.18'}
 
-  '@jill64/attempt@1.1.3':
-    resolution: {integrity: sha512-QvzBPIJoq58uiDdeP0/+gBikwYxn1AqvyZHr+GD3Fnbe+CV4BvrCYnx5KBpjzFobH85B6x1KAn2JrJhJdqniDQ==}
+  '@jill64/attempt@1.1.4':
+    resolution: {integrity: sha512-oTdlIx+S7cIBpgMEquAknA5onVoBDLmcFy6aoCssaPz19IOyizADg3u2qE0Q/W3yM2366Jz70VN6Ld+cPdFOvQ==}
 
   '@jill64/eslint-config-svelte@2.0.4':
     resolution: {integrity: sha512-3IB6z2LZnVtxZDT2WGzcG+8GgES9+GVSBZa4uj6bA0o+gw/SfgZS3sFGvweNCv9kw4PzuDgNAZe3WLWQRPmr8A==}
@@ -3349,7 +3349,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.1': {}
 
-  '@jill64/attempt@1.1.3': {}
+  '@jill64/attempt@1.1.4': {}
 
   '@jill64/eslint-config-svelte@2.0.4(svelte@5.17.4)(typescript@5.7.3)':
     dependencies:
