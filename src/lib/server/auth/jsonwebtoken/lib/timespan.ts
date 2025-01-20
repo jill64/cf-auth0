@@ -4,7 +4,7 @@ export default (time: number | string, iat: number) => {
   const timestamp = iat || Math.floor(Date.now() / 1000)
 
   if (typeof time === 'string') {
-    const milliseconds = ms(time)
+    const milliseconds = ms(`${Number(time)}`)
     if (typeof milliseconds === 'undefined') {
       return
     }
