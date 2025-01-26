@@ -49,7 +49,7 @@
     "@types/lodash.isnumber": "3.0.9",
     "@types/lodash.isplainobject": "4.0.9",
     "@types/lodash.clonedeep": "4.5.9",
-    "@cloudflare/workers-types": "4.20250121.0",
+    "@cloudflare/workers-types": "4.20250124.3",
     "dotenv": "16.4.7"
   },
   "dependencies": {
