@@ -148,6 +148,7 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
   }
 
   function del() {
+    // eslint-disable-next-line prefer-rest-params
     const key = hash(...arguments)
     cache.delete(key)
   }
@@ -190,9 +191,9 @@ export function syncMemoizer<T1, T2, T3, T4, T5, T6, TResult>(
         return load(...args)
       }
 
-      var key = hash(...args)
+      const key = hash(...args)
 
-      var fromCache = cache.get(key)
+      const fromCache = cache.get(key)
 
       if (fromCache) {
         emit('hit', ...args)

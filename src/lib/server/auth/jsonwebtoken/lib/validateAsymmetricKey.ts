@@ -65,8 +65,7 @@ export default (algorithm: string, key: KeyObject | CryptoKey) => {
           )
         }
 
-        const keyCurve = key.asymmetricKeyDetails.namedCurve
-
+        // eslint-disable-next-line
         const isCurveSupported = (
           alg?: string
         ): alg is keyof typeof allowedCurves => !!alg && alg in allowedCurves
@@ -75,7 +74,11 @@ export default (algorithm: string, key: KeyObject | CryptoKey) => {
           throw new Error(`Unknown algorithm "${algorithm}".`)
         }
 
+        // eslint-disable-next-line
         const allowedCurve = allowedCurves[algorithm]
+
+        // eslint-disable-next-line
+        const keyCurve = key.asymmetricKeyDetails.namedCurve
 
         if (keyCurve !== allowedCurve) {
           throw new Error(

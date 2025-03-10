@@ -1,7 +1,0 @@
-name: Vitest
-
-on: push
-
-jobs:
-  test:
-    uses: jill64/.github/.github/workflows/run-vitest.yml@main

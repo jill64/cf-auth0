@@ -32,7 +32,8 @@ export function decode(
 ) {
   const decoded = jwsDecode(jwt, options)
 
-  let { header, payload, signature } = decoded
+  const { header, signature } = decoded
+  let { payload } = decoded
 
   //try parse the payload
   if (typeof payload === 'string') {
