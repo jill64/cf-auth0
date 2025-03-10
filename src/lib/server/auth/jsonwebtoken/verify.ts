@@ -22,7 +22,7 @@ export const verify = async (
     | string
     | ((jwtHeader: JWTHeaderParameters) => Promise<string>)
 ) => {
-  let options: {
+  const options: {
     algorithms?: string[]
   } = {}
 
@@ -140,6 +140,7 @@ export const verify = async (
   const valid = await jwsVerify(
     jwtString,
     decodedToken.header.alg,
+    // @ts-expect-error TODO: fix this
     secretOrPublicKey3
   )
 

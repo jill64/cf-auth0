@@ -94,14 +94,14 @@ const fromBase64 = (base64: string) =>
 const toBase64 = (base64url: string) => {
   base64url = base64url.toString()
 
-  let padding = 4 - (base64url.length % 4)
+  const padding = 4 - (base64url.length % 4)
   if (padding !== 4) {
     for (let i = 0; i < padding; ++i) {
       base64url += '='
     }
   }
 
-  return base64url.replace(/\-/g, '+').replace(/_/g, '/')
+  return base64url.replace(/-/g, '+').replace(/_/g, '/')
 }
 
 const bufferOrString = (obj: unknown): obj is Buffer | string =>
