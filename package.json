@@ -1,6 +1,6 @@
 {
   "name": "cf-auth0",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "🔐 Auth0 Client on Cloudflare Pages",
   "main": "dist/index.js",
   "type": "module",
