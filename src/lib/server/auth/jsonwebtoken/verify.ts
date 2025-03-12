@@ -140,7 +140,6 @@ export const verify = async (
   const valid = await jwsVerify(
     jwtString,
     decodedToken.header.alg,
-    // @ts-expect-error TODO: fix this
     secretOrPublicKey3
   )
 

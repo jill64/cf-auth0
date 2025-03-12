@@ -29,18 +29,18 @@
     "test:e2e": "playwright test"
   },
   "devDependencies": {
-    "@jill64/eslint-config-svelte": "2.2.0",
-    "@jill64/npm-demo-layout": "2.0.11",
-    "@jill64/playwright-config": "2.4.2",
+    "@jill64/eslint-config-svelte": "2.2.1",
+    "@jill64/npm-demo-layout": "2.0.15",
+    "@jill64/playwright-config": "3.0.0",
     "@jill64/prettier-config": "1.0.0",
     "@jill64/sentry-sveltekit-cloudflare": "2.0.6",
     "@playwright/test": "1.51.0",
     "@sveltejs/adapter-cloudflare": "5.0.3",
     "typescript": "5.8.2",
-    "svelte": "5.22.6",
+    "svelte": "5.23.0",
     "@sveltejs/kit": "2.19.0",
     "vite": "6.2.1",
-    "@types/bun": "1.2.4",
+    "@types/bun": "1.2.5",
     "@sveltejs/vite-plugin-svelte": "5.0.3",
     "@types/semver": "7.5.8",
     "@types/ms": "2.1.0",
@@ -48,7 +48,7 @@
     "@types/lodash.isnumber": "3.0.9",
     "@types/lodash.isplainobject": "4.0.9",
     "@types/lodash.clonedeep": "4.5.9",
-    "@cloudflare/workers-types": "4.20250303.0",
+    "@cloudflare/workers-types": "4.20250310.0",
     "dotenv": "16.4.7",
     "eslint": "9.22.0"
   },
@@ -58,7 +58,7 @@
     "lodash.isplainobject": "4.0.6",
     "ms": "2.1.3",
     "semver": "7.7.1",
-    "jose": "6.0.8",
+    "jose": "6.0.9",
     "lru-cache": "11.0.2",
     "lodash.clonedeep": "4.5.0"
   },
@@ -72,7 +72,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/67fc49cb6865504aa0b0b2b9b4abfdde0110630ac9cf06b92f70284ee0132c9f/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/a8f3e4ffbe18083fb16b6990cf5fb657aec5a95beb4ff7310c6369d5d7b06a6d/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",
