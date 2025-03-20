@@ -35,7 +35,7 @@
     "@jill64/prettier-config": "1.0.0",
     "@jill64/sentry-sveltekit-cloudflare": "2.0.6",
     "@playwright/test": "1.51.0",
-    "@sveltejs/adapter-cloudflare": "5.0.3",
+    "@sveltejs/adapter-cloudflare": "6.0.0",
     "typescript": "5.8.2",
     "svelte": "5.23.0",
     "@sveltejs/kit": "2.20.1",
@@ -72,7 +72,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/ed64cbb6fa51d198a9bfd598f3c83333c72cdf031f526e1463b60cd143a7e350/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/a7fcc732c68080450a46e87bb77273d1c8e3b3a925c6aa49dbfbc87e363b8ffc/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",
