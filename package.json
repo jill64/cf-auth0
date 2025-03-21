@@ -50,7 +50,7 @@
     "@types/lodash.clonedeep": "4.5.9",
     "@cloudflare/workers-types": "4.20250312.0",
     "dotenv": "16.4.7",
-    "eslint": "9.22.0"
+    "eslint": "9.23.0"
   },
   "dependencies": {
     "@jill64/attempt": "1.1.5",
@@ -72,7 +72,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jill64/cf-auth0.git",
-    "image": "https://opengraph.githubassets.com/a7fcc732c68080450a46e87bb77273d1c8e3b3a925c6aa49dbfbc87e363b8ffc/jill64/cf-auth0"
+    "image": "https://opengraph.githubassets.com/53db537015042f37e9b5478156afbf999f4d1bf10dc1f9ac3a9edb2e842d385b/jill64/cf-auth0"
   },
   "license": "MIT",
   "bugs": "https://github.com/jill64/cf-auth0/issues",
